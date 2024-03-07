@@ -1,11 +1,51 @@
 <!-- title -->
 <h1 mat-dialog-title>Create New Device</h1>
+<mat-stepper #stepper style="width: 50vw;">
+  <!-- Step 1: Fill out your name -->
+  <mat-step [stepControl]="firstFormGroup" [errorMessage]="getErrorMessage()">
+    <form [formGroup]="firstFormGroup">
+      <!-- stepper header -->
+      <ng-template matStepLabel>Enter Device Details</ng-template>
+      <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 16px;">
+        <mat-form-field>
+          <mat-label>Device Name</mat-label>
+          <input matInput placeholder="Ex. Macbook Pro M1" formControlName="deviceName" required>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Device Location</mat-label>
+          <input matInput placeholder="Ex. Room 174" formControlName="location" required>
+        </mat-form-field>
+      </div>
+      
+      <!-- stepper controls -->
+      <div style="display: flex; flex-direction: row; justify-content: flex-end; gap: 10px;">
+        <button mat-stroked-button (click)="dialogRef.close(false)" matStepperNext>Cancel</button>
+        <button mat-flat-button color="primary" matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
 
-<!-- content -->
-<div mat-dialog-content>This dialog showcases the title, close, content and actions elements.</div>
+  <!-- Step 2: Confirm -->
+  <mat-step>
+    <!-- stepper header -->
+    <ng-template matStepLabel>Confirmation</ng-template>
+    <div class="mat-table-container">
+      <table class="mat-table">
+        <tr>
+          <th class="mat-header">Name</th>
+          <td class="mat-cell">{{ firstFormGroup.value.deviceName ? firstFormGroup.value.deviceName : '-' }}</td>
+        </tr>
+        <tr>
+          <th class="mat-header">Location</th>
+          <td class="mat-cell">{{ firstFormGroup.value.location ? firstFormGroup.value.location : '-' }}</td>
+        </tr>
+      </table>
+    </div>
 
-<!-- actions -->
-<div mat-dialog-actions style="display:flex; justify-content: flex-end;">
-  <button mat-stroked-button mat-dialog-close (click)="diaLogRef.close(false)">Cancel</button>
-  <button mat-flat-button mat-dialog-close color="primary" (click)="diaLogRef.close(true)" cdkFocusInitial>Create</button>
-</div>
+    <!-- stepper controls -->
+    <div style="display: flex; flex-direction: row; justify-content: flex-end; gap: 10px;">
+      <button mat-stroked-button matStepperPrevious>Back</button>
+      <button mat-flat-button color="primary" (click)="createNewDevice()" [disabled]="!firstFormGroup.valid">Confirm</button>
+    </div>
+  </mat-step>
+</mat-stepper>

@@ -86,8 +86,11 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
       disableClose: false,
     })
 
-    this.dialogRef.afterClosed().subscribe(() => {
-      return
+    this.dialogRef.afterClosed().subscribe((isConfirmed: boolean) => {
+      if (isConfirmed) {
+        console.log('user confimed!')
+        /** Create new device, send to API to create new item in DB */
+      }
     })
     this.dialogRef = null as any
   }

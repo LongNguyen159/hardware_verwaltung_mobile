@@ -17,6 +17,9 @@ import {MatInputModule} from '@angular/material/input';
 import { MatSortModule } from '@angular/material/sort';
 import { NewDeviceDialogComponent } from './feature/overview/components/new-device-dialog/new-device-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatStepperModule} from '@angular/material/stepper';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,6 +28,9 @@ import {MatDialogModule} from '@angular/material/dialog';
     NewDeviceDialogComponent
   ],
   imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    MatStepperModule,
     MatDialogModule,
     MatSortModule,
     MatInputModule,
