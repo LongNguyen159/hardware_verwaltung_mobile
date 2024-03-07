@@ -10,14 +10,27 @@ import { DeviceOverviewPageComponent } from './feature/device_management/pages/d
 import { OverviewPageComponent } from './feature/overview/pages/overview-page/overview-page.component';
 import {MatTableModule} from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatIconModule} from '@angular/material/icon';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import { MatSortModule } from '@angular/material/sort';
+import { NewDeviceDialogComponent } from './feature/overview/components/new-device-dialog/new-device-dialog.component';
+import {MatDialogModule} from '@angular/material/dialog';
 @NgModule({
   declarations: [
     AppComponent,
     DeviceOverviewPageComponent,
-    OverviewPageComponent
+    OverviewPageComponent,
+    NewDeviceDialogComponent
   ],
   imports: [
+    MatDialogModule,
+    MatSortModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatIconModule,
+    BrowserAnimationsModule,
     MatPaginatorModule,
     RouterModule,
     MatTableModule,

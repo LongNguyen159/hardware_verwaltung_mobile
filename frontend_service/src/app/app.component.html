@@ -1,6 +1,10 @@
 <!-- toolbar and content of individual pages -->
-<mat-toolbar class="toolbar" style="background-color: rgb(47, 53, 70); color: white; height: 52px;">
-  <button mat-button routerLink="/overview" class="navbarItem">Home</button>
-  <button mat-button routerLink="/device-overview" class="navbarItem">Devices</button>
-</mat-toolbar>
-<router-outlet></router-outlet>
+<div style="display: flex; flex-direction: column;">
+  <mat-toolbar class="toolbar">
+    <button mat-button routerLink="/overview" class="navbarItem">Home</button>
+    <button mat-button routerLink="/device-overview" class="navbarItem">Devices</button>
+  </mat-toolbar>
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
+</div>
