@@ -9,6 +9,8 @@ import {MatButtonModule} from '@angular/material/button';
 import { DeviceOverviewPageComponent } from './feature/device_management/pages/device-overview-page/device-overview-page.component';
 import { OverviewPageComponent } from './feature/overview/pages/overview-page/overview-page.component';
 import {MatTableModule} from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -16,6 +18,7 @@ import {MatTableModule} from '@angular/material/table';
     OverviewPageComponent
   ],
   imports: [
+    MatPaginatorModule,
     RouterModule,
     MatTableModule,
     MatButtonModule,
