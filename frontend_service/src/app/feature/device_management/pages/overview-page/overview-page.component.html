@@ -1,5 +1,5 @@
 <div style="display: flex;flex-direction: row; align-items: center; gap: 10px;">
-  <h2 style="padding-left: 10px; color:rgb(45, 45, 45)">Device Management</h2>
+  <h2 style="padding-left: 16px; color:rgb(45, 45, 45);">Device Overview</h2>
 </div>
 
 <!-- <div *ngFor="let item of mockData">
@@ -46,7 +46,7 @@
     </ng-container>
   
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row" routerLink="/device-details"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row" (click)="navigateToDetailsPage(row.id)" ></tr>
 
     <tr class="mat-row" *matNoDataRow>
       <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>

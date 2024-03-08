@@ -5,7 +5,7 @@ import { OverviewPageComponent } from './feature/device_management/pages/overvie
 import { DeviceDetailsComponent } from './feature/device_management/pages/device-details/device-details.component';
 
 const routes: Routes = [
-  { path: 'device-details', component: DeviceDetailsComponent},
+  { path: 'device-details/:id', component: DeviceDetailsComponent},
   { path: 'overview', component: OverviewPageComponent},
 ];
 

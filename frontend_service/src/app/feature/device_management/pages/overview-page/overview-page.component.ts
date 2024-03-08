@@ -6,6 +6,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NewDeviceDialogComponent } from '../../components/new-device-dialog/new-device-dialog.component';
 import { DeviceInput, DeviceMetaData } from '../../models/device-models';
 import { DeviceService } from '../../service/device.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-overview-page',
   templateUrl: './overview-page.component.html',
@@ -67,7 +68,7 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
 
   qrCodeDataUrl: string;
 
-  constructor(public dialog: MatDialog, private deviceServive: DeviceService) {}
+  constructor(public dialog: MatDialog, private deviceServive: DeviceService, private router: Router) {}
 
   ngOnInit(): void {
     this.tableDataSource = new MatTableDataSource(this.mockData); /** Change to real data here; 'dataSource' is real data */
@@ -116,7 +117,14 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
     })
     this.dialogRef = null as any
   }
+
+
+  navigateToDetailsPage(id: number) {
+    this.router.navigate(['/device-details', id])
+
+  }
 }
+
 
 
 // Name + Location POST request => backend
