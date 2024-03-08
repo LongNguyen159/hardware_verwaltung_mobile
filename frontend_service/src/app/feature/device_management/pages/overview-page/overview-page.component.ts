@@ -4,7 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NewDeviceDialogComponent } from '../../components/new-device-dialog/new-device-dialog.component';
-import { DeviceInput, DeviceMetaData } from '../../models/device-overview';
+import { DeviceInput, DeviceMetaData } from '../../models/device-models';
 import { DeviceService } from '../../service/device.service';
 @Component({
   selector: 'app-overview-page',
