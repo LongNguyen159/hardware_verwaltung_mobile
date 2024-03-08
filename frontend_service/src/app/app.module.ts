@@ -20,6 +20,7 @@ import {MatStepperModule} from '@angular/material/stepper';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DeviceDetailsComponent } from './feature/device_management/pages/device-details/device-details.component';
+import {MatCardModule} from '@angular/material/card';
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,6 +29,7 @@ import { DeviceDetailsComponent } from './feature/device_management/pages/device
     DeviceDetailsComponent
   ],
   imports: [
+    MatCardModule,
     ReactiveFormsModule,
     FormsModule,
     MatStepperModule,

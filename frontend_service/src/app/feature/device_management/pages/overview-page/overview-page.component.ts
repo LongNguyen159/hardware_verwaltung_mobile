@@ -7,6 +7,7 @@ import { NewDeviceDialogComponent } from '../../components/new-device-dialog/new
 import { DeviceInput, DeviceMetaData } from '../../models/device-models';
 import { DeviceService } from '../../service/device.service';
 import { Router } from '@angular/router';
+import { generateQRCodeFromJSON } from '../../utils/utils';
 @Component({
   selector: 'app-overview-page',
   templateUrl: './overview-page.component.html',
@@ -77,7 +78,9 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.tableDataSource.sort = this.sort;
     this.tableDataSource.paginator = this.paginator;
-    this.generateQRCodeFromJSON(this.mockData[10])
+    generateQRCodeFromJSON(this.deviceServive, this.mockData[10]).then(UrlQr => {
+      this.qrCodeDataUrl = UrlQr
+    })
   }
 
   /** Later when we have JSON from each device => pass deviceID as arg */
@@ -85,14 +88,15 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
   //   return 
   // }
 
-  async generateQRCodeFromJSON(jsonData: any) {
-    try {
-      const jsonString = JSON.stringify(jsonData);
-      this.qrCodeDataUrl = await this.deviceServive.generateQRCode(jsonString);
-    } catch (error) {
-      console.error('Error generating QR code:', error);
-    }
-  }
+  // async generateQRCodeFromJSON(jsonData: any): Promise<string> {
+  //   try {
+  //     const jsonString = JSON.stringify(jsonData);
+  //     this.qrCodeDataUrl = await this.deviceServive.generateQRCode(jsonString);
+  //   } catch (error) {
+  //     console.error('Error generating QR code:', error);
+  //   }
+  //   return this.qrCodeDataUrl
+  // }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

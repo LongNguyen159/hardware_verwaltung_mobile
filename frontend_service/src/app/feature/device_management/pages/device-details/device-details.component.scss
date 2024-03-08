@@ -6,3 +6,15 @@
     background-color: #f0f0f0;
     padding-left: 16px;
 }
+.pageContent {
+    display: flex;
+    flex-direction: column;
+}
+.metadata, .qr-code {
+    padding: 16px;
+}
+
+.qr-code {
+    display: flex;
+    justify-content: center;
+}
