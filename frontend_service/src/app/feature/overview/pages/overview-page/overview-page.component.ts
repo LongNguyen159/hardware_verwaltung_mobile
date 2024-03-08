@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NewDeviceDialogComponent } from '../../components/new-device-dialog/new-device-dialog.component';
+import { DeviceInput, DeviceMetaData } from '../../models/device-overview';
 @Component({
   selector: 'app-overview-page',
   templateUrl: './overview-page.component.html',
@@ -20,7 +21,7 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'duration'];
   tableDataSource: MatTableDataSource<any>;
 
-  mockData = [
+  mockData: DeviceMetaData[] = [
     { id: 1, deviceName: 'ElectroTech M1', location: 'Location 1', inLage: 'Yes', duration: '2 hours' },
     { id: 2, deviceName: 'SmartGear X9', location: 'Location 2', inLage: 'No', duration: '1 hour' },
     { id: 3, deviceName: 'TechWiz S3', location: 'Location 3', inLage: 'Yes', duration: '3 hours' },
@@ -86,10 +87,14 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
       disableClose: false,
     })
 
-    this.dialogRef.afterClosed().subscribe((isConfirmed: boolean) => {
-      if (isConfirmed) {
-        console.log('user confimed!')
-        /** Create new device, send to API to create new item in DB */
+    this.dialogRef.afterClosed().subscribe((results: DeviceInput) => {
+      if (results) {
+        console.log(results)
+        /** Create new device, send to API to create new item in DB. Pass device input as args */
+
+        /** Subscribe to backend results, backend should return a JSON.
+         * Use that JSON to generate a QR code.
+         */
       }
     })
     this.dialogRef = null as any

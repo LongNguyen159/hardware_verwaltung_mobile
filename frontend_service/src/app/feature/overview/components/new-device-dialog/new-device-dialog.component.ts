@@ -18,12 +18,9 @@ export class NewDeviceDialogComponent {
   @ViewChild('stepper') stepper: MatStepper;
 
   deviceName: string = '';
-  location: string = '';
+  deviceLocation: string = '';
 
   firstFormGroup: FormGroup
-
-  secondFormGroup: FormGroup
-
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -32,22 +29,20 @@ export class NewDeviceDialogComponent {
   ) {
     this.firstFormGroup = this._formBuilder.group({
       deviceName: ['', Validators.required],
-      location: ['', Validators.required]
+      deviceLocation: ['', Validators.required]
     });
-
-
   }
 
 
 
   createNewDevice(): void {
     // Emit the input values when the "Confirm" button is clicked
-    this.dialogRef.close({ deviceName: this.firstFormGroup.value.deviceName, location: this.firstFormGroup.value.location });
+    this.dialogRef.close({ deviceName: this.firstFormGroup.value.deviceName, deviceLocation: this.firstFormGroup.value.deviceLocation });
   }
 
   getErrorMessage(): string {
     const deviceNameControl = this.firstFormGroup.get('deviceName');
-    const locationControl = this.firstFormGroup.get('location');
+    const locationControl = this.firstFormGroup.get('deviceLocation');
 
     if (deviceNameControl?.hasError('required')) {
       return 'Device Name is required';
