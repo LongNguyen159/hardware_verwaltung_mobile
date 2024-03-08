@@ -5,6 +5,7 @@ import {MatSort} from '@angular/material/sort';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NewDeviceDialogComponent } from '../../components/new-device-dialog/new-device-dialog.component';
 import { DeviceInput, DeviceMetaData } from '../../models/device-overview';
+import { DeviceService } from '../../service/device.service';
 @Component({
   selector: 'app-overview-page',
   templateUrl: './overview-page.component.html',
@@ -64,8 +65,9 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
     { id: 40, deviceName: 'TechSmart G8', location: 'Location 40', inLage: 'No', duration: '4 hours' }
   ];
 
+  qrCodeDataUrl: string;
 
-  constructor(public dialog: MatDialog) {}
+  constructor(public dialog: MatDialog, private deviceServive: DeviceService) {}
 
   ngOnInit(): void {
     this.tableDataSource = new MatTableDataSource(this.mockData); /** Change to real data here; 'dataSource' is real data */
@@ -74,6 +76,21 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.tableDataSource.sort = this.sort;
     this.tableDataSource.paginator = this.paginator;
+    this.generateQRCodeFromJSON(this.mockData[10])
+  }
+
+  /** Later when we have JSON from each device => pass deviceID as arg */
+  // getQrCodeOfItem(deviceId: number) {
+  //   return 
+  // }
+
+  async generateQRCodeFromJSON(jsonData: any) {
+    try {
+      const jsonString = JSON.stringify(jsonData);
+      this.qrCodeDataUrl = await this.deviceServive.generateQRCode(jsonString);
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+    }
   }
 
   applyFilter(event: Event) {
@@ -100,3 +117,18 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
     this.dialogRef = null as any
   }
 }
+
+
+// Name + Location POST request => backend
+// backend write new device into DB.
+// backend response to POST request: JSON
+
+// frontend JSON -> QR.
+
+/** TODO
+ * - API endpoint for writing new devices (Simon)
+ * - New page (device details page)
+ * - API endpoint for getting device info by ID. (Simon)
+ * - Table actions: Delete rows, generate QR code. (Get JSON from ROW => Generate QR)
+ * - API endpoint for removing rows in DB.
+ */

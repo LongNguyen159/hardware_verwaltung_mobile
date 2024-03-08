@@ -2,6 +2,9 @@
   <h2 style="padding-left: 10px; color:rgb(45, 45, 45)">Device Management</h2>
 </div>
 
+<!-- <div *ngFor="let item of mockData">
+  <img [src]="qrCodeDataUrl" alt="QR Code">
+</div> -->
 
 <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding-right: 20px; gap: 10px;">
   <button mat-stroked-button (click)="openNewDeviceDialog()" style="position: absolute; left: 0; margin-left: 20px;">New Device</button>
@@ -43,7 +46,7 @@
     </ng-container>
   
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row" routerLink="/device-overview"></tr>
 
     <tr class="mat-row" *matNoDataRow>
       <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>

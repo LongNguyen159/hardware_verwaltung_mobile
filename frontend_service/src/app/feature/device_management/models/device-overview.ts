@@ -9,4 +9,4 @@ export interface DeviceMetaData {
     location: string,
     inLage: string,
     duration: string
-  }
+}
