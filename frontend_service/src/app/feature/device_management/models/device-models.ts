@@ -10,3 +10,8 @@ export interface DeviceMetaData {
     inLage: string,
     duration: string
 }
+
+export interface QrData {
+  id: number
+  name: string
+}

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DeviceMetaData } from '../../models/device-models';
+import { DeviceMetaData, QrData } from '../../models/device-models';
 import { generateQRCodeFromJSON } from '../../utils/utils';
 import { DeviceService } from '../../service/device.service';
 import { saveAs } from 'file-saver';
@@ -9,6 +9,7 @@ import { saveAs } from 'file-saver';
   templateUrl: './device-details.component.html',
   styleUrls: ['./device-details.component.scss']
 })
+
 export class DeviceDetailsComponent implements OnInit {
   deviceId: number
   qrCodeDataUrl: string
@@ -20,12 +21,21 @@ export class DeviceDetailsComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id')
     if (id) {
       this.deviceId = parseInt(id)
+
+      
+
+      /** GET Device details by id here; then pass data in to generate qr of that device */
+      const QrData: QrData = {
+        id: this.deviceId,
+        name: '' /** devive name acquired from api */
+      }
+      generateQRCodeFromJSON(this.deviceService, {'id': this.deviceId, 'deviceName': 'ElectroTech M1'}).then(data => {
+        this.qrCodeDataUrl = data
+      })
+
     }
 
-    generateQRCodeFromJSON(this.deviceService, this.deviceDetailsMock.id).then(data => {
-      this.qrCodeDataUrl = data
-    })
-    /** Send ID to API to get full JSON data */
+    
   }
 
 

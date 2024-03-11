@@ -21,7 +21,7 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
 
   dialogRef: MatDialogRef<NewDeviceDialogComponent>
 
-  displayedColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'duration'];
+  displayedColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'duration', 'actions'];
   tableDataSource: MatTableDataSource<any>;
 
   mockData: DeviceMetaData[] = [
@@ -72,31 +72,15 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
   constructor(public dialog: MatDialog, private deviceServive: DeviceService, private router: Router) {}
 
   ngOnInit(): void {
+    /** Get device list here, assign tableDataSource to be the result. */
     this.tableDataSource = new MatTableDataSource(this.mockData); /** Change to real data here; 'dataSource' is real data */
   }
 
   ngAfterViewInit(): void {
     this.tableDataSource.sort = this.sort;
     this.tableDataSource.paginator = this.paginator;
-    generateQRCodeFromJSON(this.deviceServive, this.mockData[10]).then(UrlQr => {
-      this.qrCodeDataUrl = UrlQr
-    })
   }
 
-  /** Later when we have JSON from each device => pass deviceID as arg */
-  // getQrCodeOfItem(deviceId: number) {
-  //   return 
-  // }
-
-  // async generateQRCodeFromJSON(jsonData: any): Promise<string> {
-  //   try {
-  //     const jsonString = JSON.stringify(jsonData);
-  //     this.qrCodeDataUrl = await this.deviceServive.generateQRCode(jsonString);
-  //   } catch (error) {
-  //     console.error('Error generating QR code:', error);
-  //   }
-  //   return this.qrCodeDataUrl
-  // }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -138,9 +122,10 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
 // frontend JSON -> QR.
 
 /** TODO
- * - API endpoint for writing new devices (Simon)
- * - New page (device details page)
- * - API endpoint for getting device info by ID. (Simon)
- * - Table actions: Delete rows, generate QR code. (Get JSON from ROW => Generate QR)
- * - API endpoint for removing rows in DB.
+ * - [ ] API endpoint for writing new devices (Simon)
+ * - [X] New page (device details page)
+ * - [X] endpoint for getting device info by ID. (Simon)
+ * - [ ] Table actions: Delete rows
+ * - [ ] API endpoint for removing rows in DB.
+ * - [ ] Starred items: => Then store them in local storage.
  */

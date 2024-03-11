@@ -2,9 +2,7 @@
   <h2 style="padding-left: 16px; color:rgb(45, 45, 45);">Device Overview</h2>
 </div>
 
-<!-- <div>
-  <img [src]="qrCodeDataUrl" alt="QR Code">
-</div> -->
+
 
 <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding-right: 20px; gap: 10px;">
   <button mat-stroked-button (click)="openNewDeviceDialog()" style="position: absolute; left: 0; margin-left: 20px;">New Device</button>
@@ -43,6 +41,15 @@
     <ng-container matColumnDef="duration">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Duration</th>
       <td mat-cell *matCellDef="let element">{{ element.duration }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-icon-button (click)="$event.stopPropagation(); onStarDeviceClick()">
+          <mat-icon>star</mat-icon>
+        </button>
+      </td>
     </ng-container>
   
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
