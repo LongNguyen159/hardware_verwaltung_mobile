@@ -13,16 +13,37 @@ import { generateQRCodeFromJSON } from '../../utils/utils';
   templateUrl: './overview-page.component.html',
   styleUrls: ['./overview-page.component.scss']
 })
+
+/** After adding new device into the database, remember to update the table datasource to reflect the changes
+ * made to the database.
+ * 
+ * Subscribe to the DB changes: GET all devices list.
+ * this.tableDataSource.data = newDataFromDB.
+ * 
+ * This approach means we have to get the whole list every time a new device is added.
+ * Not efficient, but currently acceptable because there are more than 1 admin that 
+ * can modify the database, so it's the safest to update it by getting all changes
+ * for now.
+ * 
+ */
 export class OverviewPageComponent implements OnInit, AfterViewInit {
   @Input() dataSource: any[]; /** change mockdata to this later. */
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('paginator1') paginator1: MatPaginator;
+
+  @ViewChild('paginator2') paginator2: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   dialogRef: MatDialogRef<NewDeviceDialogComponent>
 
   displayedColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'duration', 'actions'];
+  starredTableColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'duration'];
   tableDataSource: MatTableDataSource<any>;
+
+  selectedRowsId: number[] = [];
+  selectedRow: DeviceMetaData[] = []
+
+  selectedRowDataSource: MatTableDataSource<DeviceMetaData>
 
   mockData: DeviceMetaData[] = [
     { id: 1, deviceName: 'ElectroTech M1', location: 'Location 1', inLage: 'Yes', duration: '2 hours' },
@@ -74,17 +95,55 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     /** Get device list here, assign tableDataSource to be the result. */
     this.tableDataSource = new MatTableDataSource(this.mockData); /** Change to real data here; 'dataSource' is real data */
+
+    this.selectedRowDataSource = new MatTableDataSource()
   }
 
   ngAfterViewInit(): void {
     this.tableDataSource.sort = this.sort;
-    this.tableDataSource.paginator = this.paginator;
+    this.tableDataSource.paginator = this.paginator1;
   }
 
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.tableDataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  onStarDeviceClick(row: DeviceMetaData) {
+    const index = this.selectedRowsId.indexOf(row.id)
+    if (index === -1) {
+      this.addSelectedRow(row)
+    } else {
+      this.removeDeselectedRow(index)
+    }
+  }
+
+  private addSelectedRow(row: DeviceMetaData) {
+    this.selectedRowsId.push(row.id)
+    this.selectedRow.push(row)
+    this.updateStarredDeviceTable()
+  }
+
+  private removeDeselectedRow(index: number) {
+    this.selectedRowsId.splice(index, 1)
+    this.selectedRow.splice(index, 1)
+    this.updateStarredDeviceTable()
+  }
+
+  private updateStarredDeviceTable() {
+    this.selectedRowDataSource.data = this.selectedRow
+    this.selectedRowDataSource.paginator = this.paginator2
+  }
+
+  unstarredAllItems() {
+    this.selectedRow = []
+    this.selectedRowsId = []
+    this.updateStarredDeviceTable();
+  }
+
+  isRowSelected(rowId: number): boolean {
+    return this.selectedRowsId.includes(rowId)
   }
 
 

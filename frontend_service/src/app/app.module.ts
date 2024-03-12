@@ -21,7 +21,7 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DeviceDetailsComponent } from './feature/device_management/pages/device-details/device-details.component';
 import {MatCardModule} from '@angular/material/card';
-
+import { MatTooltipModule } from '@angular/material/tooltip';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,6 +30,7 @@ import {MatCardModule} from '@angular/material/card';
     DeviceDetailsComponent
   ],
   imports: [
+    MatTooltipModule,
     MatCardModule,
     ReactiveFormsModule,
     FormsModule,

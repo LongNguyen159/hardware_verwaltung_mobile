@@ -10,3 +10,15 @@ table {
 .table-row {
     cursor: pointer;
 }
+
+.tableContainer {
+    display: grid;
+    grid-template-columns: 7fr 3fr;
+}
+
+.starredTable {
+    border-radius: 8px;
+    border: solid 1px #b4b4b4;
+    box-shadow: none;
+    padding: 16px;
+}

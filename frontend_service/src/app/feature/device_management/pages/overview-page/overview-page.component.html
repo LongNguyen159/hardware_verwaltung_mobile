@@ -11,52 +11,112 @@
     <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Lage A" #input>
   </mat-form-field>
 </div>
-<table mat-table [dataSource]="tableDataSource" matSort class="mat-elevation-z8">
 
-    <!-- ID Column -->
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
-      <td mat-cell *matCellDef="let element">{{ element.id }}</td>
-    </ng-container>
-  
-    <!-- Device Name Column -->
-    <ng-container matColumnDef="deviceName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Device Name</th>
-      <td mat-cell *matCellDef="let element">{{ element.deviceName }}</td>
-    </ng-container>
-  
-    <!-- Location Column -->
-    <ng-container matColumnDef="location">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
-      <td mat-cell *matCellDef="let element">{{ element.location }}</td>
-    </ng-container>
-  
-    <!-- In Lage Column -->
-    <ng-container matColumnDef="inLage">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>In Lage</th>
-      <td mat-cell *matCellDef="let element">{{ element.inLage }}</td>
-    </ng-container>
-  
-    <!-- Duration Column -->
-    <ng-container matColumnDef="duration">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Duration</th>
-      <td mat-cell *matCellDef="let element">{{ element.duration }}</td>
-    </ng-container>
+<div [ngClass]="{'tableContainer': selectedRowsId.length > 0}" style="padding: 16px; gap: 14px">
 
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-icon-button (click)="$event.stopPropagation(); onStarDeviceClick()">
-          <mat-icon>star</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+  <!-- default table -->
+  <div>
+    <table mat-table [dataSource]="tableDataSource" matSort class="mat-elevation-z8" style="border-radius: 8px;
+    border: solid 1px #b4b4b4;
+    box-shadow: none; padding-top: 16px; padding-bottom: 16px;">
   
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row" (click)="navigateToDetailsPage(row.id)" ></tr>
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+      </ng-container>
+    
+      <!-- Device Name Column -->
+      <ng-container matColumnDef="deviceName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Device Name</th>
+        <td mat-cell *matCellDef="let element">{{ element.deviceName }}</td>
+      </ng-container>
+    
+      <!-- Location Column -->
+      <ng-container matColumnDef="location">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
+        <td mat-cell *matCellDef="let element">{{ element.location }}</td>
+      </ng-container>
+    
+      <!-- In Lage Column -->
+      <ng-container matColumnDef="inLage">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>In Lage</th>
+        <td mat-cell *matCellDef="let element">{{ element.inLage }}</td>
+      </ng-container>
+    
+      <!-- Duration Column -->
+      <ng-container matColumnDef="duration">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Duration</th>
+        <td mat-cell *matCellDef="let element">{{ element.duration }}</td>
+      </ng-container>
+  
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>
+          <div style="display: flex; flex-direction: row; align-items: center;">
+            <p>Actions</p>
+            <button mat-icon-button (click)="unstarredAllItems()" *ngIf="selectedRow.length > 0" matTooltip="Unstarred all" [matTooltipShowDelay]="300">
+              <mat-icon [style.color]="'rgb(253, 212, 115)'">star</mat-icon>
+            </button>
+          </div>
+          
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button (click)="$event.stopPropagation(); onStarDeviceClick(element)" matTooltip="Star item" [matTooltipShowDelay]="1000">
+            <mat-icon [style.color]="isRowSelected(element.id) ? 'rgb(253, 212, 115)' : 'black'">star</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+    
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row" (click)="navigateToDetailsPage(row.id)" ></tr>
+  
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+      </tr>
+    </table>
+    <mat-paginator #paginator1 [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons></mat-paginator>
+  </div>
 
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
-    </tr>
-</table>
-<mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons></mat-paginator>
+  <!-- starred table -->
+  <div *ngIf="selectedRowsId.length > 0">
+    <h3>Starred Items</h3>
+    <table mat-table [dataSource]="selectedRowDataSource" style="border-radius: 8px;
+    border: solid 1px #b4b4b4;
+    box-shadow: none; padding-top: 16px; padding-bottom: 16px;">
+
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+      </ng-container>
+  
+      <!-- Device Name Column -->
+      <ng-container matColumnDef="deviceName">
+        <th mat-header-cell *matHeaderCellDef>Device Name</th>
+        <td mat-cell *matCellDef="let element">{{ element.deviceName }}</td>
+      </ng-container>
+  
+      <!-- Location Column -->
+      <ng-container matColumnDef="location">
+        <th mat-header-cell *matHeaderCellDef>Location</th>
+        <td mat-cell *matCellDef="let element">{{ element.location }}</td>
+      </ng-container>
+  
+      <!-- In Lage Column -->
+      <ng-container matColumnDef="inLage">
+        <th mat-header-cell *matHeaderCellDef>In Lage</th>
+        <td mat-cell *matCellDef="let element">{{ element.inLage }}</td>
+      </ng-container>
+  
+      <!-- Duration Column -->
+      <ng-container matColumnDef="duration">
+        <th mat-header-cell *matHeaderCellDef>Duration</th>
+        <td mat-cell *matCellDef="let element">{{ element.duration }}</td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="starredTableColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: starredTableColumns;" class="table-row" (click)="navigateToDetailsPage(row.id)" ></tr>
+    </table>
+    <mat-paginator #paginator2 [pageSize]="10" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
