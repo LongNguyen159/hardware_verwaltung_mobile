@@ -8,6 +8,7 @@ import { DeviceInput, DeviceMetaData } from '../../models/device-models';
 import { DeviceService } from '../../service/device.service';
 import { Router } from '@angular/router';
 import { generateQRCodeFromJSON } from '../../utils/utils';
+import { take } from 'rxjs';
 @Component({
   selector: 'app-overview-page',
   templateUrl: './overview-page.component.html',
@@ -99,6 +100,10 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
     this.selectedRowDataSource = new MatTableDataSource()
 
     this.loadSavedDataFromLocalStorage()
+
+    this.deviceServive.getItemById().pipe(take(1)).subscribe(data => {
+      console.log(data)
+    })
   }
 
   ngAfterViewInit(): void {

@@ -22,6 +22,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { DeviceDetailsComponent } from './feature/device_management/pages/device-details/device-details.component';
 import {MatCardModule} from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { DeviceService } from './feature/device_management/service/device.service';
+import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,6 +32,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     DeviceDetailsComponent
   ],
   imports: [
+    HttpClientModule,
     MatTooltipModule,
     MatCardModule,
     ReactiveFormsModule,
@@ -49,7 +52,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     BrowserModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [DeviceService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
