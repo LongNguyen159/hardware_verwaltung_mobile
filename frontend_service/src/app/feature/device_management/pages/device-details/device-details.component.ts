@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DeviceMetaData, QrData } from '../../models/device-models';
+import { DeviceMetaData, DeviceMetaData1, QrData } from '../../models/device-models';
 import { generateQRCodeFromJSON } from '../../utils/utils';
 import { DeviceService } from '../../service/device.service';
 import { saveAs } from 'file-saver';
@@ -14,6 +14,7 @@ export class DeviceDetailsComponent implements OnInit {
   deviceId: number
   qrCodeDataUrl: string
   deviceDetailsMock: DeviceMetaData = { id: 1, deviceName: 'ElectroTech M1', location: 'Location 1', inLage: 'Yes', duration: '2 hours' }
+  deviceDetails: DeviceMetaData1
 
   constructor(private route: ActivatedRoute, private deviceService: DeviceService) {}
   ngOnInit(): void {
@@ -23,15 +24,28 @@ export class DeviceDetailsComponent implements OnInit {
       this.deviceId = parseInt(id)
 
       
+      const allItems: DeviceMetaData1[] = this.deviceService.getItemMockData()
 
-      /** GET Device details by id here; then pass data in to generate qr of that device */
-      const QrData: QrData = {
-        id: this.deviceId,
-        name: '' /** devive name acquired from api */
+      const device: DeviceMetaData1 | undefined = allItems.find(item => item.id == this.deviceId)
+      if (device) {
+        this.deviceDetails = device
+
+        /** GET Device details by id here; then pass data in to generate qr of that device */
+        const QrData: QrData = {
+          id: this.deviceId,
+          name: this.deviceDetails.product_type.name /** devive name acquired from api */
+        }
+
+        console.log(this.deviceDetails)
+
+        generateQRCodeFromJSON(this.deviceService, QrData).then(data => {
+          this.qrCodeDataUrl = data
+        })
       }
-      generateQRCodeFromJSON(this.deviceService, {'id': this.deviceId, 'deviceName': 'ElectroTech M1'}).then(data => {
-        this.qrCodeDataUrl = data
-      })
+      
+
+      
+      
 
     }
 

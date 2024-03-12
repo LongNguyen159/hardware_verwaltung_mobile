@@ -13,14 +13,24 @@
                 </mat-card-title>
             </mat-card-header>
             <mat-card-content style="color: #121212">
-                <p><strong>Name:</strong> {{ deviceDetailsMock.deviceName }}</p>
-                <p><strong>Location:</strong> {{ deviceDetailsMock.location }}</p>
-                <p><strong>Borrowed By:</strong> Alex A.</p>
-                <ul>
-                <li><strong>Type:</strong> Student</li>
-                <li><strong>Email:</strong> alex@gmail.com</li>
-                <li><strong>Borrowed since:</strong> 10 Aug. 2023</li>
-                </ul>
+                <p><strong>Name:</strong> {{ deviceDetails.product_type.name }}</p>
+                <p><strong>Location:</strong> {{ deviceDetails.current_room.room_number }}</p>
+
+                <div *ngIf="deviceDetails.product_type.description">
+                    <p><strong>Description:</strong> {{ deviceDetails.product_type.description }}</p>
+                </div>
+                <div *ngIf="deviceDetails.annotation">
+                    <p><strong>Condition:</strong> {{ deviceDetails.annotation }}</p>
+                </div>
+
+                <div *ngIf="deviceDetails.borrowed_by_user.first_name || deviceDetails.borrowed_by_user.last_name">
+                    <p><strong>Borrowed By:</strong> {{ deviceDetails.borrowed_by_user.first_name }} {{ deviceDetails.borrowed_by_user.last_name }}</p>
+                    <ul>
+                        <li><strong>Type:</strong> {{ deviceDetails.borrowed_by_user.user_type }} </li>
+                        <li><strong>Email:</strong> {{ deviceDetails.borrowed_by_user.email }} </li>
+                        <!-- <li><strong>Borrowed since:</strong> 10 Aug. 2023</li> -->
+                    </ul>
+                </div>    
             </mat-card-content>
         </mat-card>
         

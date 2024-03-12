@@ -4,7 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NewDeviceDialogComponent } from '../../components/new-device-dialog/new-device-dialog.component';
-import { DeviceInput, DeviceMetaData } from '../../models/device-models';
+import { DeviceInput, DeviceMetaData, DeviceMetaData1 } from '../../models/device-models';
 import { DeviceService } from '../../service/device.service';
 import { Router } from '@angular/router';
 import { generateQRCodeFromJSON } from '../../utils/utils';
@@ -28,8 +28,6 @@ import { take } from 'rxjs';
  * 
  */
 export class OverviewPageComponent implements OnInit, AfterViewInit {
-  @Input() dataSource: any[]; /** change mockdata to this later. */
-
   @ViewChild('paginator1') paginator1: MatPaginator
 
   @ViewChild('paginator2') paginator2: MatPaginator
@@ -37,9 +35,9 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
 
   dialogRef: MatDialogRef<NewDeviceDialogComponent>
 
-  displayedColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'duration', 'actions']
-  starredTableColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'duration']
-  tableDataSource: MatTableDataSource<any>
+  displayedColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'actions']
+  starredTableColumns: string[] = ['id', 'deviceName', 'location', 'inLage']
+  tableDataSource: MatTableDataSource<DeviceMetaData1>
 
   selectedRowsId: number[] = []
   selectedRow: DeviceMetaData[] = []
@@ -95,15 +93,16 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     /** Get device list here, assign tableDataSource to be the result. */
-    this.tableDataSource = new MatTableDataSource(this.mockData); /** Change to real data here; 'dataSource' is real data */
+    const allDevices = this.deviceServive.getItemMockData()
+    this.tableDataSource = new MatTableDataSource(allDevices); /** Change to real data here; 'dataSource' is real data */
 
     this.selectedRowDataSource = new MatTableDataSource()
 
     this.loadSavedDataFromLocalStorage()
 
-    this.deviceServive.getItemById().pipe(take(1)).subscribe(data => {
-      console.log(data)
-    })
+    // this.deviceServive.getItemById().pipe(take(1)).subscribe(data => {
+    //   console.log(data)
+    // })
   }
 
   ngAfterViewInit(): void {
@@ -217,5 +216,5 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
  * - [X] endpoint for getting device info by ID. (Simon)
  * - [ ] Table actions: Delete rows
  * - [ ] API endpoint for removing rows in DB.
- * - [ ] Starred items: => Then store them in local storage.
+ * - [X] Starred items: => Then store them in local storage.
  */
