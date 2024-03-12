@@ -29,18 +29,18 @@ import { generateQRCodeFromJSON } from '../../utils/utils';
 export class OverviewPageComponent implements OnInit, AfterViewInit {
   @Input() dataSource: any[]; /** change mockdata to this later. */
 
-  @ViewChild('paginator1') paginator1: MatPaginator;
+  @ViewChild('paginator1') paginator1: MatPaginator
 
-  @ViewChild('paginator2') paginator2: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('paginator2') paginator2: MatPaginator
+  @ViewChild(MatSort) sort: MatSort
 
   dialogRef: MatDialogRef<NewDeviceDialogComponent>
 
-  displayedColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'duration', 'actions'];
-  starredTableColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'duration'];
-  tableDataSource: MatTableDataSource<any>;
+  displayedColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'duration', 'actions']
+  starredTableColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'duration']
+  tableDataSource: MatTableDataSource<any>
 
-  selectedRowsId: number[] = [];
+  selectedRowsId: number[] = []
   selectedRow: DeviceMetaData[] = []
 
   selectedRowDataSource: MatTableDataSource<DeviceMetaData>
@@ -97,17 +97,33 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
     this.tableDataSource = new MatTableDataSource(this.mockData); /** Change to real data here; 'dataSource' is real data */
 
     this.selectedRowDataSource = new MatTableDataSource()
+
+    this.loadSavedDataFromLocalStorage()
   }
 
   ngAfterViewInit(): void {
     this.tableDataSource.sort = this.sort;
-    this.tableDataSource.paginator = this.paginator1;
+    this.tableDataSource.paginator = this.paginator1
+    this.selectedRowDataSource.paginator = this.paginator2
   }
 
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.tableDataSource.filter = filterValue.trim().toLowerCase();
+    this.tableDataSource.filter = filterValue.trim().toLowerCase()
+  }
+
+  loadSavedDataFromLocalStorage() {
+    const savedSelectedRow = localStorage.getItem('selectedRow')
+    const savedSelectedRowsId = localStorage.getItem('selectedRowsId')
+  
+    if (savedSelectedRow && savedSelectedRowsId) {
+      this.selectedRow = JSON.parse(savedSelectedRow)
+      this.selectedRowsId = JSON.parse(savedSelectedRowsId)
+
+      
+      this.updateStarredDeviceTable()
+    }
   }
 
   onStarDeviceClick(row: DeviceMetaData) {
@@ -123,12 +139,22 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
     this.selectedRowsId.push(row.id)
     this.selectedRow.push(row)
     this.updateStarredDeviceTable()
+    this.saveDataToLocalStorage()
   }
 
   private removeDeselectedRow(index: number) {
     this.selectedRowsId.splice(index, 1)
     this.selectedRow.splice(index, 1)
     this.updateStarredDeviceTable()
+    this.saveDataToLocalStorage()
+  }
+
+
+  unstarredAllItems() {
+    this.selectedRow = []
+    this.selectedRowsId = []
+    this.updateStarredDeviceTable()
+    this.saveDataToLocalStorage()
   }
 
   private updateStarredDeviceTable() {
@@ -136,10 +162,10 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
     this.selectedRowDataSource.paginator = this.paginator2
   }
 
-  unstarredAllItems() {
-    this.selectedRow = []
-    this.selectedRowsId = []
-    this.updateStarredDeviceTable();
+
+  private saveDataToLocalStorage() {
+    localStorage.setItem('selectedRow', JSON.stringify(this.selectedRow));
+    localStorage.setItem('selectedRowsId', JSON.stringify(this.selectedRowsId));
   }
 
   isRowSelected(rowId: number): boolean {
