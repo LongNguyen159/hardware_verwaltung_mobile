@@ -203,18 +203,20 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
 }
 
 
-
+/** Creating new device/item process: */
 // Name + Location POST request => backend
 // backend write new device into DB.
 // backend response to POST request: JSON
 
-// frontend JSON -> QR.
 
-/** TODO
- * - [ ] API endpoint for writing new devices (Simon)
- * - [X] New page (device details page)
- * - [X] endpoint for getting device info by ID. (Simon)
- * - [ ] Table actions: Delete rows
- * - [ ] API endpoint for removing rows in DB.
- * - [X] Starred items: => Then store them in local storage.
+/** TODOs
+ * - [ ] Feature: API endpoint for writing new devices that only needs name and location to write
+ * - [X] Feature: Device details page
+ * - [X] Feature: endpoint for getting device info by ID
+ * - [X] Feature: Starred items -> Store them in Local Storage
+ * 
+ * - [ ] Fix: Flatten return results for simpler sorting and filtering methods in FE
+ * - [ ] Bug: CORS Header dependency is not being recognised
+ * - [ ] Feature: Table actions: Delete rows
+ * - [ ] Feature: API endpoint for removing rows in DB
  */
