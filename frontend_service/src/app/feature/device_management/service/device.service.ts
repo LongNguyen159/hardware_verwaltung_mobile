@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as qr from 'qrcode'
 import { DeviceMetaData1 } from '../models/device-models';
+import { Observable, interval, startWith , timer} from 'rxjs';
+import { switchMap } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -25,7 +27,10 @@ export class DeviceService {
 
 
   getAllItems() {
-    return this.http.get<DeviceMetaData1[]>(`${this.apiEndpoint}/api/v1/item/`)
+    return timer(1, 3000).pipe(
+      // Use switchMap to switch to a new observable each time interval emits a value
+      switchMap(() => this.http.get<DeviceMetaData1[]>(`${this.apiEndpoint}/api/v1/item/`))
+    );
   }
 
   getItemById(itemId: number) {

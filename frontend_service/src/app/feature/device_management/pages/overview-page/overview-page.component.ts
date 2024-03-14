@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild, Input } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, Input, OnDestroy } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
@@ -8,7 +8,7 @@ import { DeviceInput, DeviceMetaData, DeviceMetaData1 } from '../../models/devic
 import { DeviceService } from '../../service/device.service';
 import { Router } from '@angular/router';
 import { generateQRCodeFromJSON } from '../../utils/utils';
-import { take } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-overview-page',
   templateUrl: './overview-page.component.html',
@@ -27,7 +27,7 @@ import { take } from 'rxjs';
  * for now.
  * 
  */
-export class OverviewPageComponent implements OnInit, AfterViewInit {
+export class OverviewPageComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('paginator1') paginator1: MatPaginator
 
   @ViewChild('paginator2') paginator2: MatPaginator
@@ -87,13 +87,15 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
     { id: 40, deviceName: 'TechSmart G8', location: 'Location 40', inLage: 'No', duration: '4 hours' }
   ];
 
+  destroyed$ = new Subject<void>()
+
   qrCodeDataUrl: string;
 
   constructor(public dialog: MatDialog, private deviceServive: DeviceService, private router: Router) {}
 
   ngOnInit(): void {
     /** Get device list here, assign tableDataSource to be the result. */
-    this.deviceServive.getAllItems().pipe(take(1)).subscribe(allItems => {
+    this.deviceServive.getAllItems().pipe(takeUntil(this.destroyed$)).subscribe(allItems => {
       console.log(allItems)
       this.tableDataSource = new MatTableDataSource(allItems); /** Change to real data here; 'dataSource' is real data */
 
@@ -200,6 +202,12 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
   navigateToDetailsPage(id: number) {
     this.router.navigate(['/device-details', id])
 
+  }
+
+
+  ngOnDestroy(): void {
+    this.destroyed$.next()
+    this.destroyed$.complete()
   }
 }
 
