@@ -4,11 +4,11 @@ export interface DeviceInput {
 }
 
 export interface DeviceMetaData {
-    id: number,
-    deviceName: string,
-    location: string,
-    inLage: string,
-    duration: string
+  id: number,
+  deviceName: string,
+  location: string,
+  inLage: string,
+  duration: string
 }
 
 export interface QrData {
