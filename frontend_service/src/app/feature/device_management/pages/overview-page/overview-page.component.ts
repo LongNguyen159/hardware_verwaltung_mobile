@@ -93,16 +93,15 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     /** Get device list here, assign tableDataSource to be the result. */
-    const allDevices = this.deviceServive.getItemMockData()
-    this.tableDataSource = new MatTableDataSource(allDevices); /** Change to real data here; 'dataSource' is real data */
+    this.deviceServive.getAllItems().pipe(take(1)).subscribe(allItems => {
+      console.log(allItems)
+      this.tableDataSource = new MatTableDataSource(allItems); /** Change to real data here; 'dataSource' is real data */
 
-    this.selectedRowDataSource = new MatTableDataSource()
+      this.selectedRowDataSource = new MatTableDataSource()
+  
+      this.loadSavedDataFromLocalStorage()
+    })
 
-    this.loadSavedDataFromLocalStorage()
-
-    // this.deviceServive.getItemById().pipe(take(1)).subscribe(data => {
-    //   console.log(data)
-    // })
   }
 
   ngAfterViewInit(): void {
@@ -216,7 +215,8 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
  * - [X] Feature: Starred items -> Store them in Local Storage
  * 
  * - [ ] Fix: Flatten return results for simpler sorting and filtering methods in FE
- * - [ ] Bug: CORS Header dependency is not being recognised
+ * - [X] Bug: CORS Header dependency is not being recognised
+ * - [ ] Feature: Modify item description
  * - [ ] Feature: Table actions: Delete rows
  * - [ ] Feature: API endpoint for removing rows in DB
  */

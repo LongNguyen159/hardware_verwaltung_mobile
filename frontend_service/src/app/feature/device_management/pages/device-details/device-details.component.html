@@ -12,7 +12,7 @@
                     Metadata
                 </mat-card-title>
             </mat-card-header>
-            <mat-card-content style="color: #121212">
+            <mat-card-content style="color: #121212" *ngIf="deviceDetails">
                 <p><strong>Name:</strong> {{ deviceDetails.product_type.name }}</p>
                 <p><strong>Location:</strong> {{ deviceDetails.current_room.room_number }}</p>
 
@@ -26,7 +26,7 @@
                 <div *ngIf="deviceDetails.borrowed_by_user.first_name || deviceDetails.borrowed_by_user.last_name">
                     <p><strong>Borrowed By:</strong> {{ deviceDetails.borrowed_by_user.first_name }} {{ deviceDetails.borrowed_by_user.last_name }}</p>
                     <ul>
-                        <li><strong>Type:</strong> {{ deviceDetails.borrowed_by_user.user_type }} </li>
+                        <li><strong>Type:</strong> {{ deviceDetails.borrowed_by_user.user_type.name }} </li>
                         <li><strong>Email:</strong> {{ deviceDetails.borrowed_by_user.email }} </li>
                         <!-- <li><strong>Borrowed since:</strong> 10 Aug. 2023</li> -->
                     </ul>

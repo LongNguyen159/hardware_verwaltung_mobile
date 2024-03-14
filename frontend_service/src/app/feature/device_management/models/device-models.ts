@@ -13,7 +13,7 @@ export interface DeviceMetaData {
 
 export interface QrData {
   id: number
-  name: string
+  deviceName: string
 }
 
 export interface DeviceMetaData1 {
@@ -29,10 +29,14 @@ export interface DeviceMetaData1 {
   },
   annotation?: string
   borrowed_by_user: {
+    id?: number,
     first_name: string,
     last_name: string,
     email: string,
-    user_type: string | null,
+    user_type: {
+      id: number,
+      name: string,
+    },
     password_hash: string
   },
   qr_code?: string

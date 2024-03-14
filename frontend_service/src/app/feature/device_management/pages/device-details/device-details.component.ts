@@ -4,6 +4,7 @@ import { DeviceMetaData, DeviceMetaData1, QrData } from '../../models/device-mod
 import { generateQRCodeFromJSON } from '../../utils/utils';
 import { DeviceService } from '../../service/device.service';
 import { saveAs } from 'file-saver';
+import { take } from 'rxjs';
 @Component({
   selector: 'app-device-details',
   templateUrl: './device-details.component.html',
@@ -23,33 +24,20 @@ export class DeviceDetailsComponent implements OnInit {
     if (id) {
       this.deviceId = parseInt(id)
 
-      
-      const allItems: DeviceMetaData1[] = this.deviceService.getItemMockData()
-
-      const device: DeviceMetaData1 | undefined = allItems.find(item => item.id == this.deviceId)
-      if (device) {
+      this.deviceService.getItemById(this.deviceId).pipe(take(1)).subscribe((device: DeviceMetaData1) => {
         this.deviceDetails = device
 
         /** GET Device details by id here; then pass data in to generate qr of that device */
         const QrData: QrData = {
           id: this.deviceId,
-          name: this.deviceDetails.product_type.name /** devive name acquired from api */
+          deviceName: this.deviceDetails.product_type.name /** devive name acquired from api */
         }
-
-        console.log(this.deviceDetails)
 
         generateQRCodeFromJSON(this.deviceService, QrData).then(data => {
           this.qrCodeDataUrl = data
         })
-      }
-      
-
-      
-      
-
+      })
     }
-
-    
   }
 
 
