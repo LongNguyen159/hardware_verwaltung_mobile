@@ -60,7 +60,7 @@ export class DeviceDetailsComponent implements OnInit {
     const blob = new Blob([this.base64ToArrayBuffer(base64Image)], { type: 'image/png' });
 
     // Use FileSaver.js to trigger the download
-    saveAs(blob, `${this.deviceDetailsMock.id}_${this.deviceDetailsMock.deviceName.replace(/\s+/g, '_')}.png`)
+    saveAs(blob, `${this.deviceDetailsMock.id}_${this.deviceDetails.product_type.name.replace(/\s+/g, '_')}.png`)
   }
 
   base64ToArrayBuffer(base64: string): Uint8Array {
