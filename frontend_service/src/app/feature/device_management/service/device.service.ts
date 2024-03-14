@@ -27,13 +27,16 @@ export class DeviceService {
 
 
   getAllItems() {
-    return timer(1, 3000).pipe(
+    return timer(1, 10000).pipe(
       // Use switchMap to switch to a new observable each time interval emits a value
       switchMap(() => this.http.get<DeviceMetaData1[]>(`${this.apiEndpoint}/api/v1/item/`))
-    );
+    )
   }
 
   getItemById(itemId: number) {
-    return this.http.get<DeviceMetaData1>(`${this.apiEndpoint}/api/v1/item/id/${itemId}/`)
+    return timer(1, 10000).pipe(
+      // Use switchMap to switch to a new observable each time interval emits a value
+      switchMap(() => this.http.get<DeviceMetaData1>(`${this.apiEndpoint}/api/v1/item/id/${itemId}/`))
+    )
   }
 }
