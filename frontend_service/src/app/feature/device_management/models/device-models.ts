@@ -28,8 +28,8 @@ export interface DeviceMetaData1 {
     room_number: string
   },
   annotation?: string
-  borrowed_by_user: {
-    id?: number,
+  borrowed_by_user?: {
+    id: number | null,
     first_name: string,
     last_name: string,
     email: string,

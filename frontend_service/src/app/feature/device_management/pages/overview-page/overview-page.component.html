@@ -41,7 +41,7 @@
       <!-- In Lage Column -->
       <ng-container matColumnDef="inLage">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>In Lage</th>
-        <td mat-cell *matCellDef="let element" [style.color]="(!element.borrowed_by_user.first_name && !element.borrowed_by_user.last_name) ? 'green' : 'red'">{{ (!element.borrowed_by_user.first_name && !element.borrowed_by_user.last_name) ? 'Yes' : 'No' }}</td>
+        <td mat-cell *matCellDef="let element" [style.color]="(!element.borrowed_by_user) ? 'green' : 'red'">{{ !element.borrowed_by_user ? 'Yes' : 'No' }}</td>
       </ng-container>
       
       <ng-container matColumnDef="actions">
@@ -99,7 +99,7 @@
       <!-- In Lage Column -->
       <ng-container matColumnDef="inLage">
         <th mat-header-cell *matHeaderCellDef>In Lage</th>
-        <td mat-cell *matCellDef="let element" [style.color]="(!element.borrowed_by_user.first_name && !element.borrowed_by_user.last_name) ? 'green' : 'red'">{{ (!element.borrowed_by_user.first_name && !element.borrowed_by_user.last_name) ? 'Yes' : 'No' }}</td>
+        <td mat-cell *matCellDef="let element" [style.color]="(!element.borrowed_by_user) ? 'green' : 'red'">{{ !element.borrowed_by_user ? 'Yes' : 'No' }}</td>
       </ng-container>
     
       <tr mat-header-row *matHeaderRowDef="starredTableColumns"></tr>

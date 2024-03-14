@@ -23,7 +23,7 @@
                     <p><strong>Condition:</strong> {{ deviceDetails.annotation }}</p>
                 </div>
 
-                <div *ngIf="deviceDetails.borrowed_by_user.first_name || deviceDetails.borrowed_by_user.last_name">
+                <div *ngIf="deviceDetails.borrowed_by_user && (deviceDetails.borrowed_by_user.first_name || deviceDetails.borrowed_by_user.last_name)">
                     <p><strong>Borrowed By:</strong> {{ deviceDetails.borrowed_by_user.first_name }} {{ deviceDetails.borrowed_by_user.last_name }}</p>
                     <ul>
                         <li><strong>Type:</strong> {{ deviceDetails.borrowed_by_user.user_type.name }} </li>
