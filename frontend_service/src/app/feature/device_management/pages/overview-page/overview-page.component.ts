@@ -98,6 +98,10 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
       this.tableDataSource = new MatTableDataSource(allItems); /** Change to real data here; 'dataSource' is real data */
 
       this.selectedRowDataSource = new MatTableDataSource()
+
+      this.tableDataSource.sort = this.sort;
+      this.tableDataSource.paginator = this.paginator1
+      this.selectedRowDataSource.paginator = this.paginator2
   
       this.loadSavedDataFromLocalStorage()
     })
@@ -105,9 +109,7 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.tableDataSource.sort = this.sort;
-    this.tableDataSource.paginator = this.paginator1
-    this.selectedRowDataSource.paginator = this.paginator2
+    
   }
 
 
@@ -139,8 +141,8 @@ export class OverviewPageComponent implements OnInit, AfterViewInit {
   }
 
   private addSelectedRow(row: DeviceMetaData) {
-    this.selectedRowsId.push(row.id)
-    this.selectedRow.push(row)
+    this.selectedRowsId.unshift(row.id)
+    this.selectedRow.unshift(row)
     this.updateStarredDeviceTable()
     this.saveDataToLocalStorage()
   }
