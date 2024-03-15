@@ -14,7 +14,7 @@ import { Subject, take, takeUntil } from 'rxjs';
 export class DeviceDetailsComponent implements OnInit, OnDestroy {
   deviceId: number
   qrCodeDataUrl: string
-  deviceDetails: DeviceMetaData1
+  deviceDetails: DeviceMetaData
   
   destroyed$ = new Subject<void>()
 
@@ -25,13 +25,13 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
     if (id) {
       this.deviceId = parseInt(id)
 
-      this.deviceService.getItemById(this.deviceId).pipe(takeUntil(this.destroyed$)).subscribe((device: DeviceMetaData1) => {
+      this.deviceService.getItemById(this.deviceId).pipe(takeUntil(this.destroyed$)).subscribe((device: DeviceMetaData) => {
         this.deviceDetails = device
 
         /** GET Device details by id here; then pass data in to generate qr of that device */
         const QrData: QrData = {
           id: this.deviceId,
-          deviceName: this.deviceDetails.product_type.name /** devive name acquired from api */
+          deviceName: this.deviceDetails.item_name /** devive name acquired from api */
         }
 
         generateQRCodeFromJSON(this.deviceService, QrData).then(data => {
@@ -61,7 +61,7 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
     const blob = new Blob([this.base64ToArrayBuffer(base64Image)], { type: 'image/png' });
 
     // Use FileSaver.js to trigger the download
-    saveAs(blob, `${this.deviceDetails.id}_${this.deviceDetails.product_type.name.replace(/\s+/g, '_')}.png`)
+    saveAs(blob, `${this.deviceDetails.id}_${this.deviceDetails.item_name.replace(/\s+/g, '_')}.png`)
   }
 
   base64ToArrayBuffer(base64: string): Uint8Array {

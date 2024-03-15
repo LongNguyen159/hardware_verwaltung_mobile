@@ -38,7 +38,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit, 
 
   displayedColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'actions']
   starredTableColumns: string[] = ['id', 'deviceName', 'location', 'inLage']
-  tableDataSource: MatTableDataSource<DeviceMetaData1>
+  tableDataSource: MatTableDataSource<DeviceMetaData>
 
   selectedRowsId: number[] = []
   selectedRow: DeviceMetaData[] = []
