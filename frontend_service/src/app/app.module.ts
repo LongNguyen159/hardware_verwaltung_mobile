@@ -24,12 +24,14 @@ import {MatCardModule} from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DeviceService } from './feature/device_management/service/device.service';
 import { HttpClientModule } from '@angular/common/http';
+import { BasePageComponent } from './shared/components/base-page/base-page.component';
 @NgModule({
   declarations: [
     AppComponent,
     OverviewPageComponent,
     NewDeviceDialogComponent,
-    DeviceDetailsComponent
+    DeviceDetailsComponent,
+    BasePageComponent
   ],
   imports: [
     HttpClientModule,

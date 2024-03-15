@@ -4,16 +4,20 @@ export interface DeviceInput {
 }
 
 export interface DeviceMetaData {
-    id: number,
-    deviceName: string,
-    location: string,
-    inLage: string,
-    duration: string
+  id: number
+  item_name: string
+  description?: string
+  annotation?: string
+  location: string
+  user_id?: number
+  user_name?: string
+  user_type?: string
+  user_email?: string
 }
 
 export interface QrData {
   id: number
-  name: string
+  deviceName: string
 }
 
 export interface DeviceMetaData1 {
@@ -28,11 +32,15 @@ export interface DeviceMetaData1 {
     room_number: string
   },
   annotation?: string
-  borrowed_by_user: {
+  borrowed_by_user?: {
+    id: number | null,
     first_name: string,
     last_name: string,
     email: string,
-    user_type: string | null,
+    user_type: {
+      id: number,
+      name: string,
+    },
     password_hash: string
   },
   qr_code?: string

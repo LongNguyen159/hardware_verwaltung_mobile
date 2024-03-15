@@ -10,6 +10,6 @@ export class AppComponent {
   title = 'verwaltung_hardware';
   constructor(private router: Router) {
     /** Navigate to overview as default */
-    this.router.navigate(['/overview'])
+    // this.router.navigate(['/overview'])
   }
 }
