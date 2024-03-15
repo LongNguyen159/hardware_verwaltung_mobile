@@ -9,7 +9,7 @@ import { switchMap } from 'rxjs';
 })
 export class DeviceService {
 
-  apiEndpoint: string = 'http://localhost:8000'
+  apiEndpoint: string = 'http://localhost:8000/api/v1'
 
   constructor(private http: HttpClient) { }
 
@@ -25,18 +25,19 @@ export class DeviceService {
     });
   }
 
-
+  /** Get all Items, polling to update the changes from DB */
   getAllItems() {
     return timer(1, 10000).pipe(
       // Use switchMap to switch to a new observable each time interval emits a value
-      switchMap(() => this.http.get<DeviceMetaData1[]>(`${this.apiEndpoint}/api/v1/item/`))
+      switchMap(() => this.http.get<DeviceMetaData1[]>(`${this.apiEndpoint}/item/`))
     )
   }
 
+  /** Get 1 item infos, polling to reflect changes in DB */
   getItemById(itemId: number) {
     return timer(1, 10000).pipe(
       // Use switchMap to switch to a new observable each time interval emits a value
-      switchMap(() => this.http.get<DeviceMetaData1>(`${this.apiEndpoint}/api/v1/item/id/${itemId}/`))
+      switchMap(() => this.http.get<DeviceMetaData1>(`${this.apiEndpoint}/item/id/${itemId}/`))
     )
   }
 }
