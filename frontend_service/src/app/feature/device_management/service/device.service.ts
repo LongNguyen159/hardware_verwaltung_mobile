@@ -9,7 +9,7 @@ import { switchMap } from 'rxjs';
 })
 export class DeviceService {
 
-  apiEndpoint: string = 'http://192.168.6.107:8000'
+  apiEndpoint: string = 'http://localhost:8000'
 
   constructor(private http: HttpClient) { }
 
