@@ -24,13 +24,13 @@
                 </div>
 
                 <div *ngIf="deviceDetails.user_id">
-                    <p><strong>Borrowed By:</strong> {{ deviceDetails.user_name }}</p>
+                    <p><strong>Currently borrowed by:</strong> {{ deviceDetails.user_name }}</p>
                     <ul>
                         <li><strong>Type:</strong> {{ deviceDetails.user_type }} </li>
                         <li><strong>Email:</strong> {{ deviceDetails.user_email }} </li>
                         <!-- <li><strong>Borrowed since:</strong> 10 Aug. 2023</li> -->
                     </ul>
-                </div>    
+                </div>
             </mat-card-content>
         </mat-card>
         
