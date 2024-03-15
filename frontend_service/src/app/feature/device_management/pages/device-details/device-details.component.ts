@@ -14,7 +14,6 @@ import { Subject, take, takeUntil } from 'rxjs';
 export class DeviceDetailsComponent implements OnInit, OnDestroy {
   deviceId: number
   qrCodeDataUrl: string
-  deviceDetailsMock: DeviceMetaData = { id: 1, deviceName: 'ElectroTech M1', location: 'Location 1', inLage: 'Yes', duration: '2 hours' }
   deviceDetails: DeviceMetaData1
   
   destroyed$ = new Subject<void>()
@@ -62,7 +61,7 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
     const blob = new Blob([this.base64ToArrayBuffer(base64Image)], { type: 'image/png' });
 
     // Use FileSaver.js to trigger the download
-    saveAs(blob, `${this.deviceDetailsMock.id}_${this.deviceDetails.product_type.name.replace(/\s+/g, '_')}.png`)
+    saveAs(blob, `${this.deviceDetails.id}_${this.deviceDetails.product_type.name.replace(/\s+/g, '_')}.png`)
   }
 
   base64ToArrayBuffer(base64: string): Uint8Array {
