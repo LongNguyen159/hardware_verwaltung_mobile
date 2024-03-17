@@ -107,26 +107,22 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
       deviceName: this.selectedProductType?.name ?? '',
       deviceDescription: this.selectedProductType?.description ?? '',
     })
-    console.log('selected from type field:', this.selectedProductType)
+    console.log('selected from auto complete:', this.selectedProductType)
   }
 
   /** Called as user types. Auto assign the user input if it matches exactly the item
    * but the user don't select it.
    */
-  onDeviceTypeInputChange(userInput: string): void {
-    const matchingItem = this.allItemsOptions.find(item => item.name.toLowerCase() == userInput.toLowerCase())
-    console.log(matchingItem)
-    if (matchingItem && !this.noMatchingProductType) {
-      this.selectedProductType = matchingItem
-    }
-  }
-
-
   onDescriptionInputChange(userInput: string): void {
     const matchingItem = this.allItemsOptions.find(item => item.description.toLowerCase() == userInput.toLowerCase())
-    console.log(matchingItem )
     if (matchingItem && !this.noMatchingProductDescription) {
       this.selectedProductType = matchingItem
+
+      this.firstFormGroup.patchValue({
+        deviceName: this.selectedProductType?.name ?? '',
+        deviceDescription: this.selectedProductType?.description ?? '',
+      })
+      console.log('auto assigned by matching input:', this.selectedProductType)
     }
   }
 

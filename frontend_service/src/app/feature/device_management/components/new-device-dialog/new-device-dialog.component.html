@@ -17,7 +17,6 @@
               formControlName="deviceName" 
               required 
               [matAutocomplete]="auto"
-              (input)="onDeviceTypeInputChange(productTypeInput.value)"
             >
             <mat-autocomplete 
               #auto="matAutocomplete" 
@@ -39,7 +38,7 @@
             <input
               matInput 
               #descriptionInput
-              placeholder="Ex. Macbook Pro M1, Dell XPS 13, etc."
+              placeholder="Ex. 3m long, HP 4K, etc."
               formControlName="deviceDescription"
               [matAutocomplete]="autoDescription" 
               (input)="onDescriptionInputChange(descriptionInput.value)"
@@ -86,7 +85,7 @@
       <table class="mat-table">
         <tr>
           <th class="mat-header">Type</th>
-          <td class="mat-cell">{{ firstFormGroup.value.deviceName ? firstFormGroup.value.deviceName.name : '-' }}</td>
+          <td class="mat-cell">{{ firstFormGroup.value.deviceName ? firstFormGroup.value.deviceName : '-' }}</td>
         </tr>
         <tr>
           <th class="mat-header">Description</th>
