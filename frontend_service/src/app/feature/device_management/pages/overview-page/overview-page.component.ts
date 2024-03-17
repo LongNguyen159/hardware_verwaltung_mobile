@@ -4,11 +4,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NewDeviceDialogComponent } from '../../components/new-device-dialog/new-device-dialog.component';
-import { DeviceInput, DeviceMetaData, DeviceMetaData1 } from '../../models/device-models';
+import { DeviceMetaData, NewDeviceData, ProductType } from '../../models/device-models';
 import { DeviceService } from '../../service/device.service';
 import { Router } from '@angular/router';
-import { generateQRCodeFromJSON } from '../../utils/utils';
-import { Subject, take, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { BasePageComponent } from 'src/app/shared/components/base-page/base-page.component';
 @Component({
   selector: 'app-overview-page',
@@ -28,7 +27,7 @@ import { BasePageComponent } from 'src/app/shared/components/base-page/base-page
  * for now.
  * 
  */
-export class OverviewPageComponent extends BasePageComponent implements OnInit, AfterViewInit {
+export class OverviewPageComponent extends BasePageComponent implements OnInit {
   @ViewChild('paginator1') paginator1: MatPaginator
 
   @ViewChild('paginator2') paginator2: MatPaginator
@@ -50,14 +49,13 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit, 
 
   qrCodeDataUrl: string;
 
-  constructor(public dialog: MatDialog, private deviceServive: DeviceService, private router: Router) {
+  constructor(public dialog: MatDialog, private deviceService: DeviceService, private router: Router) {
     super()
   }
 
   ngOnInit(): void {
     /** Get device list here, assign tableDataSource to be the result. */
-    this.deviceServive.getAllItems().pipe(takeUntil(this.componentDestroyed$)).subscribe(allItems => {
-      console.log(allItems)
+    this.deviceService.getAllItems().pipe(takeUntil(this.componentDestroyed$)).subscribe(allItems => {
       this.tableDataSource = new MatTableDataSource(allItems); /** Change to real data here; 'dataSource' is real data */
 
       this.selectedRowDataSource = new MatTableDataSource()
@@ -68,13 +66,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit, 
   
       this.loadSavedDataFromLocalStorage()
     })
-
   }
-
-  ngAfterViewInit(): void {
-    
-  }
-
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -143,10 +135,10 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit, 
 
   openNewDeviceDialog() {
     this.dialogRef = this.dialog.open(NewDeviceDialogComponent, {
-      disableClose: false,
+      disableClose: true,
     })
 
-    this.dialogRef.afterClosed().subscribe((results: DeviceInput) => {
+    this.dialogRef.afterClosed().subscribe((results: NewDeviceData) => {
       if (results) {
         console.log(results)
         /** Create new device, send to API to create new item in DB. Pass device input as args */
@@ -162,7 +154,6 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit, 
 
   navigateToDetailsPage(id: number) {
     this.router.navigate(['/device-details', id])
-
   }
 }
 
@@ -174,12 +165,12 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit, 
 
 
 /** TODOs
- * - [ ] Feature: API endpoint for writing new devices that only needs name and location to write
+ * - [X] Feature: API endpoint for writing new devices that only needs name and location to write
  * - [X] Feature: Device details page
  * - [X] Feature: endpoint for getting device info by ID
  * - [X] Feature: Starred items -> Store them in Local Storage
  * 
- * - [ ] Fix: Flatten return results for simpler sorting and filtering methods in FE
+ * - [X] Fix: Flatten return results for simpler sorting and filtering methods in FE
  * - [X] Bug: CORS Header dependency is not being recognised
  * - [ ] Feature: Modify item description
  * - [ ] Feature: Table actions: Delete rows
