@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
-import { ProductType } from '../../models/device-models';
+import { NewDeviceData, ProductType, RoomInterface } from '../../models/device-models';
 import { Observable, Subject, of } from 'rxjs';
 import { startWith, map, take, takeUntil } from 'rxjs/operators';
 import { DeviceService } from '../../service/device.service';
@@ -21,9 +21,10 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
   ],
 })
 export class NewDeviceDialogComponent implements OnInit, OnDestroy {
-  @ViewChild('stepper') stepper: MatStepper;
-  @ViewChild('auto') auto: any;
-  @ViewChild('autoDescription') autoDescription: any;
+  @ViewChild('stepper') stepper: MatStepper
+  @ViewChild('auto') auto: any
+  @ViewChild('autoDescription') autoDescription: any
+  @ViewChild('autoRooom') autoRoom: any
 
   @ViewChild('productTypeInput') productTypeInput: ElementRef;
   @ViewChild('descriptionInput') descriptionInput: ElementRef;
@@ -31,9 +32,13 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
   /** Filtered as user types => Observable of changes in the form field */
   filteredProductTypes$: Observable<ProductType[]> | null = null
   filteredDescriptions$: Observable<ProductType[]> | null = null
+  filteredRooms$: Observable<RoomInterface[]> | null = null
 
   selectedProductType: ProductType | null = null /** Selected Name - Description pair */
+  selectedRoom: RoomInterface | null = null
   allItemsOptions: ProductType[] = []
+
+  allRoomsOptions: RoomInterface[] = []
 
   /** Named 'first form group' because I thought there would be a second form group
    * for the second stepper (dialog), but seems like we don't need the second form group.
@@ -46,6 +51,7 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
   /** Boolean flag true when no matching results when filtering in auto complete fields */
   noMatchingProductType: boolean = false
   noMatchingProductDescription: boolean = false
+  noMatchingRoom: boolean = false
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -65,8 +71,12 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
   /** TODO: Auto complete for Rooms */
   ngOnInit(): void {
     /** Acquire all product types from API for auto complete suggestions */
-    this.deviceService.getAllProductTypes().pipe(take(1)).subscribe(allItems => {
+    this.deviceService.getAllProductTypes().pipe(take(1)).subscribe((allItems: ProductType[]) => {
       this.allItemsOptions = allItems
+    })
+
+    this.deviceService.getAllRooms().pipe(take(1)).subscribe((rooms: RoomInterface[]) => {
+      this.allRoomsOptions = rooms
     })
 
     this.filteredProductTypes$ = this.firstFormGroup.get('deviceName')!.valueChanges.pipe(
@@ -74,7 +84,9 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
       map(value => this._filter(value!, this.allItemsOptions))
     )
     
-    /** Check matching product type results */
+    /** Check matching product type results
+     * This is to prevent false auto assigning
+     */
     this.filteredProductTypes$.pipe(takeUntil(this.componentDestroyed$)).subscribe((value: ProductType[]) => {
       if (value.length == 0) {
         this.noMatchingProductType = true
@@ -88,7 +100,9 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
       map(value => this._filterDescription(value!, this.allItemsOptions))
     )
 
-    /** Check matching description results */
+    /** Check matching description results
+     * This is to prevent false auto assigning
+     */
     this.filteredDescriptions$.pipe(takeUntil(this.componentDestroyed$)).subscribe((value: ProductType[]) => {
       if (value.length == 0) {
         this.noMatchingProductDescription = true
@@ -96,6 +110,12 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
         this.noMatchingProductDescription = false
       }
     })
+
+
+    this.filteredRooms$ = this.firstFormGroup.get('deviceLocation')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterRoom(value!, this.allRoomsOptions))
+    )
   }
 
   /** Called when user selects an option in the auto complete field */
@@ -108,6 +128,14 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
       deviceDescription: this.selectedProductType?.description ?? '',
     })
     console.log('selected from auto complete:', this.selectedProductType)
+  }
+
+  onAutoRoomSelected(selection: MatAutocompleteSelectedEvent) {
+    this.selectedRoom = selection.option.value
+    this.firstFormGroup.patchValue({
+      deviceLocation: this.selectedRoom?.room_number
+    })
+    console.log('selected room', this.selectedRoom)
   }
 
   /** Called as user types. Auto assign the user input if it matches exactly the item
@@ -124,6 +152,41 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
       })
       console.log('auto assigned by matching input:', this.selectedProductType)
     }
+    /** Set selected Product to null to prevent auto assigning falsely.
+     * If the item type/name/description is not exactly the same, that means the item is unique.
+     */
+    if (!matchingItem) {
+      this.selectedProductType = null
+      this.firstFormGroup.patchValue({
+        deviceDescription: this.firstFormGroup.value.deviceDescription
+      })
+    }
+  }
+
+  onDeviceTypeInputChange(userInput: string) {
+    const matchingItem = this.allItemsOptions.find(item => item.name.toLowerCase() == userInput.toLowerCase())
+    /** Set selected Product to null to prevent auto assigning falsely.
+     * If the item type/name/description is not exactly the same, that means the item is unique.
+     */
+    if (!matchingItem) {
+      this.selectedProductType = null
+      this.firstFormGroup.patchValue({
+        deviceName: this.firstFormGroup.value.deviceName
+      })
+    }
+  }
+
+  onRoomInputChange(userInput: string) {
+    /** Auto assign room if matches exactly */
+    const matchingRoom = this.allRoomsOptions.find(room => room.room_number.toLowerCase() == userInput.toLowerCase())
+    if (matchingRoom) {
+      this.selectedRoom = matchingRoom
+      this.firstFormGroup.patchValue({
+        deviceLocation: this.selectedRoom?.room_number
+      })
+
+      console.log('auto assigned room by matching input:', this.selectedRoom)
+    }
   }
 
   /** Submit form results */
@@ -133,25 +196,32 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
      * 
      * If there already exists the item, send the id to the database.
      */
-    if (!this.noMatchingProductDescription && !this.noMatchingProductType) {
-      this.dialogRef.close({
-        product_type: this.selectedProductType,
-        annotation: this.firstFormGroup.value.deviceAnnotation,
-        current_room: this.firstFormGroup.value.deviceLocation
-      })
+    let productType: ProductType
+    let room: RoomInterface
+    if (this.selectedProductType) {
+       productType = this.selectedProductType
     } else {
-      const newProductType: ProductType = {
+      productType = {
         id: null,
         name: this.firstFormGroup.value.deviceName,
         description: this.firstFormGroup.value.deviceDescription,
       }
-      
-      this.dialogRef.close({
-        product_type: newProductType,
-        annotation: this.firstFormGroup.value.deviceAnnotation,
-        current_room: this.firstFormGroup.value.deviceLocation
-      })
     }
+
+    if (this.selectedRoom) {
+      room = this.selectedRoom
+    } else {
+      room = {
+        id: null,
+        room_number: this.firstFormGroup.value.deviceLocation
+      }
+    }
+
+    this.dialogRef.close({
+      product_type: productType,
+      annotation: this.firstFormGroup.value.deviceAnnotation,
+      current_room: room
+    })
   }
 
 
@@ -163,6 +233,11 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
   private _filterDescription(value: string | ProductType, options: ProductType[]): ProductType[] {
     const filterValue = typeof value === 'string' ? value.toLowerCase() : value.description.toLowerCase()
     return options.filter(option => option.description.toLowerCase().includes(filterValue));
+  }
+
+  private _filterRoom(value: string | RoomInterface, options: RoomInterface[]): RoomInterface[] {
+    const filterValue = typeof value === 'string' ? value.toLowerCase() : value.room_number.toLowerCase()
+    return options.filter(option => option.room_number.toLowerCase().includes(filterValue))
   }
 
   getErrorMessage(): string {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as qr from 'qrcode'
-import { DeviceMetaData, ProductType } from '../models/device-models';
+import { DeviceMetaData, ProductType, RoomInterface } from '../models/device-models';
 import { Observable, map, timer} from 'rxjs';
 import { switchMap } from 'rxjs';
 @Injectable({
@@ -43,5 +43,9 @@ export class DeviceService {
 
   getAllProductTypes() {
     return this.http.get<ProductType[]>(`${this.apiEndpoint}/product-type/`)
+  }
+
+  getAllRooms() {
+    return this.http.get<RoomInterface[]>(`${this.apiEndpoint}/room/`)
   }
 }

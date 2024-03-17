@@ -16,6 +16,7 @@
               placeholder="Ex. Laptop, Tablet, Cable etc." 
               formControlName="deviceName" 
               required 
+              (input)="onDeviceTypeInputChange(productTypeInput.value)"
               [matAutocomplete]="auto"
             >
             <mat-autocomplete 
@@ -60,7 +61,28 @@
 
         <mat-form-field>
           <mat-label>Device Location</mat-label>
-          <input matInput placeholder="Ex. Room 174" formControlName="deviceLocation" required>
+          <!-- <input matInput placeholder="Ex. Room 174" formControlName="deviceLocation" required> -->
+
+          <input
+              matInput 
+              #roomInput
+              placeholder="Ex. Room 174"
+              formControlName="deviceLocation"
+              [matAutocomplete]="autoRoom"
+              (input)="onRoomInputChange(roomInput.value)"
+            >
+            <mat-autocomplete
+              #autoRoom="matAutocomplete" 
+              autoActiveFirstOption
+              (optionSelected)="onAutoRoomSelected($event)"
+            >
+              <mat-option
+                *ngFor="let option of filteredRooms$ | async" 
+                [value]="option"
+              >
+                ID: {{ option.id }} - {{ option.room_number}}
+              </mat-option>
+            </mat-autocomplete>
         </mat-form-field>
 
         <mat-form-field>
