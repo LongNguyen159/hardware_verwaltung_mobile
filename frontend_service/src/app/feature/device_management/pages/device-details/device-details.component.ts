@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DeviceMetaData, DeviceMetaData1, QrData } from '../../models/device-models';
+import { DeviceMetaData, QrData } from '../../models/device-models';
 import { generateQRCodeFromJSON } from '../../utils/utils';
 import { DeviceService } from '../../service/device.service';
 import { saveAs } from 'file-saver';

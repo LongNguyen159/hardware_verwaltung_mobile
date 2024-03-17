@@ -23,7 +23,7 @@
                     <p><strong>Condition:</strong> {{ deviceDetails.annotation }}</p>
                 </div>
 
-                <div *ngIf="deviceDetails.user_id">
+                <div *ngIf="deviceDetails.borrowed_by_user_id">
                     <p><strong>Currently borrowed by:</strong> {{ deviceDetails.user_name }}</p>
                     <ul>
                         <li><strong>Type:</strong> {{ deviceDetails.user_type }} </li>
