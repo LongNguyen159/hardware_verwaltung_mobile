@@ -217,11 +217,16 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.dialogRef.close({
+    /** In the future we can add multiple devices at once (Choose quantity to add)
+     * That is why the type expects an array.
+     */
+    const newDeviceData: NewDeviceData[] = [{
       product_type: productType,
       annotation: this.firstFormGroup.value.deviceAnnotation,
       current_room: room
-    })
+    }]
+
+    this.dialogRef.close(newDeviceData)
   }
 
 

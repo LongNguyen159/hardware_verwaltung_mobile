@@ -7,7 +7,7 @@ import { NewDeviceDialogComponent } from '../../components/new-device-dialog/new
 import { DeviceMetaData, NewDeviceData, ProductType } from '../../models/device-models';
 import { DeviceService } from '../../service/device.service';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { BasePageComponent } from 'src/app/shared/components/base-page/base-page.component';
 @Component({
   selector: 'app-overview-page',
@@ -63,7 +63,10 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
       this.tableDataSource.sort = this.sort;
       this.tableDataSource.paginator = this.paginator1
       this.selectedRowDataSource.paginator = this.paginator2
-  
+
+      /** Update data source on polling */
+      this.updateDataSource()
+      
       this.loadSavedDataFromLocalStorage()
     })
   }
@@ -132,20 +135,38 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
     return this.selectedRowsId.includes(rowId)
   }
 
+  updateDataSource() {
+    this.deviceService.getAllItems().pipe(take(1)).subscribe(allItems => {
+      this.tableDataSource.data = allItems
+
+      for (let i = 0; i< this.selectedRow.length; i++) {
+        const rowToUpdate = allItems.find(item => item.id == this.selectedRow[i].id)
+        if (rowToUpdate) {
+          console.log('updated row:', rowToUpdate)
+          this.selectedRow[i] = rowToUpdate
+        }
+      }
+      this.selectedRowDataSource.data = this.selectedRow
+      this.saveDataToLocalStorage()
+    })
+  }
+
 
   openNewDeviceDialog() {
     this.dialogRef = this.dialog.open(NewDeviceDialogComponent, {
       disableClose: true,
     })
 
-    this.dialogRef.afterClosed().subscribe((results: NewDeviceData) => {
+    this.dialogRef.afterClosed().subscribe((results: NewDeviceData[]) => {
       if (results) {
         console.log(results)
-        /** Create new device, send to API to create new item in DB. Pass device input as args */
-
-        /** Subscribe to backend results, backend should return a JSON.
-         * Use that JSON to generate a QR code.
-         */
+        /** Send post request to create new device here. */
+        this.deviceService.createNewDevice(results).pipe(take(1)).subscribe((newDevice) => {
+          console.log('new device posted response', newDevice)
+          this.updateDataSource()
+          /** Display bread crumps message at the bottom showing it's succeeded or not */
+        })
+        
       }
     })
     this.dialogRef = null as any
@@ -172,7 +193,9 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
  * 
  * - [X] Fix: Flatten return results for simpler sorting and filtering methods in FE
  * - [X] Bug: CORS Header dependency is not being recognised
- * - [ ] Feature: Modify item description
+ * - [ ] Bug: Starred items data source needs polling also
+ * - [ ] Feature: Showing bread crump message at the bottom when creating new device done.
+ * - [ ] Feature: Modify item description after creating new device
  * - [ ] Feature: Table actions: Delete rows
  * - [ ] Feature: API endpoint for removing rows in DB
  */

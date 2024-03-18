@@ -16,11 +16,12 @@
                 <p><strong>Name:</strong> {{ deviceDetails.item_name }}</p>
                 <p><strong>Location:</strong> {{ deviceDetails.location }}</p>
 
-                <div *ngIf="deviceDetails.description">
+                <!-- TODO: Be able to change description and Notes here. Tips: Use patch request -->
+                <div>
                     <p><strong>Description:</strong> {{ deviceDetails.description }}</p>
                 </div>
-                <div *ngIf="deviceDetails.annotation">
-                    <p><strong>Condition:</strong> {{ deviceDetails.annotation }}</p>
+                <div>
+                    <p><strong>Notes:</strong> {{ deviceDetails.annotation }}</p>
                 </div>
 
                 <div *ngIf="deviceDetails.borrowed_by_user_id">
