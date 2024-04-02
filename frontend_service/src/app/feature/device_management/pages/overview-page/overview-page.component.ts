@@ -4,10 +4,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NewDeviceDialogComponent } from '../../components/new-device-dialog/new-device-dialog.component';
-import { DeviceInput, DeviceMetaData, DeviceMetaData1 } from '../../models/device-models';
+import { DeviceMetaData, NewDeviceData, ProductType } from '../../models/device-models';
 import { DeviceService } from '../../service/device.service';
 import { Router } from '@angular/router';
-import { generateQRCodeFromJSON } from '../../utils/utils';
 import { Subject, take, takeUntil } from 'rxjs';
 import { BasePageComponent } from 'src/app/shared/components/base-page/base-page.component';
 @Component({
@@ -28,7 +27,7 @@ import { BasePageComponent } from 'src/app/shared/components/base-page/base-page
  * for now.
  * 
  */
-export class OverviewPageComponent extends BasePageComponent implements OnInit, AfterViewInit {
+export class OverviewPageComponent extends BasePageComponent implements OnInit {
   @ViewChild('paginator1') paginator1: MatPaginator
 
   @ViewChild('paginator2') paginator2: MatPaginator
@@ -50,14 +49,13 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit, 
 
   qrCodeDataUrl: string;
 
-  constructor(public dialog: MatDialog, private deviceServive: DeviceService, private router: Router) {
+  constructor(public dialog: MatDialog, private deviceService: DeviceService, private router: Router) {
     super()
   }
 
   ngOnInit(): void {
     /** Get device list here, assign tableDataSource to be the result. */
-    this.deviceServive.getAllItems().pipe(takeUntil(this.componentDestroyed$)).subscribe(allItems => {
-      console.log(allItems)
+    this.deviceService.getAllItems().pipe(takeUntil(this.componentDestroyed$)).subscribe(allItems => {
       this.tableDataSource = new MatTableDataSource(allItems); /** Change to real data here; 'dataSource' is real data */
 
       this.selectedRowDataSource = new MatTableDataSource()
@@ -65,16 +63,13 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit, 
       this.tableDataSource.sort = this.sort;
       this.tableDataSource.paginator = this.paginator1
       this.selectedRowDataSource.paginator = this.paginator2
-  
+
+      /** Update data source on polling */
+      this.updateDataSource()
+      
       this.loadSavedDataFromLocalStorage()
     })
-
   }
-
-  ngAfterViewInit(): void {
-    
-  }
-
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -140,20 +135,38 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit, 
     return this.selectedRowsId.includes(rowId)
   }
 
+  updateDataSource() {
+    this.deviceService.getAllItems().pipe(take(1)).subscribe(allItems => {
+      this.tableDataSource.data = allItems
+
+      for (let i = 0; i< this.selectedRow.length; i++) {
+        const rowToUpdate = allItems.find(item => item.id == this.selectedRow[i].id)
+        if (rowToUpdate) {
+          console.log('updated row:', rowToUpdate)
+          this.selectedRow[i] = rowToUpdate
+        }
+      }
+      this.selectedRowDataSource.data = this.selectedRow
+      this.saveDataToLocalStorage()
+    })
+  }
+
 
   openNewDeviceDialog() {
     this.dialogRef = this.dialog.open(NewDeviceDialogComponent, {
-      disableClose: false,
+      disableClose: true,
     })
 
-    this.dialogRef.afterClosed().subscribe((results: DeviceInput) => {
+    this.dialogRef.afterClosed().subscribe((results: NewDeviceData[]) => {
       if (results) {
         console.log(results)
-        /** Create new device, send to API to create new item in DB. Pass device input as args */
-
-        /** Subscribe to backend results, backend should return a JSON.
-         * Use that JSON to generate a QR code.
-         */
+        /** Send post request to create new device here. */
+        this.deviceService.createNewDevice(results).pipe(take(1)).subscribe((newDevice) => {
+          console.log('new device posted response', newDevice)
+          this.updateDataSource()
+          /** Display bread crumps message at the bottom showing it's succeeded or not */
+        })
+        
       }
     })
     this.dialogRef = null as any
@@ -162,7 +175,6 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit, 
 
   navigateToDetailsPage(id: number) {
     this.router.navigate(['/device-details', id])
-
   }
 }
 
@@ -174,14 +186,16 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit, 
 
 
 /** TODOs
- * - [ ] Feature: API endpoint for writing new devices that only needs name and location to write
+ * - [X] Feature: API endpoint for writing new devices that only needs name and location to write
  * - [X] Feature: Device details page
  * - [X] Feature: endpoint for getting device info by ID
  * - [X] Feature: Starred items -> Store them in Local Storage
  * 
- * - [ ] Fix: Flatten return results for simpler sorting and filtering methods in FE
+ * - [X] Fix: Flatten return results for simpler sorting and filtering methods in FE
  * - [X] Bug: CORS Header dependency is not being recognised
- * - [ ] Feature: Modify item description
+ * - [ ] Bug: Starred items data source needs polling also
+ * - [ ] Feature: Showing bread crump message at the bottom when creating new device done.
+ * - [ ] Feature: Modify item description after creating new device
  * - [ ] Feature: Table actions: Delete rows
  * - [ ] Feature: API endpoint for removing rows in DB
  */

@@ -25,6 +25,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DeviceService } from './feature/device_management/service/device.service';
 import { HttpClientModule } from '@angular/common/http';
 import { BasePageComponent } from './shared/components/base-page/base-page.component';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,6 +37,9 @@ import { BasePageComponent } from './shared/components/base-page/base-page.compo
     BasePageComponent
   ],
   imports: [
+    MatSelectModule,
+    MatOptionModule,
+    MatAutocompleteModule,
     HttpClientModule,
     MatTooltipModule,
     MatCardModule,

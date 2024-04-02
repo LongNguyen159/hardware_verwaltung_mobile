@@ -1,19 +1,93 @@
 <!-- title -->
 <h1 mat-dialog-title>Create New Device</h1>
-<mat-stepper #stepper style="width: 50vw;">
+<mat-stepper #stepper style="width: 80vw;">
   <!-- Step 1: Fill out your name -->
   <mat-step [stepControl]="firstFormGroup" [errorMessage]="getErrorMessage()">
     <form [formGroup]="firstFormGroup">
       <!-- stepper header -->
       <ng-template matStepLabel>Enter Device Details</ng-template>
       <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 16px;">
-        <mat-form-field>
-          <mat-label>Device Name</mat-label>
-          <input matInput placeholder="Ex. Macbook Pro M1" formControlName="deviceName" required>
-        </mat-form-field>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <mat-form-field>
+            <mat-label>Device Type</mat-label>
+            <input
+              matInput
+              #productTypeInput
+              placeholder="Ex. Laptop, Tablet, Cable etc." 
+              formControlName="deviceName" 
+              required 
+              (input)="onDeviceTypeInputChange(productTypeInput.value)"
+              [matAutocomplete]="auto"
+            >
+            <mat-autocomplete 
+              #auto="matAutocomplete" 
+              autoActiveFirstOption
+              hideSingleSelectionIndicator
+              (optionSelected)="onAutoCompleteSelected($event)"
+            >
+              <mat-option 
+                *ngFor="let option of filteredProductTypes$ | async" 
+                [value]="option"
+              >
+                {{ option.name }} - {{ option.description }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+  
+          <mat-form-field>
+            <mat-label>Device Variant/Description</mat-label>
+            <input
+              matInput 
+              #descriptionInput
+              placeholder="Ex. 3m long, HP 4K, etc."
+              formControlName="deviceDescription"
+              [matAutocomplete]="autoDescription" 
+              (input)="onDescriptionInputChange(descriptionInput.value)"
+            >
+            <mat-autocomplete 
+              #autoDescription="matAutocomplete" 
+              autoActiveFirstOption
+              (optionSelected)="onAutoCompleteSelected($event)"
+            >
+              <mat-option 
+                *ngFor="let option of filteredDescriptions$ | async" 
+                [value]="option"
+              >
+                {{ option.name }} - {{ option.description}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+
         <mat-form-field>
           <mat-label>Device Location</mat-label>
-          <input matInput placeholder="Ex. Room 174" formControlName="deviceLocation" required>
+          <!-- <input matInput placeholder="Ex. Room 174" formControlName="deviceLocation" required> -->
+
+          <input
+              matInput 
+              #roomInput
+              placeholder="Ex. Room 174"
+              formControlName="deviceLocation"
+              [matAutocomplete]="autoRoom"
+              (input)="onRoomInputChange(roomInput.value)"
+            >
+            <mat-autocomplete
+              #autoRoom="matAutocomplete" 
+              autoActiveFirstOption
+              (optionSelected)="onAutoRoomSelected($event)"
+            >
+              <mat-option
+                *ngFor="let option of filteredRooms$ | async" 
+                [value]="option"
+              >
+                ID: {{ option.id }} - {{ option.room_number}}
+              </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Annotation</mat-label>
+          <input matInput placeholder="Ex. New, used, not compatible with monitor etc." formControlName="deviceAnnotation">
         </mat-form-field>
       </div>
       
@@ -32,12 +106,20 @@
     <div class="mat-table-container">
       <table class="mat-table">
         <tr>
-          <th class="mat-header">Name</th>
+          <th class="mat-header">Type</th>
           <td class="mat-cell">{{ firstFormGroup.value.deviceName ? firstFormGroup.value.deviceName : '-' }}</td>
+        </tr>
+        <tr>
+          <th class="mat-header">Description</th>
+          <td class="mat-cell">{{ firstFormGroup.value.deviceDescription ? firstFormGroup.value.deviceDescription : '-' }}</td>
         </tr>
         <tr>
           <th class="mat-header">Location</th>
           <td class="mat-cell">{{ firstFormGroup.value.deviceLocation ? firstFormGroup.value.deviceLocation : '-' }}</td>
+        </tr>
+        <tr>
+          <th class="mat-header">Annotation</th>
+          <td class="mat-cell">{{ firstFormGroup.value.deviceAnnotation ? firstFormGroup.value.deviceAnnotation : '-' }}</td>
         </tr>
       </table>
     </div>

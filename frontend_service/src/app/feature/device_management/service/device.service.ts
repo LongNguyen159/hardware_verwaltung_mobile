@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as qr from 'qrcode'
-import { DeviceMetaData } from '../models/device-models';
-import { Observable, timer} from 'rxjs';
+import { DeviceMetaData, NewDeviceData, ProductType, RoomInterface } from '../models/device-models';
+import { Observable, map, timer} from 'rxjs';
 import { switchMap } from 'rxjs';
 @Injectable({
   providedIn: 'root'
@@ -25,19 +25,31 @@ export class DeviceService {
     });
   }
 
+  createNewDevice(newDeviceData: NewDeviceData[]) {
+    return this.http.post(`${this.apiEndpoint}/items-new/`, newDeviceData)
+  }
+
   /** Get all Items, polling to update the changes from DB */
   getAllItems() {
     return timer(1, 10000).pipe(
       // Use switchMap to switch to a new observable each time interval emits a value
-      switchMap(() => this.http.get<DeviceMetaData[]>(`${this.apiEndpoint}/items_all/`))
+      switchMap(() => this.http.get<DeviceMetaData[]>(`${this.apiEndpoint}/items-all/`))
     )
   }
 
   /** Get 1 item infos, polling to reflect changes in DB */
-  getItemById(itemId: number) {
+  getItemById(itemId: number): Observable<DeviceMetaData> {
     return timer(1, 10000).pipe(
       // Use switchMap to switch to a new observable each time interval emits a value
-      switchMap(() => this.http.get<DeviceMetaData>(`${this.apiEndpoint}/item_details/${itemId}/`))
+      switchMap(() => this.http.get<DeviceMetaData>(`${this.apiEndpoint}/item-details/${itemId}/`)),
     )
+  }
+
+  getAllProductTypes() {
+    return this.http.get<ProductType[]>(`${this.apiEndpoint}/product-type/`)
+  }
+
+  getAllRooms() {
+    return this.http.get<RoomInterface[]>(`${this.apiEndpoint}/room/`)
   }
 }
