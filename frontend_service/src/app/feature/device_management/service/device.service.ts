@@ -13,7 +13,7 @@ export class DeviceService {
   constructor(private http: HttpClient) { }
 
   createNewDevice(newDeviceData: NewDeviceData[]) {
-    return this.http.post(`${this.apiEndpoint}/items-nw/`, newDeviceData)
+    return this.http.post(`${this.apiEndpoint}/items-new/`, newDeviceData)
   }
 
   /** Get all Items, polling to update the changes from DB */
