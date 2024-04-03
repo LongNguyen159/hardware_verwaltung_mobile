@@ -185,7 +185,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
 
 
   navigateToDetailsPage(id: number) {
-    this.router.navigate(['/device-details', id])
+    this.router.navigate(['/device', id])
   }
 }
 

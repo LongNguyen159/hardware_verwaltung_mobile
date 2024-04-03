@@ -1,8 +1,8 @@
 <!-- toolbar and content of individual pages -->
 <div style="display: flex; flex-direction: column;">
   <mat-toolbar class="toolbar">
-    <button mat-button routerLink="/overview" class="navbarItem">Home</button>
-    <button mat-button routerLink="/room" class="navbarItem">Rooms</button>
+    <button mat-button routerLink="/device" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}" class="navbarItem">Home</button>
+    <button mat-button routerLink="/room" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}" class="navbarItem">Rooms</button>
   </mat-toolbar>
   <div class="container">
     <router-outlet></router-outlet>

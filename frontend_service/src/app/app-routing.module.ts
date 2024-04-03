@@ -7,9 +7,9 @@ import { RoomPageComponent } from './feature/room_management/pages/room-page/roo
 import { RoomDetailsPageComponent } from './feature/room_management/pages/room-details/room-details.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/overview', pathMatch: 'full' },
-  { path: 'device-details/:id', component: DeviceDetailsComponent},
-  { path: 'overview', component: OverviewPageComponent},
+  { path: '', redirectTo: '/device', pathMatch: 'full' },
+  { path: 'device/:id', component: DeviceDetailsComponent},
+  { path: 'device', component: OverviewPageComponent},
   { path: 'room', component: RoomPageComponent},
   { path: 'room/:id', component: RoomDetailsPageComponent},
 ];

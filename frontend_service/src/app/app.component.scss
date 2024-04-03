@@ -2,11 +2,13 @@
     font-weight: bold;
     height: 100%;
     border-radius: 0;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
 }
 
 .active {
-    background: whitesmoke;
-    color: rgb(45, 45, 45);
+    background: white;
+    color: rgb(45, 45, 45) !important;
 }
 
 .toolbar {
@@ -14,7 +16,8 @@
     flex-direction: row;
     gap: 10px;
     background-color: rgb(47, 53, 70); 
-    color: white; height: 52px;
+    color: white; 
+    height: 50px;
     position: sticky;
     top: 0;
     width: 100%;
