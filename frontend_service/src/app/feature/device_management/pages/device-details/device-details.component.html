@@ -1,8 +1,8 @@
-<div class="pageHeader">
-    <h2>
-        ID: {{ deviceId }}
-    </h2>
-</div>
+<app-title-bar
+    [title]="'ID: ' + deviceId"
+    [enableBackButton]="true"
+    [colorBackground]="true"
+></app-title-bar>
 
 <div class="pageContent">
     <div class="metadata">
