@@ -10,7 +10,10 @@ import { Subject, take, takeUntil } from 'rxjs';
   templateUrl: './device-details.component.html',
   styleUrls: ['./device-details.component.scss']
 })
-
+/**
+ * TODO:
+ * Feat: Allow user to upload photos of device in this page.
+ */
 export class DeviceDetailsComponent implements OnInit, OnDestroy {
   deviceId: number
   qrCodeDataUrl: string

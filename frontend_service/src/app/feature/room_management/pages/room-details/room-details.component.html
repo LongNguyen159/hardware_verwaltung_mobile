@@ -4,20 +4,30 @@
     [enableBackButton]="true"
 >
 </app-title-bar>
-
-<div class="qr-code">
-    <mat-card style="width: 100%">
-        <mat-card-header>
-            <mat-card-title>
-                QR Code
-            </mat-card-title>
-        </mat-card-header>
-        <mat-card-content style="display: flex; justify-content: center;">
-            
-            <img [src]="qrCodeDataUrl" alt="QR Code">
-        </mat-card-content>
-        <mat-card-actions style="justify-content: center;">
-            <button mat-button (click)="onDownloadClick()">Download QR Code</button>
-        </mat-card-actions>
-    </mat-card>
+<div class="wrapper">
+    <div class="qr-code">
+        <mat-card style="width: 100%">
+            <mat-card-header>
+                <mat-card-title>
+                    QR Code
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div *ngIf="roomDetails">
+                    <p class="boldTitle"><strong>QR Metadata:</strong></p>
+                    <ul>
+                        <li><strong class="boldTitle">id:</strong> {{ roomId }} </li>
+                        <li><strong class="boldTitle">room_number:</strong> {{ roomDetails.room_number }} </li>
+                        <!-- <li><strong>Borrowed since:</strong> 10 Aug. 2023</li> -->
+                    </ul>
+                </div>
+                <div style="display: flex; justify-content: center;">
+                    <img [src]="qrCodeDataUrl" alt="QR Code">
+                </div>
+            </mat-card-content>
+            <mat-card-actions style="justify-content: center;">
+                <button mat-button (click)="onDownloadClick()">Download QR Code</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>    
 </div>
