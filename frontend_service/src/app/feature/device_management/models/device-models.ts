@@ -11,11 +11,14 @@ export interface DeviceMetaData {
   user_email?: string
 }
 
-export interface QrData {
+export interface deviceQrData {
   id: number
   deviceName: string
 }
-
+export interface DownloadFileName {
+  id: number | string
+  name: string
+}
 export interface NewDeviceData {
   product_type: ProductType
   current_room: RoomInterface

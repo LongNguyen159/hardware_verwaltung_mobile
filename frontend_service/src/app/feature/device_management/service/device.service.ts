@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import * as qr from 'qrcode'
 import { DeviceMetaData, NewDeviceData, ProductType, RoomInterface } from '../models/device-models';
 import { Observable, map, timer} from 'rxjs';
 import { switchMap } from 'rxjs';
@@ -12,18 +11,6 @@ export class DeviceService {
   apiEndpoint: string = 'http://localhost:8000/api/v1'
 
   constructor(private http: HttpClient) { }
-
-  generateQRCode(data: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      qr.toDataURL(data, (err, url) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(url);
-        }
-      });
-    });
-  }
 
   createNewDevice(newDeviceData: NewDeviceData[]) {
     return this.http.post(`${this.apiEndpoint}/items-new/`, newDeviceData)
