@@ -139,10 +139,10 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
     this.deviceService.getAllItems().pipe(take(1)).subscribe(allItems => {
       this.tableDataSource.data = allItems
 
+      /** Update starred table data source after updating main data source */
       for (let i = 0; i< this.selectedRow.length; i++) {
         const rowToUpdate = allItems.find(item => item.id == this.selectedRow[i].id)
         if (rowToUpdate) {
-          console.log('updated row:', rowToUpdate)
           this.selectedRow[i] = rowToUpdate
         }
       }

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { RoomInterface } from 'src/app/feature/device_management/models/device-models';
 import { DeviceService } from 'src/app/feature/device_management/service/device.service';
@@ -25,7 +26,7 @@ export class RoomPageComponent extends BasePageComponent implements OnInit {
 
   roomDataSource: MatTableDataSource<RoomInterface>
 
-  constructor(private deviceService: DeviceService) {
+  constructor(private deviceService: DeviceService, private router: Router) {
     super()
   }
 
@@ -51,5 +52,7 @@ export class RoomPageComponent extends BasePageComponent implements OnInit {
     this.roomDataSource.filter = filterValue.trim().toLowerCase()
   }
 
-  
+  navigateToDetailsPage(roomId: number) {
+    this.router.navigate(['/room', roomId])
+  }
 }

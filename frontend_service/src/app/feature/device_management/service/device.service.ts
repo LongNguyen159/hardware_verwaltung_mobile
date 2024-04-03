@@ -52,4 +52,8 @@ export class DeviceService {
   getAllRooms() {
     return this.http.get<RoomInterface[]>(`${this.apiEndpoint}/room/`)
   }
+
+  getOneRoom(roomId: number) {
+    return this.http.get<RoomInterface>(`${this.apiEndpoint}/room/id/${roomId}/`)
+  }
 }

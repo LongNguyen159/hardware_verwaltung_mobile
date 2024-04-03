@@ -14,7 +14,7 @@
 
   <!-- Define data rows -->
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="navigateToDetailsPage(row.id)"></tr>
 </table>
   
 <mat-paginator #paginator [pageSizeOptions]="[10, 25, 100]" showFirstLastButtons></mat-paginator>

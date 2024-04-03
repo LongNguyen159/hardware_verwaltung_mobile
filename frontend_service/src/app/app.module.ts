@@ -30,6 +30,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { RoomPageComponent } from './feature/room_management/pages/room-page/room-page.component';
 import { TitleBarComponent } from './shared/components/title-bar/title-bar.component';
+import { RoomDetailsPageComponent } from './feature/room_management/pages/room-details/room-details.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,7 +39,8 @@ import { TitleBarComponent } from './shared/components/title-bar/title-bar.compo
     DeviceDetailsComponent,
     BasePageComponent,
     RoomPageComponent,
-    TitleBarComponent
+    TitleBarComponent,
+    RoomDetailsPageComponent
   ],
   imports: [
     MatSelectModule,
