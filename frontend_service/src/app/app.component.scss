@@ -1,8 +1,18 @@
 .navbarItem {
     font-weight: bold;
+    height: 100%;
+    border-radius: 0;
+}
+
+.active {
+    background: whitesmoke;
+    color: rgb(45, 45, 45);
 }
 
 .toolbar {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
     background-color: rgb(47, 53, 70); 
     color: white; height: 52px;
     position: sticky;

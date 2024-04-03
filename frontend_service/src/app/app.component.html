@@ -1,7 +1,8 @@
 <!-- toolbar and content of individual pages -->
-<div style="display: flex; flex-direction: column;">
+<div style="display: flex; flex-direction: column; gap: 16px;">
   <mat-toolbar class="toolbar">
     <button mat-button routerLink="/overview" class="navbarItem">Home</button>
+    <button mat-button routerLink="/room" class="navbarItem">Rooms</button>
   </mat-toolbar>
   <div class="container">
     <router-outlet></router-outlet>
