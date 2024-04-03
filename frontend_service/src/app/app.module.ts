@@ -31,6 +31,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { RoomPageComponent } from './feature/room_management/pages/room-page/room-page.component';
 import { TitleBarComponent } from './shared/components/title-bar/title-bar.component';
 import { RoomDetailsPageComponent } from './feature/room_management/pages/room-details/room-details.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 @NgModule({
   declarations: [
     AppComponent,
@@ -43,6 +44,7 @@ import { RoomDetailsPageComponent } from './feature/room_management/pages/room-d
     RoomDetailsPageComponent
   ],
   imports: [
+    MatSnackBarModule,
     MatSelectModule,
     MatOptionModule,
     MatAutocompleteModule,

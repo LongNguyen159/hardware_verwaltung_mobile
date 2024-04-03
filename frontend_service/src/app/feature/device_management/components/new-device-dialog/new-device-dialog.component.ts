@@ -68,7 +68,6 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
     })
   }
 
-  /** TODO: Auto complete for Rooms */
   ngOnInit(): void {
     /** Acquire all product types from API for auto complete suggestions */
     this.deviceService.getAllProductTypes().pipe(take(1)).subscribe((allItems: ProductType[]) => {

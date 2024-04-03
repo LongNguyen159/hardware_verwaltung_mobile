@@ -9,6 +9,8 @@ import { DeviceService } from '../../service/device.service';
 import { Router } from '@angular/router';
 import { Subject, take, takeUntil } from 'rxjs';
 import { BasePageComponent } from 'src/app/shared/components/base-page/base-page.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-overview-page',
   templateUrl: './overview-page.component.html',
@@ -49,7 +51,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
 
   qrCodeDataUrl: string;
 
-  constructor(public dialog: MatDialog, private deviceService: DeviceService, private router: Router) {
+  constructor(public dialog: MatDialog, private deviceService: DeviceService, private router: Router, private snackbar: MatSnackBar) {
     super()
   }
 
@@ -159,18 +161,27 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
 
     this.dialogRef.afterClosed().subscribe((results: NewDeviceData[]) => {
       if (results) {
-        console.log(results)
         /** Send post request to create new device here. */
-        this.deviceService.createNewDevice(results).pipe(take(1)).subscribe((newDevice) => {
-          console.log('new device posted response', newDevice)
-          this.updateDataSource()
-          /** Display bread crumps message at the bottom showing it's succeeded or not */
+        this.deviceService.createNewDevice(results).pipe(take(1)).subscribe({
+          next: (newDevice) => {
+            this.snackbar.open('New device added successfully!', 'Dismiss', {
+              duration: 3000
+            })
+            this.updateDataSource()
+          },
+          error: (error: HttpErrorResponse) => {
+            console.error(error)
+            this.snackbar.open('Error adding new device, please try again', 'Dismiss', {
+              duration: 3000
+            })
+          },
         })
         
       }
     })
     this.dialogRef = null as any
   }
+
 
 
   navigateToDetailsPage(id: number) {
@@ -193,9 +204,10 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
  * 
  * - [X] Fix: Flatten return results for simpler sorting and filtering methods in FE
  * - [X] Bug: CORS Header dependency is not being recognised
- * - [ ] Bug: Starred items data source needs polling also
- * - [ ] Feature: Showing bread crump message at the bottom when creating new device done.
- * - [ ] Feature: Modify item description after creating new device
+ * - [X] Bug: Starred items data source needs polling also
+ * - [X] Feature: Showing snackbar message at the bottom when creating new device done.
+ * - [ ] Feature: Be able to modify item description after creating new device
+ * - [ ] Feature: Be able to modify item annotation after creating new device
  * - [ ] Feature: Table actions: Delete rows
  * - [ ] Feature: API endpoint for removing rows in DB
  */
