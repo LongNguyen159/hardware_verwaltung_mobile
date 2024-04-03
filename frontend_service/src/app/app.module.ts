@@ -29,6 +29,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { RoomPageComponent } from './feature/room_management/pages/room-page/room-page.component';
+import { TitleBarComponent } from './shared/components/title-bar/title-bar.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,7 +37,8 @@ import { RoomPageComponent } from './feature/room_management/pages/room-page/roo
     NewDeviceDialogComponent,
     DeviceDetailsComponent,
     BasePageComponent,
-    RoomPageComponent
+    RoomPageComponent,
+    TitleBarComponent
   ],
   imports: [
     MatSelectModule,
