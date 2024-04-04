@@ -1,12 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { takeUntil } from 'rxjs';
+import { take, takeUntil } from 'rxjs';
 import { RoomInterface } from 'src/app/feature/device_management/models/device-models';
 import { DeviceService } from 'src/app/feature/device_management/service/device.service';
 import { BasePageComponent } from 'src/app/shared/components/base-page/base-page.component';
+import { NewRoomDialogComponent } from '../../components/new-room-dialog/new-room-dialog.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { SharedService } from 'src/app/shared/service/shared.service';
 
 @Component({
   selector: 'app-room-page',
@@ -26,7 +30,7 @@ export class RoomPageComponent extends BasePageComponent implements OnInit {
 
   roomDataSource: MatTableDataSource<RoomInterface>
 
-  constructor(private deviceService: DeviceService, private router: Router) {
+  constructor(private deviceService: DeviceService, private router: Router, public dialog: MatDialog, private sharedService: SharedService) {
     super()
   }
 
@@ -46,6 +50,14 @@ export class RoomPageComponent extends BasePageComponent implements OnInit {
     )
   }
 
+  updateTableDataSrc() {
+    this.deviceService.getAllRooms().pipe(take(1)).subscribe(rooms => {
+      this.roomDataSource.data = rooms
+      this.roomDataSource.sort = this.sort
+      this.roomDataSource.paginator = this.paginator
+    })
+  }
+
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value
@@ -54,5 +66,27 @@ export class RoomPageComponent extends BasePageComponent implements OnInit {
 
   navigateToDetailsPage(roomId: number) {
     this.router.navigate(['/room', roomId])
+  }
+
+  openNewRoomDialog() {
+    const dialogRef = this.dialog.open(NewRoomDialogComponent, {
+      width: '40vw',
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      // send POST request here
+      if (result) {
+        this.deviceService.createNewRoom(result).pipe(take(1)).subscribe({
+          next: (res) => {
+            console.log('success:', res)
+            this.sharedService.openSnackbar('New room created successfully!')
+            this.updateTableDataSrc()
+          },
+          error: (err: HttpErrorResponse) => {
+            this.sharedService.openSnackbar('Error creating new room, please try again.')
+          }
+        })
+      }
+    })
   }
 }

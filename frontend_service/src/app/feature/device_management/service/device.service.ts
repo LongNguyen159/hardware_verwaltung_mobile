@@ -37,10 +37,20 @@ export class DeviceService {
   }
 
   getAllRooms() {
-    return this.http.get<RoomInterface[]>(`${this.apiEndpoint}/room/`)
+    return timer(1, 10000).pipe(
+      switchMap(() => this.http.get<RoomInterface[]>(`${this.apiEndpoint}/room/`))
+    )
   }
 
   getOneRoom(roomId: number) {
     return this.http.get<RoomInterface>(`${this.apiEndpoint}/room/id/${roomId}/`)
+  }
+
+  createNewRoom(roomNumber: string) {
+    /** POST JSON to create new room */
+    const postData = {
+      room_number: roomNumber
+    }
+    return this.http.post(`${this.apiEndpoint}/room/`, postData)
   }
 }

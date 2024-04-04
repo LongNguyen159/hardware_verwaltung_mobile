@@ -183,8 +183,6 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
       this.firstFormGroup.patchValue({
         deviceLocation: this.selectedRoom?.room_number
       })
-
-      console.log('auto assigned room by matching input:', this.selectedRoom)
     }
   }
 
