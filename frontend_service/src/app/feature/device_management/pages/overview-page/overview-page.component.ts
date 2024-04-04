@@ -223,10 +223,9 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
  * - [X] Bug: CORS Header dependency is not being recognised
  * - [X] Bug: Starred items data source needs polling also
  * - [X] Feature: Showing snackbar message at the bottom when creating new device done.
- * - [ ] Feature: Create new room (with auto fills)
+ * - [X] Feature: Create new room
  * - [ ] Feature: Be able to modify item description after creating new device
  * - [ ] Feature: Be able to modify item annotation after creating new device
  * - [ ] Feature: Be able to modify Room name
- * - [ ] Feature: Table actions: Delete rows
- * - [ ] Feature: API endpoint for removing rows in DB
+ * - [X] Feature: Table actions: Delete rows
  */
