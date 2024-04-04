@@ -38,7 +38,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
 
   dialogRef: MatDialogRef<NewDeviceDialogComponent>
 
-  displayedColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'actions']
+  displayedColumns: string[] = ['id', 'deviceName', 'description', 'location', 'inLage', 'actions']
   starredTableColumns: string[] = ['id', 'deviceName', 'location', 'inLage']
   tableDataSource: MatTableDataSource<DeviceMetaData>
 

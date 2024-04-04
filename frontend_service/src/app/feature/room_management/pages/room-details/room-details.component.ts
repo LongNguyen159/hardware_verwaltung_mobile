@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { take, takeUntil } from 'rxjs';
-import { DownloadFileName, RoomInterface } from 'src/app/feature/device_management/models/device-models';
+import { DeviceMetaData, DownloadFileName, RoomInterface } from 'src/app/feature/device_management/models/device-models';
 import { DeviceService } from 'src/app/feature/device_management/service/device.service';
 import { downloadQRCode, generateQRCodeFromJSON } from 'src/app/feature/device_management/utils/utils';
 import { BasePageComponent } from 'src/app/shared/components/base-page/base-page.component';
@@ -12,15 +14,19 @@ import { BasePageComponent } from 'src/app/shared/components/base-page/base-page
   styleUrls: ['./room-details.component.scss']
 })
 export class RoomDetailsPageComponent extends BasePageComponent implements OnInit {
+  @ViewChild('paginator') paginator: MatPaginator
   roomId: number
   roomDetails: RoomInterface
-
+  displayedColumns: string[] = ['id', 'item_name', 'description', 'borrowed_by_user'];
   qrCodeDataUrl: string
+
+  allItemsOfRoom: DeviceMetaData[] = []
+  dataSource: MatTableDataSource<DeviceMetaData>
 
   roomName: string = ''
   constructor(
     private deviceService: DeviceService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     super()
   }
@@ -31,8 +37,15 @@ export class RoomDetailsPageComponent extends BasePageComponent implements OnIni
     if (id) {
       this.roomId = parseInt(id)
       this.getRoomDetails(this.roomId)
-      
     }
+  }
+
+  getAllItems() {
+    this.deviceService.getAllItems().pipe(takeUntil(this.componentDestroyed$)).subscribe(allItems => {
+      this.allItemsOfRoom = allItems.filter(item => item.location === this.roomDetails.room_number)
+      this.dataSource = new MatTableDataSource(this.allItemsOfRoom)
+      this.dataSource.paginator = this.paginator
+    })
   }
 
 
@@ -40,6 +53,8 @@ export class RoomDetailsPageComponent extends BasePageComponent implements OnIni
     this.deviceService.getOneRoom(id).pipe(take(1)).subscribe((room: RoomInterface) => {
       this.roomDetails = room
       this.roomName = room.room_number
+
+      this.getAllItems()
 
       generateQRCodeFromJSON(room).then(data => {
         this.qrCodeDataUrl = data
