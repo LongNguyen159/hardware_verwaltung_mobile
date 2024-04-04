@@ -21,7 +21,7 @@ export class RoomPageComponent extends BasePageComponent implements OnInit {
   @ViewChild('paginator') paginator: MatPaginator
   @ViewChild(MatSort) sort: MatSort
 
-  displayedColumns = ['id', 'room_number']
+  displayedColumns = ['id', 'room_number', 'actions']
 
   columnMap: { [key: string]: string } = {
     'id': 'ID',
@@ -78,7 +78,6 @@ export class RoomPageComponent extends BasePageComponent implements OnInit {
       if (result) {
         this.deviceService.createNewRoom(result).pipe(take(1)).subscribe({
           next: (res) => {
-            console.log('success:', res)
             this.sharedService.openSnackbar('New room created successfully!')
             this.updateTableDataSrc()
           },
@@ -86,6 +85,22 @@ export class RoomPageComponent extends BasePageComponent implements OnInit {
             this.sharedService.openSnackbar('Error creating new room, please try again.')
           }
         })
+      }
+    })
+  }
+
+  /** NOTE: This would remove all items associated with that room
+   * TODO: Fix: Only delete the room, not all items associated with it.
+   */
+  onDeleteRoom(roomId: number) {
+    this.deviceService.deleteRoom(roomId).pipe(take(1)).subscribe({
+      next: (res) => {
+        this.updateTableDataSrc()
+        this.sharedService.openSnackbar('Room has been successfully removed!')
+      },
+      error: (err: HttpErrorResponse) => {
+        this.updateTableDataSrc()
+        this.sharedService.openSnackbar(`Error deleting room: ${err.error.details}`)
       }
     })
   }

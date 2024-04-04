@@ -41,7 +41,7 @@
       
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>
-          <div style="display: flex; flex-direction: row; align-items: center;">
+          <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-start;">
             <p>Actions</p>
             <button mat-icon-button (click)="unstarredAllItems()" *ngIf="selectedRow.length > 0" matTooltip="Unstarred all" [matTooltipShowDelay]="300">
               <mat-icon [style.color]="'rgb(253, 212, 115)'">star</mat-icon>
@@ -50,10 +50,16 @@
           
         </th>
         <td mat-cell *matCellDef="let element">
-          <button mat-icon-button (click)="$event.stopPropagation(); onStarDeviceClick(element)" matTooltip="Star item" [matTooltipShowDelay]="1000">
-            <mat-icon *ngIf="!isRowSelected(element.id)" [style.color]="'black'">star_border</mat-icon>
-            <mat-icon *ngIf="isRowSelected(element.id)" [style.color]="'rgb(253, 212, 115)'">star</mat-icon>
-          </button>
+          <div style="display: flex; align-items: center; gap: 10px; justify-content: flex-start;">
+            <button mat-icon-button (click)="$event.stopPropagation(); onStarDeviceClick(element)" matTooltip="Star item" [matTooltipShowDelay]="1000">
+              <mat-icon *ngIf="!isRowSelected(element.id)" [style.color]="'black'">star_border</mat-icon>
+              <mat-icon *ngIf="isRowSelected(element.id)" [style.color]="'rgb(253, 212, 115)'">star</mat-icon>
+            </button>
+  
+            <button mat-icon-button color="warn" (click)="$event.stopPropagation(); onRemoveDevice(element.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
         </td>
       </ng-container>
     

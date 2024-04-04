@@ -11,6 +11,7 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { BasePageComponent } from 'src/app/shared/components/base-page/base-page.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
+import { SharedService } from 'src/app/shared/service/shared.service';
 @Component({
   selector: 'app-overview-page',
   templateUrl: './overview-page.component.html',
@@ -51,7 +52,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
 
   qrCodeDataUrl: string;
 
-  constructor(public dialog: MatDialog, private deviceService: DeviceService, private router: Router, private snackbar: MatSnackBar) {
+  constructor(public dialog: MatDialog, private deviceService: DeviceService, private router: Router, private snackbar: MatSnackBar, private sharedService: SharedService) {
     super()
   }
 
@@ -182,7 +183,23 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
     this.dialogRef = null as any
   }
 
-
+  onRemoveDevice(deviceId: number) {
+    this.deviceService.deleteItemById(deviceId).pipe(take(1)).subscribe({
+      next: (res) => {
+        this.updateDataSource()
+        this.selectedRow = this.selectedRow.filter(item => item.id !== deviceId)
+        this.selectedRowsId = this.selectedRow.map(item => item.id)
+        this.saveDataToLocalStorage()
+        this.updateStarredDeviceTable()
+        this.sharedService.openSnackbar('Device has been successfully removed!')
+      },
+      error: (err: HttpErrorResponse) => {
+        this.updateDataSource()
+        this.updateStarredDeviceTable()
+        this.sharedService.openSnackbar(`Error deleting device: ${err.error.details}`)
+      }
+    })
+  }
 
   navigateToDetailsPage(id: number) {
     this.router.navigate(['/device', id])

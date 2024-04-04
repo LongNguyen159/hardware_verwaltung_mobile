@@ -32,6 +32,10 @@ export class DeviceService {
     )
   }
 
+  deleteItemById(itemId: number) {
+    return this.http.delete(`${this.apiEndpoint}/item/id/${itemId}/`)
+  }
+
   getAllProductTypes() {
     return this.http.get<ProductType[]>(`${this.apiEndpoint}/product-type/`)
   }
@@ -52,5 +56,9 @@ export class DeviceService {
       room_number: roomNumber
     }
     return this.http.post(`${this.apiEndpoint}/room/`, postData)
+  }
+
+  deleteRoom(roomId: number) {
+    return this.http.delete(`${this.apiEndpoint}/room/id/${roomId}/`)
   }
 }

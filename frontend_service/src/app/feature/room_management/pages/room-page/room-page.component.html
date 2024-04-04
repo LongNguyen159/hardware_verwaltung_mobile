@@ -13,9 +13,29 @@
   border: solid 1px #e4e4e4;
   box-shadow: none; padding-top: 16px; padding-bottom: 16px;">
     <!-- Define columns -->
-    <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+    <!-- <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnMap[column] }}</th>
       <td mat-cell *matCellDef="let row">{{ row[column] }}</td>
+    </ng-container> -->
+
+
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+      <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="room_number">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Room Name</th>
+      <td mat-cell *matCellDef="let row">{{ row.room_number }}</td>
+    </ng-container>
+    
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-icon-button color="warn" (click)="$event.stopPropagation(); onDeleteRoom(row.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
     </ng-container>
 
     <!-- Define data rows -->
