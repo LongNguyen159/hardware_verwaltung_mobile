@@ -21,7 +21,11 @@
                     <p><strong>Description:</strong> {{ deviceDetails.description }}</p>
                 </div>
                 <div>
-                    <p><strong>Notes:</strong> {{ deviceDetails.annotation }}</p>
+                    <p><strong>Notes:</strong></p>
+                    <div style="display:flex; align-items: center; flex-direction: row; gap: 10px;">
+                        <textarea matInput style="width: 300px;" [(ngModel)]="editedNotes" rows="5">{{ deviceDetails.annotation }}</textarea>
+                        <button mat-stroked-button (click)="saveNotes()">Save</button>
+                    </div>
                 </div>
 
                 <div *ngIf="deviceDetails.borrowed_by_user_id">

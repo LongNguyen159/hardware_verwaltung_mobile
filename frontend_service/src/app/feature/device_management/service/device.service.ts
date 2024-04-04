@@ -32,6 +32,13 @@ export class DeviceService {
     )
   }
 
+  updateItemNotes(itemId: number, notes: string) {
+    const patchData = {
+      annotation: notes
+    }
+    return this.http.patch(`${this.apiEndpoint}/item/id/${itemId}/`, patchData)
+  }
+
   deleteItemById(itemId: number) {
     return this.http.delete(`${this.apiEndpoint}/item/id/${itemId}/`)
   }

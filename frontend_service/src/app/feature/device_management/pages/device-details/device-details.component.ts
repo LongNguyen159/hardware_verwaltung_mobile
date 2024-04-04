@@ -5,6 +5,8 @@ import { downloadQRCode, generateQRCodeFromJSON } from '../../utils/utils';
 import { DeviceService } from '../../service/device.service';
 import { saveAs } from 'file-saver';
 import { Subject, take, takeUntil } from 'rxjs';
+import { SharedService } from 'src/app/shared/service/shared.service';
+import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-device-details',
   templateUrl: './device-details.component.html',
@@ -18,19 +20,22 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
   deviceId: number
   qrCodeDataUrl: string
   deviceDetails: DeviceMetaData
+
+  editedNotes: string = ''
   
   destroyed$ = new Subject<void>()
 
-  constructor(private route: ActivatedRoute, private deviceService: DeviceService) {}
+  constructor(private route: ActivatedRoute, private deviceService: DeviceService, private sharedService: SharedService) {}
   ngOnInit(): void {
     /** Retrieve Device ID from URL */
     const id = this.route.snapshot.paramMap.get('id')
     if (id) {
       this.deviceId = parseInt(id)
+      this.retrieveNotes()
+
 
       this.deviceService.getItemById(this.deviceId).pipe(takeUntil(this.destroyed$)).subscribe((device: DeviceMetaData) => {
         this.deviceDetails = device
-
         /** GET Device details by id here; then pass data in to generate qr of that device */
         const QrData: deviceQrData = {
           id: this.deviceId,
@@ -42,6 +47,23 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
         })
       })
     }
+  }
+
+  retrieveNotes() {
+    this.deviceService.getItemById(this.deviceId).pipe(take(1)).subscribe(device => {
+      device.annotation ? this.editedNotes = device.annotation : ''
+    })
+  }
+
+  saveNotes() {
+    this.deviceService.updateItemNotes(this.deviceId, this.editedNotes).pipe(take(1)).subscribe({
+      next: (res) => {
+        this.sharedService.openSnackbar('Notes updated successfully!')
+      },
+      error: (err: HttpErrorResponse) => {
+        this.sharedService.openSnackbar(`Error updating notes: ${err.error.details}`)
+      }
+    })
   }
 
   onDownloadClick() {
