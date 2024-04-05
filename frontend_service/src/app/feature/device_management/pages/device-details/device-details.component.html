@@ -24,7 +24,13 @@
                     <p><strong>Notes:</strong></p>
                     <div style="display:flex; align-items: center; flex-direction: row; gap: 10px;">
                         <textarea matInput style="width: 300px;" [(ngModel)]="editedNotes" rows="5">{{ deviceDetails.annotation }}</textarea>
-                        <button mat-stroked-button (click)="saveNotes()">Save</button>
+                        <button mat-flat-button (click)="saveNotes()" color="primary">Save</button>
+                        <button mat-stroked-button (click)="onNotesReset()">
+                            <mat-icon>
+                                restore
+                            </mat-icon>
+                            Reset
+                        </button>
                     </div>
                 </div>
 

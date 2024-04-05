@@ -51,8 +51,13 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
 
   retrieveNotes() {
     this.deviceService.getItemById(this.deviceId).pipe(take(1)).subscribe(device => {
-      device.annotation ? this.editedNotes = device.annotation : ''
+      device.annotation ? this.editedNotes = device.annotation : this.editedNotes = ''
     })
+  }
+
+  onNotesReset() {
+    this.retrieveNotes()
+    this.sharedService.openSnackbar('Notes reset successfully!')
   }
 
   saveNotes() {
