@@ -21,6 +21,7 @@ export class RoomDetailsPageComponent extends BasePageComponent implements OnIni
   qrCodeDataUrl: string
 
   allItemsOfRoom: DeviceMetaData[] = []
+  allItemsNotBorrowed: DeviceMetaData[] = []
   dataSource: MatTableDataSource<DeviceMetaData>
 
   roomName: string = ''
@@ -43,8 +44,9 @@ export class RoomDetailsPageComponent extends BasePageComponent implements OnIni
   getAllItems() {
     this.deviceService.getAllItems().pipe(takeUntil(this.componentDestroyed$)).subscribe(allItems => {
       this.allItemsOfRoom = allItems.filter(item => item.location === this.roomDetails.room_number)
+      this.allItemsNotBorrowed = this.allItemsOfRoom.filter(item => !item.borrowed_by_user_id)
+
       this.dataSource = new MatTableDataSource(this.allItemsOfRoom)
-      this.dataSource.paginator = this.paginator
     })
   }
 

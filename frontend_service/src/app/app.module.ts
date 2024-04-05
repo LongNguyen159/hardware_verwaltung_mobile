@@ -33,6 +33,7 @@ import { TitleBarComponent } from './shared/components/title-bar/title-bar.compo
 import { RoomDetailsPageComponent } from './feature/room_management/pages/room-details/room-details.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { NewRoomDialogComponent } from './feature/room_management/components/new-room-dialog/new-room-dialog.component';
+import { OverviewTableComponent } from './shared/components/overview-table/overview-table.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -43,7 +44,8 @@ import { NewRoomDialogComponent } from './feature/room_management/components/new
     RoomPageComponent,
     TitleBarComponent,
     RoomDetailsPageComponent,
-    NewRoomDialogComponent
+    NewRoomDialogComponent,
+    OverviewTableComponent
   ],
   imports: [
     MatSnackBarModule,
