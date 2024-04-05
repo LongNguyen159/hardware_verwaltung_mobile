@@ -39,7 +39,8 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
         /** GET Device details by id here; then pass data in to generate qr of that device */
         const QrData: deviceQrData = {
           id: this.deviceId,
-          deviceName: this.deviceDetails.item_name /** devive name acquired from api */
+          deviceType: this.deviceDetails.item_name, /** devive name acquired from api */
+          deviceVariant: this.deviceDetails.description
         }
 
         generateQRCodeFromJSON(QrData).then(data => {

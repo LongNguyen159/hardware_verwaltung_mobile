@@ -240,8 +240,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
  * - [X] Bug: Starred items data source needs polling also
  * - [X] Feature: Showing snackbar message at the bottom when creating new device done.
  * - [X] Feature: Create new room
- * - [ ] Feature: Be able to modify item description after creating new device
- * - [ ] Feature: Be able to modify item annotation after creating new device
- * - [ ] Feature: Be able to modify Room name
+ * - [X] Feature: Be able to modify item annotation after creating new device 
  * - [X] Feature: Table actions: Delete rows
+ * - [ ] Refactor: Sync with Jan: QR code now requires device description (attribute name: deviceVariant)
  */

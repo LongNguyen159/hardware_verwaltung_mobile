@@ -2,7 +2,7 @@
 export interface DeviceMetaData {
   id: number
   item_name: string
-  description?: string
+  description: string
   annotation?: string
   location: string
   borrowed_by_user_id?: number
@@ -13,7 +13,8 @@ export interface DeviceMetaData {
 
 export interface deviceQrData {
   id: number
-  deviceName: string
+  deviceType: string
+  deviceVariant: string
 }
 export interface DownloadFileName {
   id: number | string
