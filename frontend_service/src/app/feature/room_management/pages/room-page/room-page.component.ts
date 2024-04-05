@@ -11,6 +11,7 @@ import { BasePageComponent } from 'src/app/shared/components/base-page/base-page
 import { NewRoomDialogComponent } from '../../components/new-room-dialog/new-room-dialog.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SharedService } from 'src/app/shared/service/shared.service';
+import { AlertDialogComponent, DialogData } from 'src/app/shared/components/alert-dialog/alert-dialog.component';
 
 @Component({
   selector: 'app-room-page',
@@ -92,16 +93,37 @@ export class RoomPageComponent extends BasePageComponent implements OnInit {
   /** NOTE: This would remove all items associated with that room
    * TODO: Fix: Only delete the room, not all items associated with it.
    */
-  onDeleteRoom(roomId: number) {
-    this.deviceService.deleteRoom(roomId).pipe(take(1)).subscribe({
-      next: (res) => {
-        this.updateTableDataSrc()
-        this.sharedService.openSnackbar('Room has been successfully removed!')
-      },
-      error: (err: HttpErrorResponse) => {
-        this.updateTableDataSrc()
-        this.sharedService.openSnackbar(`Error deleting room: ${err.error.details}`)
+  onDeleteRoom(event: Event, roomId: number) {
+    event.stopPropagation()
+    const dialogData: DialogData = {
+      title: 'Are you sure you want to delete this room?',
+      message: `Room ID ${roomId} will be permanently removed. QR code and all associated data will no longer be valid. This action cannot be undone.`,
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      confirmButtonColor: 'warn'
+    }
+
+    const dialogRef = this.dialog.open(AlertDialogComponent, {
+      width: '40vw',
+      data: dialogData
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deviceService.deleteRoom(roomId).pipe(take(1)).subscribe({
+          next: (res) => {
+            this.updateTableDataSrc()
+            this.sharedService.openSnackbar('Room has been successfully removed!')
+          },
+          error: (err: HttpErrorResponse) => {
+            this.updateTableDataSrc()
+            this.sharedService.openSnackbar(`Error deleting room: ${err.error.details}`)
+          }
+        })
+      } else {
+        return
       }
     })
+
+    
   }
 }

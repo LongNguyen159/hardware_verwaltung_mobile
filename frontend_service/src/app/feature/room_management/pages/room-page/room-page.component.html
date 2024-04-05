@@ -32,8 +32,8 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let row">
-        <button mat-icon-button color="warn" (click)="$event.stopPropagation(); onDeleteRoom(row.id)">
-          <mat-icon>delete</mat-icon>
+        <button mat-icon-button color="warn" (click)="onDeleteRoom($event, row.id)">
+          <mat-icon>delete_outline</mat-icon>
         </button>
       </td>
     </ng-container>
