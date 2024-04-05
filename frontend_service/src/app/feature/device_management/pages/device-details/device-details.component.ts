@@ -56,11 +56,20 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
 
   onFileSelected(event: Event) {
     const inputElement = event.target as HTMLInputElement
+
+    /** User confirms file select */
     if (inputElement.files && inputElement.files.length > 0) {
       this.selectedFile = inputElement.files[0]
       console.log('selected:', this.selectedFile.name)
       this.displaySelectedImage()
       this.onSubmit()
+
+      /** Later logic:
+       * Call onSubmit() => Send post/patch request to backend to save image to database.
+       * After onSubmit(): inside onSubmit(), call displaySelectedImage().
+       * 
+       * displaySelectedImage(): send GET request to retrieve photo url.
+       */
     } else {
       console.error('No file selected.')
     }
