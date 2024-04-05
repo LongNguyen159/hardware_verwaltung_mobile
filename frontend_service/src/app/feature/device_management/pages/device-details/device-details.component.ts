@@ -60,6 +60,7 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
       this.selectedFile = inputElement.files[0]
       console.log('selected:', this.selectedFile.name)
       this.displaySelectedImage()
+      this.onSubmit()
     } else {
       console.error('No file selected.')
     }
@@ -78,6 +79,10 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
       };
     };
     reader.readAsDataURL(this.selectedFile)
+  }
+
+  clearPhoto() {
+    this.imageToShow = null
   }
 
   /** Later implement POST data to server/database */
