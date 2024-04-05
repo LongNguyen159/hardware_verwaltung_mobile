@@ -17,7 +17,7 @@ export class RoomDetailsPageComponent extends BasePageComponent implements OnIni
   @ViewChild('paginator') paginator: MatPaginator
   roomId: number
   roomDetails: RoomInterface
-  displayedColumns: string[] = ['id', 'item_name', 'description', 'borrowed_by_user'];
+  displayedColumns: string[] = ['id', 'item_name', 'description', 'borrowed_by_user']
   qrCodeDataUrl: string
 
   allItemsOfRoom: DeviceMetaData[] = []

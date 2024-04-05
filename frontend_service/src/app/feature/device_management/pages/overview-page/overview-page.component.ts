@@ -32,14 +32,11 @@ import { SharedService } from 'src/app/shared/service/shared.service';
  */
 export class OverviewPageComponent extends BasePageComponent implements OnInit {
   @ViewChild('paginator1') paginator1: MatPaginator
-
-  @ViewChild('paginator2') paginator2: MatPaginator
   @ViewChild(MatSort) sort: MatSort
 
   dialogRef: MatDialogRef<NewDeviceDialogComponent>
 
   displayedColumns: string[] = ['id', 'deviceName', 'description', 'location', 'inLage', 'actions']
-  starredTableColumns: string[] = ['id', 'deviceName', 'location', 'inLage']
   tableDataSource: MatTableDataSource<DeviceMetaData>
 
   selectedRowsId: number[] = []
@@ -65,7 +62,6 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
 
       this.tableDataSource.sort = this.sort;
       this.tableDataSource.paginator = this.paginator1
-      this.selectedRowDataSource.paginator = this.paginator2
 
       /** Update data source on polling */
       this.updateDataSource()
@@ -124,8 +120,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
   }
 
   private updateStarredDeviceTable() {
-    this.selectedRowDataSource.data = this.selectedRow
-    this.selectedRowDataSource.paginator = this.paginator2
+    this.selectedRowDataSource.data = [...this.selectedRow]
   }
 
 
