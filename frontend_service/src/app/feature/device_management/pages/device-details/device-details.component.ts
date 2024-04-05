@@ -90,6 +90,7 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
     reader.readAsDataURL(this.selectedFile)
   }
 
+  /** Send request to Backend to delete the image from database */
   clearPhoto() {
     this.imageToShow = null
   }

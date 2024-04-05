@@ -56,7 +56,7 @@
             <mat-card-content style="display: flex; justify-content: center; flex-direction: column; width: 100%; align-items: center; gap: 16px;">
                 <form (ngSubmit)="onSubmit()" enctype="multipart/form-data" style="display: flex; flex-direction: row; gap: 16px;">
                     <input type="file" (change)="onFileSelected($event)" accept="image/*" id="fileInput" style="display: none;" />
-                    <label for="fileInput" class="custom-file-input">Choose File</label>
+                    <label for="fileInput" *ngIf="!imageToShow" class="custom-file-input">Choose File</label>
 
                     <button mat-stroked-button color="warn" *ngIf="imageToShow" (click)="clearPhoto()">
                         Clear photo
