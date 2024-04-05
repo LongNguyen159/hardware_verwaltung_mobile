@@ -12,6 +12,7 @@ import { BasePageComponent } from 'src/app/shared/components/base-page/base-page
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SharedService } from 'src/app/shared/service/shared.service';
+import { AlertDialogComponent, DialogData } from 'src/app/shared/components/alert-dialog/alert-dialog.component';
 @Component({
   selector: 'app-overview-page',
   templateUrl: './overview-page.component.html',
@@ -178,20 +179,40 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
     this.dialogRef = null as any
   }
 
-  onRemoveDevice(deviceId: number) {
-    this.deviceService.deleteItemById(deviceId).pipe(take(1)).subscribe({
-      next: (res) => {
-        this.updateDataSource()
-        this.selectedRow = this.selectedRow.filter(item => item.id !== deviceId)
-        this.selectedRowsId = this.selectedRow.map(item => item.id)
-        this.saveDataToLocalStorage()
-        this.updateStarredDeviceTable()
-        this.sharedService.openSnackbar('Device has been successfully removed!')
-      },
-      error: (err: HttpErrorResponse) => {
-        this.updateDataSource()
-        this.updateStarredDeviceTable()
-        this.sharedService.openSnackbar(`Error deleting device: ${err.error.details}`)
+  onRemoveDevice(event: Event, deviceId: number) {
+    event.stopPropagation()
+    const dialogData: DialogData = {
+      title: 'Are you sure you want to delete this device?',
+      message: `Device ID ${deviceId} will be permanently removed. QR code and all associated data will no longer be valid. This action cannot be undone.`,
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      confirmButtonColor: 'warn'
+    }
+
+    const dialogRef = this.dialog.open(AlertDialogComponent, {
+      width: '40vw',
+      data: dialogData
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deviceService.deleteItemById(deviceId).pipe(take(1)).subscribe({
+          next: (res) => {
+            this.updateDataSource()
+            this.selectedRow = this.selectedRow.filter(item => item.id !== deviceId)
+            this.selectedRowsId = this.selectedRow.map(item => item.id)
+            this.saveDataToLocalStorage()
+            this.updateStarredDeviceTable()
+            this.sharedService.openSnackbar('Device has been successfully removed!')
+          },
+          error: (err: HttpErrorResponse) => {
+            this.updateDataSource()
+            this.updateStarredDeviceTable()
+            this.sharedService.openSnackbar(`Error deleting device: ${err.error.details}`)
+          }
+        })
+      } else {
+        return
       }
     })
   }

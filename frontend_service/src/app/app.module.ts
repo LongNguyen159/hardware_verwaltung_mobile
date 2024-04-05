@@ -34,6 +34,7 @@ import { RoomDetailsPageComponent } from './feature/room_management/pages/room-d
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { NewRoomDialogComponent } from './feature/room_management/components/new-room-dialog/new-room-dialog.component';
 import { OverviewTableComponent } from './shared/components/overview-table/overview-table.component';
+import { AlertDialogComponent } from './shared/components/alert-dialog/alert-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,7 +46,8 @@ import { OverviewTableComponent } from './shared/components/overview-table/overv
     TitleBarComponent,
     RoomDetailsPageComponent,
     NewRoomDialogComponent,
-    OverviewTableComponent
+    OverviewTableComponent,
+    AlertDialogComponent
   ],
   imports: [
     MatSnackBarModule,

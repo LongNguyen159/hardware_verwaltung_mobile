@@ -68,7 +68,7 @@
               <mat-icon *ngIf="isRowSelected(element.id)" [style.color]="'rgb(253, 212, 115)'">star</mat-icon>
             </button>
   
-            <button mat-icon-button color="warn" (click)="$event.stopPropagation(); onRemoveDevice(element.id)">
+            <button mat-icon-button color="warn" (click)="onRemoveDevice($event, element.id)">
               <mat-icon>delete</mat-icon>
             </button>
           </div>
