@@ -9,12 +9,25 @@
 .pageContent {
     display: flex;
     flex-direction: column;
+    gap: 10px;
 }
-.metadata, .qr-code {
+.metadata, .qr-code .photos-upload {
     padding: 16px;
 }
 
 .qr-code {
     display: flex;
     justify-content: center;
+}
+
+.portrait {
+    width: 390px;
+    height: 520px;
+    object-fit: cover;
+}
+
+.notPortrait {
+    width: 520px;
+    height: 390px;
+    object-fit: cover;
 }

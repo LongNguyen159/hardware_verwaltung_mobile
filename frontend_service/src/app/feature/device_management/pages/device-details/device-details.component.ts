@@ -25,6 +25,10 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
   
   destroyed$ = new Subject<void>()
 
+  selectedFile: File
+  imageToShow: any
+  isPortrait: boolean = false
+
   constructor(private route: ActivatedRoute, private deviceService: DeviceService, private sharedService: SharedService) {}
   ngOnInit(): void {
     /** Retrieve Device ID from URL */
@@ -48,6 +52,38 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
         })
       })
     }
+  }
+
+  onFileSelected(event: Event) {
+    const inputElement = event.target as HTMLInputElement
+    if (inputElement.files && inputElement.files.length > 0) {
+      this.selectedFile = inputElement.files[0]
+      console.log('selected:', this.selectedFile.name)
+      this.displaySelectedImage()
+    } else {
+      console.error('No file selected.')
+    }
+  }
+
+  /** GET data from server */
+  displaySelectedImage() {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      this.imageToShow = event.target?.result;
+      // Check if the image is in portrait orientation
+      const img = new Image();
+      img.src = this.imageToShow;
+      img.onload = () => {
+        this.isPortrait = img.height > img.width
+      };
+    };
+    reader.readAsDataURL(this.selectedFile)
+  }
+
+  /** Later implement POST data to server/database */
+  onSubmit() {
+    const formData = new FormData()
+    formData.append('image', this.selectedFile, this.selectedFile.name)
   }
 
   retrieveNotes() {
