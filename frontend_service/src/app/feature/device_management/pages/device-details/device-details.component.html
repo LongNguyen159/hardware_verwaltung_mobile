@@ -52,16 +52,19 @@
                     Photo
                 </mat-card-title>
             </mat-card-header>
-            <mat-card-content style="display: flex; justify-content: center; flex-direction: column; width: 100%; align-items: center; gap: 16px;">
-                <form enctype="multipart/form-data" style="display: flex; flex-direction: row; gap: 16px;">
-                    <input type="file" (change)="onFileSelected($event)" accept="image/*" id="fileInput" style="display: none;" />
-                    <label for="fileInput" *ngIf="!imageToShow" class="custom-file-input">Choose File</label>
-                </form>
-                <button mat-stroked-button color="warn" *ngIf="imageToShow" (click)="clearImage()">
-                    Clear photo
-                </button>
-
-                <img *ngIf="imageToShow" [ngClass]="{'portrait': isPortrait, 'notPortrait': !isPortrait}" [src]="imageToShow" alt="Selected Photo" />
+            <mat-card-content>
+                <p><strong>Last modified:</strong> {{ unixTimestampMiliseconds | date: "LLL dd, yyyy 'at' HH:mm" }} ({{ timezoneName }}) </p>
+                <div style="display: flex; justify-content: center; flex-direction: column; width: 100%; align-items: center; gap: 16px;">
+                    <form enctype="multipart/form-data" style="display: flex; flex-direction: row; gap: 16px;">
+                        <input type="file" (change)="onFileSelected($event)" accept="image/*" id="fileInput" style="display: none;" />
+                        <label for="fileInput" *ngIf="!imageToShow" class="custom-file-input">Choose File</label>
+                    </form>
+                    <button mat-stroked-button color="warn" *ngIf="imageToShow" (click)="clearImage()">
+                        Clear photo
+                    </button>
+    
+                    <img *ngIf="imageToShow" [ngClass]="{'portrait': isPortrait, 'notPortrait': !isPortrait}" [src]="imageToShow" alt="Selected Photo" />
+                </div>
             </mat-card-content>
             <mat-card-actions style="justify-content: center;">
             </mat-card-actions>

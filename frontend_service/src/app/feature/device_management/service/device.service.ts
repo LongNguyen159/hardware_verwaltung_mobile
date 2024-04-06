@@ -78,7 +78,7 @@ export class DeviceService {
 
   /** Get image (blob) of one device */
   getImageOfDevice(deviceId: number): Observable<Blob | null> {
-    return this.getUploadedImageOfDevice(deviceId).pipe(
+    return this.getImageInfos(deviceId).pipe(
       switchMap(response => {
         if (response.length !== 0) {
 
@@ -90,7 +90,7 @@ export class DeviceService {
     )
   }
   /** Get all images URL associated with one device ID */
-  private getUploadedImageOfDevice(deviceId: number): Observable<ImageResponse[]> {
+  getImageInfos(deviceId: number): Observable<ImageResponse[]> {
     return this.http.get<ImageResponse[]>(`${this.apiEndpoint}/items/${deviceId}/image/`)
   }
 

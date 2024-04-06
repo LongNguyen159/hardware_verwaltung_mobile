@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DeviceMetaData, DownloadFileName, deviceQrData } from '../../models/device-models';
+import { DeviceMetaData, DownloadFileName, ImageResponse, deviceQrData } from '../../models/device-models';
 import { downloadQRCode, generateQRCodeFromJSON } from '../../utils/utils';
 import { DeviceService } from '../../service/device.service';
 import { saveAs } from 'file-saver';
@@ -25,8 +25,12 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
 
   editedNotes: string = ''
   selectedFile: File
-  imageToShow: any
+  imageToShow: string
   isPortrait: boolean = false
+  unixTimestampMiliseconds: number
+
+  lastModifiedDate: Date
+  timezoneName: string
 
   constructor(private route: ActivatedRoute, private deviceService: DeviceService, private sharedService: SharedService) {
     super()
@@ -85,6 +89,10 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
           this._readBlobDataFromImage(imageBlob)
         })
 
+        this.unixTimestampMiliseconds = res.id
+
+        this.lastModifiedDate = new Date(this.unixTimestampMiliseconds)
+
         this.sharedService.openSnackbar('Image uploaded successfully!')
       },
       error: (err: HttpErrorResponse) => {
@@ -97,11 +105,24 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
   getSavedImage() {
     this.deviceService.getImageOfDevice(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe(blobData => {
       if (blobData) {
+        this.getSavedImageMetaData()
         this._readBlobDataFromImage(blobData)
       } else {
         /** Display nothing when there are no images found */
-        this.imageToShow = null
+        this.imageToShow = ''
       }
+    })
+  }
+
+  getSavedImageMetaData() {
+    this.deviceService.getImageInfos(this.deviceId).pipe(take(1)).subscribe((imageData: ImageResponse[]) => {
+      this.unixTimestampMiliseconds = imageData[0].id
+      this.lastModifiedDate = new Date(this.unixTimestampMiliseconds)
+      const timezoneLong = new Intl.DateTimeFormat('en-US', { timeZoneName: 'long' }).format(this.lastModifiedDate)
+      const firstSpaceIndex = timezoneLong.indexOf(' ')
+
+      /** Splice the long time zone to just get the latter part 'Center EU Time' */
+      this.timezoneName = timezoneLong.substring(firstSpaceIndex)
     })
   }
 
@@ -121,7 +142,7 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
   clearImage() {
     this.deviceService.clearImage(this.deviceId).pipe(take(1)).subscribe({
       next: (res) => {
-        this.imageToShow = null
+        this.imageToShow = ''
         this.sharedService.openSnackbar('Image cleared!')
       },
       error: (err: HttpErrorResponse) => {
