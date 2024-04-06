@@ -9,6 +9,10 @@ import { DeviceService } from '../../service/device.service';
 import { Router } from '@angular/router';
 import { Subject, take, takeUntil } from 'rxjs';
 import { BasePageComponent } from 'src/app/shared/components/base-page/base-page.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpErrorResponse } from '@angular/common/http';
+import { SharedService } from 'src/app/shared/service/shared.service';
+import { AlertDialogComponent, DialogData } from 'src/app/shared/components/alert-dialog/alert-dialog.component';
 @Component({
   selector: 'app-overview-page',
   templateUrl: './overview-page.component.html',
@@ -29,14 +33,11 @@ import { BasePageComponent } from 'src/app/shared/components/base-page/base-page
  */
 export class OverviewPageComponent extends BasePageComponent implements OnInit {
   @ViewChild('paginator1') paginator1: MatPaginator
-
-  @ViewChild('paginator2') paginator2: MatPaginator
   @ViewChild(MatSort) sort: MatSort
 
   dialogRef: MatDialogRef<NewDeviceDialogComponent>
 
-  displayedColumns: string[] = ['id', 'deviceName', 'location', 'inLage', 'actions']
-  starredTableColumns: string[] = ['id', 'deviceName', 'location', 'inLage']
+  displayedColumns: string[] = ['id', 'deviceName', 'description', 'location', 'inLage', 'actions']
   tableDataSource: MatTableDataSource<DeviceMetaData>
 
   selectedRowsId: number[] = []
@@ -49,7 +50,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
 
   qrCodeDataUrl: string;
 
-  constructor(public dialog: MatDialog, private deviceService: DeviceService, private router: Router) {
+  constructor(public dialog: MatDialog, private deviceService: DeviceService, private router: Router, private snackbar: MatSnackBar, private sharedService: SharedService) {
     super()
   }
 
@@ -62,7 +63,6 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
 
       this.tableDataSource.sort = this.sort;
       this.tableDataSource.paginator = this.paginator1
-      this.selectedRowDataSource.paginator = this.paginator2
 
       /** Update data source on polling */
       this.updateDataSource()
@@ -121,8 +121,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
   }
 
   private updateStarredDeviceTable() {
-    this.selectedRowDataSource.data = this.selectedRow
-    this.selectedRowDataSource.paginator = this.paginator2
+    this.selectedRowDataSource.data = [...this.selectedRow]
   }
 
 
@@ -139,10 +138,10 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
     this.deviceService.getAllItems().pipe(take(1)).subscribe(allItems => {
       this.tableDataSource.data = allItems
 
+      /** Update starred table data source after updating main data source */
       for (let i = 0; i< this.selectedRow.length; i++) {
         const rowToUpdate = allItems.find(item => item.id == this.selectedRow[i].id)
         if (rowToUpdate) {
-          console.log('updated row:', rowToUpdate)
           this.selectedRow[i] = rowToUpdate
         }
       }
@@ -159,12 +158,20 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
 
     this.dialogRef.afterClosed().subscribe((results: NewDeviceData[]) => {
       if (results) {
-        console.log(results)
         /** Send post request to create new device here. */
-        this.deviceService.createNewDevice(results).pipe(take(1)).subscribe((newDevice) => {
-          console.log('new device posted response', newDevice)
-          this.updateDataSource()
-          /** Display bread crumps message at the bottom showing it's succeeded or not */
+        this.deviceService.createNewDevice(results).pipe(take(1)).subscribe({
+          next: (newDevice) => {
+            this.snackbar.open('New device added successfully!', 'Dismiss', {
+              duration: 3000
+            })
+            this.updateDataSource()
+          },
+          error: (error: HttpErrorResponse) => {
+            console.error(error)
+            this.snackbar.open('Error adding new device, please try again', 'Dismiss', {
+              duration: 3000
+            })
+          },
         })
         
       }
@@ -172,9 +179,46 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
     this.dialogRef = null as any
   }
 
+  onRemoveDevice(event: Event, deviceId: number) {
+    event.stopPropagation()
+    const dialogData: DialogData = {
+      title: 'Are you sure you want to delete this device?',
+      message: `Device ID ${deviceId} will be permanently removed. QR code and all associated data will no longer be valid. This action cannot be undone.`,
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      confirmButtonColor: 'warn'
+    }
+
+    const dialogRef = this.dialog.open(AlertDialogComponent, {
+      width: '40vw',
+      data: dialogData
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deviceService.deleteItemById(deviceId).pipe(take(1)).subscribe({
+          next: (res) => {
+            this.updateDataSource()
+            this.selectedRow = this.selectedRow.filter(item => item.id !== deviceId)
+            this.selectedRowsId = this.selectedRow.map(item => item.id)
+            this.saveDataToLocalStorage()
+            this.updateStarredDeviceTable()
+            this.sharedService.openSnackbar('Device has been successfully removed!')
+          },
+          error: (err: HttpErrorResponse) => {
+            this.updateDataSource()
+            this.updateStarredDeviceTable()
+            this.sharedService.openSnackbar(`Error deleting device: ${err.error.details}`)
+          }
+        })
+      } else {
+        return
+      }
+    })
+  }
 
   navigateToDetailsPage(id: number) {
-    this.router.navigate(['/device-details', id])
+    this.router.navigate(['/device', id])
   }
 }
 
@@ -193,9 +237,10 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
  * 
  * - [X] Fix: Flatten return results for simpler sorting and filtering methods in FE
  * - [X] Bug: CORS Header dependency is not being recognised
- * - [ ] Bug: Starred items data source needs polling also
- * - [ ] Feature: Showing bread crump message at the bottom when creating new device done.
- * - [ ] Feature: Modify item description after creating new device
- * - [ ] Feature: Table actions: Delete rows
- * - [ ] Feature: API endpoint for removing rows in DB
+ * - [X] Bug: Starred items data source needs polling also
+ * - [X] Feature: Showing snackbar message at the bottom when creating new device done.
+ * - [X] Feature: Create new room
+ * - [X] Feature: Be able to modify item annotation after creating new device 
+ * - [X] Feature: Table actions: Delete rows
+ * - [ ] Refactor: Sync with Jan: QR code now requires device description (attribute name: deviceVariant)
  */

@@ -13,13 +13,13 @@
             <input
               matInput
               #productTypeInput
-              placeholder="Ex. Laptop, Tablet, Cable etc." 
+              placeholder="Ex. Laptop, Monitor, Cable etc." 
               formControlName="deviceName" 
               required 
               (input)="onDeviceTypeInputChange(productTypeInput.value)"
               [matAutocomplete]="auto"
             >
-            <mat-autocomplete 
+            <mat-autocomplete
               #auto="matAutocomplete" 
               autoActiveFirstOption
               hideSingleSelectionIndicator
@@ -39,7 +39,7 @@
             <input
               matInput 
               #descriptionInput
-              placeholder="Ex. 3m long, HP 4K, etc."
+              placeholder="Ex. Dell XPS 13, HP 4K, Cable 1m, etc."
               formControlName="deviceDescription"
               [matAutocomplete]="autoDescription" 
               (input)="onDescriptionInputChange(descriptionInput.value)"
@@ -87,7 +87,7 @@
 
         <mat-form-field>
           <mat-label>Annotation</mat-label>
-          <input matInput placeholder="Ex. New, used, not compatible with monitor etc." formControlName="deviceAnnotation">
+          <input matInput placeholder="Ex. New, HDMI port, not compatible with MacOS, etc." formControlName="deviceAnnotation">
         </mat-form-field>
       </div>
       

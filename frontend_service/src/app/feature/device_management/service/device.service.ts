@@ -1,29 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import * as qr from 'qrcode'
-import { DeviceMetaData, NewDeviceData, ProductType, RoomInterface } from '../models/device-models';
-import { Observable, map, timer} from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { DeviceMetaData, ImageResponse, NewDeviceData, ProductType, RoomInterface } from '../models/device-models';
+import { Observable, map, of, timer} from 'rxjs';
 import { switchMap } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 export class DeviceService {
 
-  apiEndpoint: string = 'http://localhost:8000/api/v1'
+  apiBaseHostUrl: string = 'http://localhost:8000'
+  apiEndpoint: string = `${this.apiBaseHostUrl}/api/v1`
+  imageId: number
+  unixTimeValue: number
 
   constructor(private http: HttpClient) { }
-
-  generateQRCode(data: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      qr.toDataURL(data, (err, url) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(url);
-        }
-      });
-    });
-  }
 
   createNewDevice(newDeviceData: NewDeviceData[]) {
     return this.http.post(`${this.apiEndpoint}/items-new/`, newDeviceData)
@@ -45,11 +35,70 @@ export class DeviceService {
     )
   }
 
+  updateItemNotes(itemId: number, notes: string) {
+    const patchData = {
+      annotation: notes
+    }
+    return this.http.patch(`${this.apiEndpoint}/item/id/${itemId}/`, patchData)
+  }
+
+  deleteItemById(itemId: number) {
+    return this.http.delete(`${this.apiEndpoint}/item/id/${itemId}/`)
+  }
+
   getAllProductTypes() {
     return this.http.get<ProductType[]>(`${this.apiEndpoint}/product-type/`)
   }
 
   getAllRooms() {
-    return this.http.get<RoomInterface[]>(`${this.apiEndpoint}/room/`)
+    return timer(1, 10000).pipe(
+      switchMap(() => this.http.get<RoomInterface[]>(`${this.apiEndpoint}/room/`))
+    )
+  }
+
+  getOneRoom(roomId: number) {
+    return this.http.get<RoomInterface>(`${this.apiEndpoint}/room/id/${roomId}/`)
+  }
+
+  createNewRoom(roomNumber: string) {
+    /** POST JSON to create new room */
+    const postData = {
+      room_number: roomNumber
+    }
+    return this.http.post(`${this.apiEndpoint}/room/`, postData)
+  }
+
+  deleteRoom(roomId: number) {
+    return this.http.delete(`${this.apiEndpoint}/room/id/${roomId}/`)
+  }
+
+  uploadDeviceImageToServer(formData: FormData, deviceId: number) {
+    return this.http.post(`${this.apiEndpoint}/items/${deviceId}/image/`, formData)
+  }
+
+  /** Get image (blob) of one device */
+  getImageOfDevice(deviceId: number): Observable<Blob | null> {
+    return this.getUploadedImageOfDevice(deviceId).pipe(
+      switchMap(response => {
+        if (response.length !== 0) {
+
+          return this.getImageBlob(response[0].image)
+        } else {
+          return of(null)
+        }
+      })
+    )
+  }
+  /** Get all images URL associated with one device ID */
+  private getUploadedImageOfDevice(deviceId: number): Observable<ImageResponse[]> {
+    return this.http.get<ImageResponse[]>(`${this.apiEndpoint}/items/${deviceId}/image/`)
+  }
+
+  getImageBlob(imageUrl: string): Observable<Blob> {
+    return this.http.get(`${this.apiBaseHostUrl}${imageUrl}`, { responseType: 'blob' })
+  }
+
+  clearImage(deviceId: number) {
+    return this.http.delete(`${this.apiEndpoint}/items/${deviceId}/image/`)
   }
 }

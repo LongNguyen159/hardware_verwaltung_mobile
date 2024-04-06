@@ -2,7 +2,7 @@
 export interface DeviceMetaData {
   id: number
   item_name: string
-  description?: string
+  description: string
   annotation?: string
   location: string
   borrowed_by_user_id?: number
@@ -11,11 +11,15 @@ export interface DeviceMetaData {
   user_email?: string
 }
 
-export interface QrData {
+export interface deviceQrData {
   id: number
-  deviceName: string
+  deviceType: string
+  deviceVariant: string
 }
-
+export interface DownloadFileName {
+  id: number | string
+  name: string
+}
 export interface NewDeviceData {
   product_type: ProductType
   current_room: RoomInterface
@@ -31,4 +35,11 @@ export interface ProductType {
 export interface RoomInterface {
   id: number | null
   room_number: string
+}
+
+export interface ImageResponse {
+  id: number
+  file_name: string
+  device_id: number
+  image: string
 }

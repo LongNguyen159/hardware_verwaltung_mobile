@@ -5,7 +5,7 @@ table {
     padding-right: 20px;
 }
 .searchField {
-    width: 40%;
+    width: 30%;
 }
 .table-row {
     cursor: pointer;
@@ -21,4 +21,8 @@ table {
     border: solid 1px #b4b4b4;
     box-shadow: none;
     padding: 16px;
+}
+
+.mat-mdc-row:hover {
+    background-color: rgb(245, 245, 245) !important;
 }

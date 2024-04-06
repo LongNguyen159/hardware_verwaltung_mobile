@@ -68,7 +68,6 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
     })
   }
 
-  /** TODO: Auto complete for Rooms */
   ngOnInit(): void {
     /** Acquire all product types from API for auto complete suggestions */
     this.deviceService.getAllProductTypes().pipe(take(1)).subscribe((allItems: ProductType[]) => {
@@ -127,7 +126,6 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
       deviceName: this.selectedProductType?.name ?? '',
       deviceDescription: this.selectedProductType?.description ?? '',
     })
-    console.log('selected from auto complete:', this.selectedProductType)
   }
 
   onAutoRoomSelected(selection: MatAutocompleteSelectedEvent) {
@@ -135,7 +133,6 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
     this.firstFormGroup.patchValue({
       deviceLocation: this.selectedRoom?.room_number
     })
-    console.log('selected room', this.selectedRoom)
   }
 
   /** Called as user types. Auto assign the user input if it matches exactly the item
@@ -150,7 +147,6 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
         deviceName: this.selectedProductType?.name ?? '',
         deviceDescription: this.selectedProductType?.description ?? '',
       })
-      console.log('auto assigned by matching input:', this.selectedProductType)
     }
     /** Set selected Product to null to prevent auto assigning falsely.
      * If the item type/name/description is not exactly the same, that means the item is unique.
@@ -184,8 +180,6 @@ export class NewDeviceDialogComponent implements OnInit, OnDestroy {
       this.firstFormGroup.patchValue({
         deviceLocation: this.selectedRoom?.room_number
       })
-
-      console.log('auto assigned room by matching input:', this.selectedRoom)
     }
   }
 

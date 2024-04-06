@@ -28,15 +28,29 @@ import { BasePageComponent } from './shared/components/base-page/base-page.compo
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import { RoomPageComponent } from './feature/room_management/pages/room-page/room-page.component';
+import { TitleBarComponent } from './shared/components/title-bar/title-bar.component';
+import { RoomDetailsPageComponent } from './feature/room_management/pages/room-details/room-details.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { NewRoomDialogComponent } from './feature/room_management/components/new-room-dialog/new-room-dialog.component';
+import { OverviewTableComponent } from './shared/components/overview-table/overview-table.component';
+import { AlertDialogComponent } from './shared/components/alert-dialog/alert-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
     OverviewPageComponent,
     NewDeviceDialogComponent,
     DeviceDetailsComponent,
-    BasePageComponent
+    BasePageComponent,
+    RoomPageComponent,
+    TitleBarComponent,
+    RoomDetailsPageComponent,
+    NewRoomDialogComponent,
+    OverviewTableComponent,
+    AlertDialogComponent
   ],
   imports: [
+    MatSnackBarModule,
     MatSelectModule,
     MatOptionModule,
     MatAutocompleteModule,

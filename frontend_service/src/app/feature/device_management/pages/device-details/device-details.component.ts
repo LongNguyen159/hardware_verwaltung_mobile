@@ -1,82 +1,163 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DeviceMetaData, QrData } from '../../models/device-models';
-import { generateQRCodeFromJSON } from '../../utils/utils';
+import { DeviceMetaData, DownloadFileName, deviceQrData } from '../../models/device-models';
+import { downloadQRCode, generateQRCodeFromJSON } from '../../utils/utils';
 import { DeviceService } from '../../service/device.service';
 import { saveAs } from 'file-saver';
 import { Subject, take, takeUntil } from 'rxjs';
+import { SharedService } from 'src/app/shared/service/shared.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { BasePageComponent } from 'src/app/shared/components/base-page/base-page.component';
 @Component({
   selector: 'app-device-details',
   templateUrl: './device-details.component.html',
   styleUrls: ['./device-details.component.scss']
 })
-
-export class DeviceDetailsComponent implements OnInit, OnDestroy {
+/**
+ * TODO:
+ * Feat: Allow user to upload photos of device in this page.
+ * Refactor: Use websocket connection to DB instead of polling.
+ */
+export class DeviceDetailsComponent extends BasePageComponent implements OnInit {
   deviceId: number
   qrCodeDataUrl: string
   deviceDetails: DeviceMetaData
-  
-  destroyed$ = new Subject<void>()
 
-  constructor(private route: ActivatedRoute, private deviceService: DeviceService) {}
+  editedNotes: string = ''
+  selectedFile: File
+  imageToShow: any
+  isPortrait: boolean = false
+
+  constructor(private route: ActivatedRoute, private deviceService: DeviceService, private sharedService: SharedService) {
+    super()
+  }
   ngOnInit(): void {
     /** Retrieve Device ID from URL */
     const id = this.route.snapshot.paramMap.get('id')
     if (id) {
       this.deviceId = parseInt(id)
+      /** Get saved notes */
+      this.retrieveNotes()
 
-      this.deviceService.getItemById(this.deviceId).pipe(takeUntil(this.destroyed$)).subscribe((device: DeviceMetaData) => {
+      /** Get saved image */
+      this.getSavedImage()
+
+      /** Get device details */
+      this.deviceService.getItemById(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe((device: DeviceMetaData) => {
         this.deviceDetails = device
-
         /** GET Device details by id here; then pass data in to generate qr of that device */
-        const QrData: QrData = {
+        const QrData: deviceQrData = {
           id: this.deviceId,
-          deviceName: this.deviceDetails.item_name /** devive name acquired from api */
+          deviceType: this.deviceDetails.item_name, /** devive name acquired from api */
+          deviceVariant: this.deviceDetails.description
         }
 
-        generateQRCodeFromJSON(this.deviceService, QrData).then(data => {
+        generateQRCodeFromJSON(QrData).then(data => {
           this.qrCodeDataUrl = data
         })
       })
     }
   }
 
+  onFileSelected(event: Event) {
+    const inputElement = event.target as HTMLInputElement
 
-  downloadQRCode() {
-    // Check if qrCodeDataUrl is not available
-    if (!this.qrCodeDataUrl) {
-        console.error('QR code data URL is not available.')
-        return
+    /** User confirms file select */
+    if (inputElement.files && inputElement.files.length > 0) {
+      this.selectedFile = inputElement.files[0]
+      this.onSubmit()
+    } else {
+      console.error('No file selected.')
     }
-
-    // Extract the data from the data URL
-    const base64Image = this.qrCodeDataUrl.split(';base64,').pop()
-
-    // Check if base64Image is not available
-    if (!base64Image) {
-        console.error('QR code data URL is invalid.')
-        return
-    }
-    // Create a Blob object from the base64 data
-    const blob = new Blob([this.base64ToArrayBuffer(base64Image)], { type: 'image/png' });
-
-    // Use FileSaver.js to trigger the download
-    saveAs(blob, `${this.deviceDetails.id}_${this.deviceDetails.item_name.replace(/\s+/g, '_')}.png`)
   }
 
-  base64ToArrayBuffer(base64: string): Uint8Array {
-    const binaryString = window.atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; ++i) {
-        bytes[i] = binaryString.charCodeAt(i);
+  onSubmit() {
+    const formData = new FormData()
+    formData.append('id', this.selectedFile.lastModified.toString())
+    formData.append('file_name', this.selectedFile.name)
+    formData.append('device_id', this.deviceId.toString())
+    formData.append('image', this.selectedFile)
+
+    this.deviceService.uploadDeviceImageToServer(formData, this.deviceId).pipe(take(1)).subscribe({
+      next: (res: any) => {
+        /** After POST get the image url from response and read BLOB data */
+        this.deviceService.getImageBlob(res.image).pipe(take(1)).subscribe(imageBlob => {
+          this._readBlobDataFromImage(imageBlob)
+        })
+
+        this.sharedService.openSnackbar('Image uploaded successfully!')
+      },
+      error: (err: HttpErrorResponse) => {
+        this.sharedService.openSnackbar('Error uploading image to server, please try again later.')
+      }
+    })
+  }
+
+  /** Get saved image and display them (if there is an image) */
+  getSavedImage() {
+    this.deviceService.getImageOfDevice(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe(blobData => {
+      if (blobData) {
+        this._readBlobDataFromImage(blobData)
+      } else {
+        /** Display nothing when there are no images found */
+        this.imageToShow = null
+      }
+    })
+  }
+
+  private _readBlobDataFromImage(blobData: Blob) {
+    const reader = new FileReader()
+    reader.onload = () => {
+      this.imageToShow = reader.result as string
+      const img = new Image()
+      img.src = this.imageToShow
+      img.onload = () => {
+        this.isPortrait = img.height > img.width
+      }
     }
-    return bytes;
+    reader.readAsDataURL(blobData)
   }
 
-  ngOnDestroy(): void {
-    this.destroyed$.next()
-    this.destroyed$.complete()
+  clearImage() {
+    this.deviceService.clearImage(this.deviceId).pipe(take(1)).subscribe({
+      next: (res) => {
+        this.imageToShow = null
+        this.sharedService.openSnackbar('Image cleared!')
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error(err)
+        this.sharedService.openSnackbar('Error deleting photo')
+      }
+    })
   }
 
+  retrieveNotes() {
+    this.deviceService.getItemById(this.deviceId).pipe(take(1)).subscribe(device => {
+      device.annotation ? this.editedNotes = device.annotation : this.editedNotes = ''
+    })
+  }
+
+  onNotesReset() {
+    this.retrieveNotes()
+    this.sharedService.openSnackbar('Notes reset successfully!')
+  }
+
+  saveNotes() {
+    this.deviceService.updateItemNotes(this.deviceId, this.editedNotes).pipe(take(1)).subscribe({
+      next: (res) => {
+        this.sharedService.openSnackbar('Notes updated successfully!')
+      },
+      error: (err: HttpErrorResponse) => {
+        this.sharedService.openSnackbar(`Error updating notes: ${err.error.details}`)
+      }
+    })
+  }
+
+  onQrDownloadClick() {
+    const downloadFileName: DownloadFileName = {
+      id: this.deviceDetails.id,
+      name: this.deviceDetails.item_name
+    }
+    downloadQRCode(this.qrCodeDataUrl, downloadFileName)
+  }
 }
