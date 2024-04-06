@@ -88,10 +88,8 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
         this.deviceService.getImageBlob(res.image).pipe(take(1)).subscribe(imageBlob => {
           this._readBlobDataFromImage(imageBlob)
         })
-
-        this.unixTimestampMiliseconds = res.id
-
-        this.lastModifiedDate = new Date(this.unixTimestampMiliseconds)
+        /** format date after posting new image */
+        this._formatDateTimeFromUnix(res.id)
 
         this.sharedService.openSnackbar('Image uploaded successfully!')
       },
@@ -114,16 +112,21 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
     })
   }
 
+  /** Get image infos everytime page reloaded or initialised */
   getSavedImageMetaData() {
     this.deviceService.getImageInfos(this.deviceId).pipe(take(1)).subscribe((imageData: ImageResponse[]) => {
-      this.unixTimestampMiliseconds = imageData[0].id
-      this.lastModifiedDate = new Date(this.unixTimestampMiliseconds)
-      const timezoneLong = new Intl.DateTimeFormat('en-US', { timeZoneName: 'long' }).format(this.lastModifiedDate)
-      const firstSpaceIndex = timezoneLong.indexOf(' ')
-
-      /** Splice the long time zone to just get the latter part 'Center EU Time' */
-      this.timezoneName = timezoneLong.substring(firstSpaceIndex)
+      this._formatDateTimeFromUnix(imageData[0].id)
     })
+  }
+
+  private _formatDateTimeFromUnix(unixTimeMiliSeconds: number) {
+    this.unixTimestampMiliseconds = unixTimeMiliSeconds
+    this.lastModifiedDate = new Date(this.unixTimestampMiliseconds)
+    const timezoneLong = new Intl.DateTimeFormat('en-US', { timeZoneName: 'long' }).format(this.lastModifiedDate)
+    const firstSpaceIndex = timezoneLong.indexOf(' ')
+
+    /** Splice the long time zone to just get the latter part 'Center EU Time' */
+    this.timezoneName = timezoneLong.substring(firstSpaceIndex)
   }
 
   private _readBlobDataFromImage(blobData: Blob) {
