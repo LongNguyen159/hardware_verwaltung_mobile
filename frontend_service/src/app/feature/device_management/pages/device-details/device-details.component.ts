@@ -71,7 +71,6 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
     }
   }
 
-  /** Later implement POST data to server/database */
   onSubmit() {
     const formData = new FormData()
     formData.append('id', this.selectedFile.lastModified.toString())
@@ -85,17 +84,22 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
         this.deviceService.getImageBlob(res.image).pipe(take(1)).subscribe(imageBlob => {
           this._readBlobDataFromImage(imageBlob)
         })
+
+        this.sharedService.openSnackbar('Image uploaded successfully!')
       },
       error: (err: HttpErrorResponse) => {
+        this.sharedService.openSnackbar('Error uploading image to server, please try again later.')
       }
     })
   }
 
+  /** Get saved image and display them (if there is an image) */
   getSavedImage() {
     this.deviceService.getImageOfDevice(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe(blobData => {
       if (blobData) {
         this._readBlobDataFromImage(blobData)
       } else {
+        /** Display nothing when there are no images found */
         this.imageToShow = null
       }
     })
@@ -118,7 +122,7 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
     this.deviceService.clearImage(this.deviceId).pipe(take(1)).subscribe({
       next: (res) => {
         this.imageToShow = null
-        this.sharedService.openSnackbar('Photo cleared!')
+        this.sharedService.openSnackbar('Image cleared!')
       },
       error: (err: HttpErrorResponse) => {
         console.error(err)
@@ -149,7 +153,7 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
     })
   }
 
-  onDownloadClick() {
+  onQrDownloadClick() {
     const downloadFileName: DownloadFileName = {
       id: this.deviceDetails.id,
       name: this.deviceDetails.item_name
