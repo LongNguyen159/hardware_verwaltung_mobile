@@ -11,8 +11,13 @@
     flex-direction: column;
     gap: 10px;
 }
-.metadata, .qr-code .photos-upload {
-    padding: 16px;
+
+
+.metadata, .photos-upload, .qr-code   {
+    padding: 0px 16px;
+}
+.metadata {
+    padding-top: 10px;
 }
 
 .qr-code {
