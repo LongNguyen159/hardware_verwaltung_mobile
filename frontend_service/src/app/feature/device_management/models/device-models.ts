@@ -36,3 +36,10 @@ export interface RoomInterface {
   id: number | null
   room_number: string
 }
+
+export interface ImageResponse {
+  id: number
+  file_name: string
+  device_id: number
+  image: string
+}

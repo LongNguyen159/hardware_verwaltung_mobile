@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DeviceMetaData, DownloadFileName, deviceQrData } from '../../models/device-models';
 import { downloadQRCode, generateQRCodeFromJSON } from '../../utils/utils';
@@ -7,6 +7,7 @@ import { saveAs } from 'file-saver';
 import { Subject, take, takeUntil } from 'rxjs';
 import { SharedService } from 'src/app/shared/service/shared.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { BasePageComponent } from 'src/app/shared/components/base-page/base-page.component';
 @Component({
   selector: 'app-device-details',
   templateUrl: './device-details.component.html',
@@ -15,30 +16,34 @@ import { HttpErrorResponse } from '@angular/common/http';
 /**
  * TODO:
  * Feat: Allow user to upload photos of device in this page.
+ * Refactor: Use websocket connection to DB instead of polling.
  */
-export class DeviceDetailsComponent implements OnInit, OnDestroy {
+export class DeviceDetailsComponent extends BasePageComponent implements OnInit {
   deviceId: number
   qrCodeDataUrl: string
   deviceDetails: DeviceMetaData
 
   editedNotes: string = ''
-  
-  destroyed$ = new Subject<void>()
-
   selectedFile: File
   imageToShow: any
   isPortrait: boolean = false
 
-  constructor(private route: ActivatedRoute, private deviceService: DeviceService, private sharedService: SharedService) {}
+  constructor(private route: ActivatedRoute, private deviceService: DeviceService, private sharedService: SharedService) {
+    super()
+  }
   ngOnInit(): void {
     /** Retrieve Device ID from URL */
     const id = this.route.snapshot.paramMap.get('id')
     if (id) {
       this.deviceId = parseInt(id)
+      /** Get saved notes */
       this.retrieveNotes()
 
+      /** Get saved image */
+      this.getSavedImage()
 
-      this.deviceService.getItemById(this.deviceId).pipe(takeUntil(this.destroyed$)).subscribe((device: DeviceMetaData) => {
+      /** Get device details */
+      this.deviceService.getItemById(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe((device: DeviceMetaData) => {
         this.deviceDetails = device
         /** GET Device details by id here; then pass data in to generate qr of that device */
         const QrData: deviceQrData = {
@@ -60,45 +65,66 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
     /** User confirms file select */
     if (inputElement.files && inputElement.files.length > 0) {
       this.selectedFile = inputElement.files[0]
-      console.log('selected:', this.selectedFile.name)
-      this.displaySelectedImage()
       this.onSubmit()
-
-      /** Later logic:
-       * Call onSubmit() => Send post/patch request to backend to save image to database.
-       * After onSubmit(): inside onSubmit(), call displaySelectedImage().
-       * 
-       * displaySelectedImage(): send GET request to retrieve photo url.
-       */
     } else {
       console.error('No file selected.')
     }
   }
 
-  /** GET data from server */
-  displaySelectedImage() {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      this.imageToShow = event.target?.result;
-      // Check if the image is in portrait orientation
-      const img = new Image();
-      img.src = this.imageToShow;
-      img.onload = () => {
-        this.isPortrait = img.height > img.width
-      };
-    };
-    reader.readAsDataURL(this.selectedFile)
-  }
-
-  /** Send request to Backend to delete the image from database */
-  clearPhoto() {
-    this.imageToShow = null
-  }
-
   /** Later implement POST data to server/database */
   onSubmit() {
     const formData = new FormData()
-    formData.append('image', this.selectedFile, this.selectedFile.name)
+    formData.append('id', this.selectedFile.lastModified.toString())
+    formData.append('file_name', this.selectedFile.name)
+    formData.append('device_id', this.deviceId.toString())
+    formData.append('image', this.selectedFile)
+
+    this.deviceService.uploadDeviceImageToServer(formData, this.deviceId).pipe(take(1)).subscribe({
+      next: (res: any) => {
+        /** After POST get the image url from response and read BLOB data */
+        this.deviceService.getImageBlob(res.image).pipe(take(1)).subscribe(imageBlob => {
+          this._readBlobDataFromImage(imageBlob)
+        })
+      },
+      error: (err: HttpErrorResponse) => {
+      }
+    })
+  }
+
+  getSavedImage() {
+    this.deviceService.getImageOfDevice(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe(blobData => {
+      if (blobData) {
+        this._readBlobDataFromImage(blobData)
+      } else {
+        this.imageToShow = null
+      }
+    })
+  }
+
+  private _readBlobDataFromImage(blobData: Blob) {
+    const reader = new FileReader()
+    reader.onload = () => {
+      this.imageToShow = reader.result as string
+      const img = new Image()
+      img.src = this.imageToShow
+      img.onload = () => {
+        this.isPortrait = img.height > img.width
+      }
+    }
+    reader.readAsDataURL(blobData)
+  }
+
+  clearImage() {
+    this.deviceService.clearImage(this.deviceId).pipe(take(1)).subscribe({
+      next: (res) => {
+        this.imageToShow = null
+        this.sharedService.openSnackbar('Photo cleared!')
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error(err)
+        this.sharedService.openSnackbar('Error deleting photo')
+      }
+    })
   }
 
   retrieveNotes() {
@@ -130,12 +156,4 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
     }
     downloadQRCode(this.qrCodeDataUrl, downloadFileName)
   }
-
-  
-
-  ngOnDestroy(): void {
-    this.destroyed$.next()
-    this.destroyed$.complete()
-  }
-
 }
