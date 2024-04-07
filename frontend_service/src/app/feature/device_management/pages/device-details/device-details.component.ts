@@ -13,10 +13,7 @@ import { BasePageComponent } from 'src/app/shared/components/base-page/base-page
   templateUrl: './device-details.component.html',
   styleUrls: ['./device-details.component.scss']
 })
-/**
- * TODO:
- * Refactor: Use websocket connection to DB instead of polling.
- */
+
 export class DeviceDetailsComponent extends BasePageComponent implements OnInit {
   deviceId: number
   qrCodeDataUrl: string
@@ -42,8 +39,11 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
       /** Get saved notes */
       this.retrieveNotes()
 
-      /** Get saved image */
+      /** Get saved image, this function will get BLOB data of image and parse it to url for the template to display */
       this.getSavedImage()
+
+      /** Get image infos (id, name, etc.) */
+      this.getSavedImageMetaData()
 
       /** Get device details */
       this.deviceService.getItemById(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe((device: DeviceMetaData) => {
@@ -62,6 +62,7 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
     }
   }
 
+  /** being called when user confirms the selected file (when choosing photos) */
   onFileSelected(event: Event) {
     const inputElement = event.target as HTMLInputElement
 
@@ -74,7 +75,9 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
     }
   }
 
+  /** If confirm selected photo, submit form; send POST request to server. */
   onSubmit() {
+    /** Gather selected file metadata to include in POST request */
     const formData = new FormData()
     formData.append('id', this.selectedFile.lastModified.toString())
     formData.append('file_name', this.selectedFile.name)
@@ -102,7 +105,6 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
   getSavedImage() {
     this.deviceService.getImageOfDevice(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe(blobData => {
       if (blobData) {
-        this.getSavedImageMetaData()
         this._readBlobDataFromImage(blobData)
       } else {
         /** Display nothing when there are no images found */

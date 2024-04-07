@@ -57,7 +57,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
   ngOnInit(): void {
     /** Get device list here, assign tableDataSource to be the result. */
     this.deviceService.getAllItems().pipe(takeUntil(this.componentDestroyed$)).subscribe(allItems => {
-      this.tableDataSource = new MatTableDataSource(allItems); /** Change to real data here; 'dataSource' is real data */
+      this.tableDataSource = new MatTableDataSource(allItems)
 
       this.selectedRowDataSource = new MatTableDataSource()
 
@@ -71,11 +71,13 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
     })
   }
 
+  /** Filter datasource as user types */
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.tableDataSource.filter = filterValue.trim().toLowerCase()
   }
 
+  /** Get saved data from LocalStorage */
   loadSavedDataFromLocalStorage() {
     const savedSelectedRow = localStorage.getItem('selectedRow')
     const savedSelectedRowsId = localStorage.getItem('selectedRowsId')
@@ -121,6 +123,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
   }
 
   private updateStarredDeviceTable() {
+    /** update by value, not by reference. */
     this.selectedRowDataSource.data = [...this.selectedRow]
   }
 
@@ -130,10 +133,12 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
     localStorage.setItem('selectedRowsId', JSON.stringify(this.selectedRowsId));
   }
 
+  /** Reflects the state of table row: If row is being selected, return true; and false otherwise. */
   isRowSelected(rowId: number): boolean {
     return this.selectedRowsId.includes(rowId)
   }
 
+  /** Update Table data */
   updateDataSource() {
     this.deviceService.getAllItems().pipe(take(1)).subscribe(allItems => {
       this.tableDataSource.data = allItems
@@ -198,9 +203,13 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
       if (result) {
         this.deviceService.deleteItemById(deviceId).pipe(take(1)).subscribe({
           next: (res) => {
+            /** Update datasource after deleting items */
             this.updateDataSource()
+
+            /** Filter selected rows in case the item being starred is removed */
             this.selectedRow = this.selectedRow.filter(item => item.id !== deviceId)
             this.selectedRowsId = this.selectedRow.map(item => item.id)
+            /** Update filtered data to LocalStorage */
             this.saveDataToLocalStorage()
             this.updateStarredDeviceTable()
             this.sharedService.openSnackbar('Device has been successfully removed!')
@@ -221,13 +230,6 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
     this.router.navigate(['/device', id])
   }
 }
-
-
-/** Creating new device/item process: */
-// Name + Location POST request => backend
-// backend write new device into DB.
-// backend response to POST request: JSON
-
 
 /** TODOs
  * - [X] Feature: API endpoint for writing new devices that only needs name and location to write
