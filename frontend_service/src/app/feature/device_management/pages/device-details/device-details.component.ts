@@ -8,6 +8,8 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { SharedService } from 'src/app/shared/service/shared.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BasePageComponent } from 'src/app/shared/components/base-page/base-page.component';
+import { MatDialog } from '@angular/material/dialog';
+import { AlertDialogComponent, DialogData } from 'src/app/shared/components/alert-dialog/alert-dialog.component';
 @Component({
   selector: 'app-device-details',
   templateUrl: './device-details.component.html',
@@ -28,7 +30,7 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
   lastModifiedDate: Date
   timezoneName: string
 
-  constructor(private route: ActivatedRoute, private deviceService: DeviceService, private sharedService: SharedService) {
+  constructor(private route: ActivatedRoute, private deviceService: DeviceService, private sharedService: SharedService, private dialog: MatDialog) {
     super()
   }
   ngOnInit(): void {
@@ -42,8 +44,6 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
       /** Get saved image, this function will get BLOB data of image and parse it to url for the template to display */
       this.getSavedImage()
 
-      /** Get image infos (id, name, etc.) */
-      this.getSavedImageMetaData()
 
       /** Get device details */
       this.deviceService.getItemById(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe((device: DeviceMetaData) => {
@@ -96,6 +96,23 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
         this.sharedService.openSnackbar('Image uploaded successfully!')
       },
       error: (err: HttpErrorResponse) => {
+        console.error(err)
+        if (err.error.image[0]) {
+          const dialogData: DialogData = {
+            title: 'Error: Cannot upload image to server',
+            message: `${err.error.image[0]}`,
+            confirmLabel: 'Ok',
+            cancelLabel: ''
+          }
+          const dialogRef = this.dialog.open(AlertDialogComponent, {
+            width: '40vw',
+            data: dialogData
+          })
+
+          dialogRef.afterClosed().subscribe(result => {
+            return
+          })
+        }
         this.sharedService.openSnackbar('Error uploading image to server, please try again later.')
       }
     })
@@ -105,6 +122,8 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
   getSavedImage() {
     this.deviceService.getImageOfDevice(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe(blobData => {
       if (blobData) {
+        /** Get image infos (id, name, etc.) */
+        this.getSavedImageMetaData()
         this._readBlobDataFromImage(blobData)
       } else {
         /** Display nothing when there are no images found */
@@ -116,6 +135,7 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
   /** Get image infos everytime page reloaded or initialised */
   getSavedImageMetaData() {
     this.deviceService.getImageInfos(this.deviceId).pipe(take(1)).subscribe((imageData: ImageResponse[]) => {
+      console.log(imageData)
       this._formatDateTimeFromUnix(imageData[0].id)
     })
   }

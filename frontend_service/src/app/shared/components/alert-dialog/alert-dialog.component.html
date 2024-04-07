@@ -4,6 +4,6 @@
   <p>{{ data.message }}</p>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-stroked-button (click)="onCancelClick()">{{ data.cancelLabel }}</button>
+  <button mat-stroked-button *ngIf="data.cancelLabel" (click)="onCancelClick()">{{ data.cancelLabel }}</button>
   <button mat-flat-button [color]="data.confirmButtonColor ? data.confirmButtonColor : 'primary' " cdkFocusInitial (click)="onConfirmClick()">{{ data.confirmLabel }}</button>
 </div>
