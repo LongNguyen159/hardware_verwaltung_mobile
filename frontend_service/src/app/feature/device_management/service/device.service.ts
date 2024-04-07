@@ -8,6 +8,9 @@ import { switchMap } from 'rxjs';
 })
 export class DeviceService {
 
+  /** TODO: Change API endpoint Host in production. Not 'localhost' anymore, but the IP
+   * of server where it's been hosted.
+   */
   apiBaseHostUrl: string = 'http://localhost:8000'
   apiEndpoint: string = `${this.apiBaseHostUrl}/api/v1`
   imageId: number

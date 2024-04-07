@@ -15,7 +15,6 @@ import { BasePageComponent } from 'src/app/shared/components/base-page/base-page
 })
 /**
  * TODO:
- * Feat: Allow user to upload photos of device in this page.
  * Refactor: Use websocket connection to DB instead of polling.
  */
 export class DeviceDetailsComponent extends BasePageComponent implements OnInit {
