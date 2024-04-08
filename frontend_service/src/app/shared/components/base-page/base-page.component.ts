@@ -11,7 +11,7 @@ export class BasePageComponent implements OnDestroy {
 
   constructor() {}
 
-
+  /** Emit null when components gets destroyed. Unsubscribe from Observables. */
   ngOnDestroy(): void {
     this.componentDestroyed$.next()
     this.componentDestroyed$.complete()

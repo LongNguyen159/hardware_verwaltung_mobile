@@ -8,6 +8,9 @@ import { switchMap } from 'rxjs';
 })
 export class DeviceService {
 
+  /** TODO: Change API endpoint Host in production. Not 'localhost' anymore, but the IP
+   * of server where it's been hosted.
+   */
   apiBaseHostUrl: string = 'http://localhost:8000'
   apiEndpoint: string = `${this.apiBaseHostUrl}/api/v1`
   imageId: number
@@ -78,7 +81,7 @@ export class DeviceService {
 
   /** Get image (blob) of one device */
   getImageOfDevice(deviceId: number): Observable<Blob | null> {
-    return this.getUploadedImageOfDevice(deviceId).pipe(
+    return this.getImageInfos(deviceId).pipe(
       switchMap(response => {
         if (response.length !== 0) {
 
@@ -90,7 +93,7 @@ export class DeviceService {
     )
   }
   /** Get all images URL associated with one device ID */
-  private getUploadedImageOfDevice(deviceId: number): Observable<ImageResponse[]> {
+  getImageInfos(deviceId: number): Observable<ImageResponse[]> {
     return this.http.get<ImageResponse[]>(`${this.apiEndpoint}/items/${deviceId}/image/`)
   }
 

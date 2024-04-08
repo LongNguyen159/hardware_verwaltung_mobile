@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DeviceMetaData, DownloadFileName, deviceQrData } from '../../models/device-models';
+import { DeviceMetaData, DownloadFileName, ImageResponse, deviceQrData } from '../../models/device-models';
 import { downloadQRCode, generateQRCodeFromJSON } from '../../utils/utils';
 import { DeviceService } from '../../service/device.service';
 import { saveAs } from 'file-saver';
@@ -8,16 +8,14 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { SharedService } from 'src/app/shared/service/shared.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BasePageComponent } from 'src/app/shared/components/base-page/base-page.component';
+import { MatDialog } from '@angular/material/dialog';
+import { AlertDialogComponent, DialogData } from 'src/app/shared/components/alert-dialog/alert-dialog.component';
 @Component({
   selector: 'app-device-details',
   templateUrl: './device-details.component.html',
   styleUrls: ['./device-details.component.scss']
 })
-/**
- * TODO:
- * Feat: Allow user to upload photos of device in this page.
- * Refactor: Use websocket connection to DB instead of polling.
- */
+
 export class DeviceDetailsComponent extends BasePageComponent implements OnInit {
   deviceId: number
   qrCodeDataUrl: string
@@ -25,10 +23,14 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
 
   editedNotes: string = ''
   selectedFile: File
-  imageToShow: any
+  imageToShow: string
   isPortrait: boolean = false
+  unixTimestampMiliseconds: number
 
-  constructor(private route: ActivatedRoute, private deviceService: DeviceService, private sharedService: SharedService) {
+  lastModifiedDate: Date
+  timezoneName: string
+
+  constructor(private route: ActivatedRoute, private deviceService: DeviceService, private sharedService: SharedService, private dialog: MatDialog) {
     super()
   }
   ngOnInit(): void {
@@ -39,8 +41,9 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
       /** Get saved notes */
       this.retrieveNotes()
 
-      /** Get saved image */
+      /** Get saved image, this function will get BLOB data of image and parse it to url for the template to display */
       this.getSavedImage()
+
 
       /** Get device details */
       this.deviceService.getItemById(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe((device: DeviceMetaData) => {
@@ -59,6 +62,7 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
     }
   }
 
+  /** being called when user confirms the selected file (when choosing photos) */
   onFileSelected(event: Event) {
     const inputElement = event.target as HTMLInputElement
 
@@ -71,7 +75,9 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
     }
   }
 
+  /** If confirm selected photo, submit form; send POST request to server. */
   onSubmit() {
+    /** Gather selected file metadata to include in POST request */
     const formData = new FormData()
     formData.append('id', this.selectedFile.lastModified.toString())
     formData.append('file_name', this.selectedFile.name)
@@ -84,10 +90,29 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
         this.deviceService.getImageBlob(res.image).pipe(take(1)).subscribe(imageBlob => {
           this._readBlobDataFromImage(imageBlob)
         })
+        /** format date after posting new image */
+        this._formatDateTimeFromUnix(res.id)
 
         this.sharedService.openSnackbar('Image uploaded successfully!')
       },
       error: (err: HttpErrorResponse) => {
+        console.error(err)
+        if (err.error.image[0]) {
+          const dialogData: DialogData = {
+            title: 'Error: Cannot upload image to server',
+            message: `${err.error.image[0]}`,
+            confirmLabel: 'Ok',
+            cancelLabel: ''
+          }
+          const dialogRef = this.dialog.open(AlertDialogComponent, {
+            width: '40vw',
+            data: dialogData
+          })
+
+          dialogRef.afterClosed().subscribe(result => {
+            return
+          })
+        }
         this.sharedService.openSnackbar('Error uploading image to server, please try again later.')
       }
     })
@@ -97,12 +122,32 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
   getSavedImage() {
     this.deviceService.getImageOfDevice(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe(blobData => {
       if (blobData) {
+        /** Get image infos (id, name, etc.) */
+        this.getSavedImageMetaData()
         this._readBlobDataFromImage(blobData)
       } else {
         /** Display nothing when there are no images found */
-        this.imageToShow = null
+        this.imageToShow = ''
       }
     })
+  }
+
+  /** Get image infos everytime page reloaded or initialised */
+  getSavedImageMetaData() {
+    this.deviceService.getImageInfos(this.deviceId).pipe(take(1)).subscribe((imageData: ImageResponse[]) => {
+      console.log(imageData)
+      this._formatDateTimeFromUnix(imageData[0].id)
+    })
+  }
+
+  private _formatDateTimeFromUnix(unixTimeMiliSeconds: number) {
+    this.unixTimestampMiliseconds = unixTimeMiliSeconds
+    this.lastModifiedDate = new Date(this.unixTimestampMiliseconds)
+    const timezoneLong = new Intl.DateTimeFormat('en-US', { timeZoneName: 'long' }).format(this.lastModifiedDate)
+    const firstSpaceIndex = timezoneLong.indexOf(' ')
+
+    /** Splice the long time zone to just get the latter part 'Center EU Time' */
+    this.timezoneName = timezoneLong.substring(firstSpaceIndex)
   }
 
   private _readBlobDataFromImage(blobData: Blob) {
@@ -121,7 +166,7 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
   clearImage() {
     this.deviceService.clearImage(this.deviceId).pipe(take(1)).subscribe({
       next: (res) => {
-        this.imageToShow = null
+        this.imageToShow = ''
         this.sharedService.openSnackbar('Image cleared!')
       },
       error: (err: HttpErrorResponse) => {

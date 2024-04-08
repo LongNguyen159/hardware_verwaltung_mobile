@@ -13,7 +13,6 @@ export class TitleBarComponent {
   @Input() enableBackButton: boolean = false
 
   constructor(
-    private router: Router,
     private _location: Location
   ) {}
 

@@ -7,9 +7,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'verwaltung_hardware';
+  title = 'hardware_verwaltung';
   constructor(private router: Router) {
-    /** Navigate to overview as default */
-    // this.router.navigate(['/overview'])
   }
 }
