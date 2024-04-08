@@ -90,9 +90,7 @@ export class RoomPageComponent extends BasePageComponent implements OnInit {
     })
   }
 
-  /** NOTE: This would remove all items associated with that room
-   * TODO: Fix: Only delete the room, not all items associated with it.
-   */
+  /** NOTE: This would remove all items associated with that room */
   onDeleteRoom(event: Event, roomId: number) {
     event.stopPropagation()
     const dialogData: DialogData = {
