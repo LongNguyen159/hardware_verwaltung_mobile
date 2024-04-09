@@ -244,23 +244,9 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
  * - [X] Feature: Create new room
  * - [X] Feature: Be able to modify item annotation after creating new device 
  * - [X] Feature: Table actions: Delete rows
- * - [ ] Refactor: Sync with Jan: QR code now requires device description (attribute name: deviceVariant)
+ * - [X] Refactor: Sync with Jan: QR code now requires device description (attribute name: deviceVariant)
  * - [ ] Fix: When POST to `item_history`, `item` should update column `borrowed_by_user` accordingly
- * - [ ] Refactor: POST to `item_history` (If the above fix not available, send another request to patch `item`)
+ * - [X] Refactor: POST to `item_history` (If the above fix not available, send another request to patch `item`)
+ * - [ ] Fix: Filter datasource conflicts with polling: After new poll, filter condition should also apply to newly polled data.
  * 
- */
-
-/** POST to `item_history`:
- * - Scan QR => Get device ID: Send GET to retrieve device details: `item-details/${itemId}/`
- * - After GET, we have all device metadata (and room metadata) => Send POST to `item_history`: 
- * 
- * (`keys` means the actual attribute name in backend)
- * const postData =
- * {
- *  deviceId: number, (key: item_id)
- *  roomId: number, (key: room_id)
- *  date: dateTime, (key: date)
- *  typeId: number (1 = ausleihe/ 2 = rückgabe) (key: item_history_type_id)
- *  userId: number (key: user_id)
- * }
  */
