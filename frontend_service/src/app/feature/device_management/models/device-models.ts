@@ -39,6 +39,7 @@ export interface RoomInterface {
 
 export interface ImageResponse {
   id: number
+  unix_time: number
   file_name: string
   device_id: number
   image: string

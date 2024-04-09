@@ -29,6 +29,7 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
 
   lastModifiedDate: Date
   timezoneName: string
+  relativeTime: string
 
   constructor(private route: ActivatedRoute, private deviceService: DeviceService, private sharedService: SharedService, private dialog: MatDialog) {
     super()
@@ -79,7 +80,6 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
   onSubmit() {
     /** Gather selected file metadata to include in POST request */
     const formData = new FormData()
-    formData.append('id', this.selectedFile.lastModified.toString())
     formData.append('file_name', this.selectedFile.name)
     formData.append('device_id', this.deviceId.toString())
     formData.append('image', this.selectedFile)
@@ -91,7 +91,7 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
           this._readBlobDataFromImage(imageBlob)
         })
         /** format date after posting new image */
-        this._formatDateTimeFromUnix(res.id)
+        this._formatDateTimeFromUnix(res.unix_time)
 
         this.sharedService.openSnackbar('Image uploaded successfully!')
       },
@@ -136,18 +136,24 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
   getSavedImageMetaData() {
     this.deviceService.getImageInfos(this.deviceId).pipe(take(1)).subscribe((imageData: ImageResponse[]) => {
       console.log(imageData)
-      this._formatDateTimeFromUnix(imageData[0].id)
+      this._formatDateTimeFromUnix(imageData[0].unix_time)
     })
   }
 
-  private _formatDateTimeFromUnix(unixTimeMiliSeconds: number) {
-    this.unixTimestampMiliseconds = unixTimeMiliSeconds
+  private _formatDateTimeFromUnix(unixSeconds: number) {
+    this.unixTimestampMiliseconds = unixSeconds * 1000
     this.lastModifiedDate = new Date(this.unixTimestampMiliseconds)
     const timezoneLong = new Intl.DateTimeFormat('en-US', { timeZoneName: 'long' }).format(this.lastModifiedDate)
     const firstSpaceIndex = timezoneLong.indexOf(' ')
 
     /** Splice the long time zone to just get the latter part 'Center EU Time' */
     this.timezoneName = timezoneLong.substring(firstSpaceIndex)
+
+    this.relativeTime = this.sharedService.getRelativeTimeText(this.lastModifiedDate)
+    /** Update relative time in interval, in case user stays on one page for a long time */
+    this.intervalUpdate = setInterval(() => {
+      this.relativeTime = this.sharedService.getRelativeTimeText(this.lastModifiedDate)      
+    }, 5 * 60 * 1000); // Update every 5 minutes
   }
 
   private _readBlobDataFromImage(blobData: Blob) {

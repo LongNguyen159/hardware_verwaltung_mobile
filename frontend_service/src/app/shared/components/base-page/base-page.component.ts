@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 })
 export class BasePageComponent implements OnDestroy {
   componentDestroyed$ = new Subject<void>()
+  intervalUpdate: any = null
 
   constructor() {}
 
@@ -15,6 +16,10 @@ export class BasePageComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.componentDestroyed$.next()
     this.componentDestroyed$.complete()
+    if (this.intervalUpdate) {
+      clearInterval(this.intervalUpdate)
+      this.intervalUpdate = 0
+    }
   }
 
 }
