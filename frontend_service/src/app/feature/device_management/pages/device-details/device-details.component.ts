@@ -135,7 +135,6 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
   /** Get image infos everytime page reloaded or initialised */
   getSavedImageMetaData() {
     this.deviceService.getImageInfos(this.deviceId).pipe(take(1)).subscribe((imageData: ImageResponse[]) => {
-      console.log(imageData)
       this._formatDateTimeFromUnix(imageData[0].unix_time)
     })
   }
@@ -153,7 +152,7 @@ export class DeviceDetailsComponent extends BasePageComponent implements OnInit 
     /** Update relative time in interval, in case user stays on one page for a long time */
     this.intervalUpdate = setInterval(() => {
       this.relativeTime = this.sharedService.getRelativeTimeText(this.lastModifiedDate)      
-    }, 5 * 60 * 1000); // Update every 5 minutes
+    }, 3 * 60 * 1000); // Update every 3 minutes
   }
 
   private _readBlobDataFromImage(blobData: Blob) {
