@@ -37,7 +37,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
 
   dialogRef: MatDialogRef<NewDeviceDialogComponent>
 
-  displayedColumns: string[] = ['id', 'deviceName', 'description', 'location', 'inLage', 'actions']
+  displayedColumns: string[] = ['deviceName', 'description', 'location']
   tableDataSource: MatTableDataSource<DeviceMetaData>
 
   selectedRowsId: number[] = []
@@ -57,6 +57,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
   ngOnInit(): void {
     /** Get device list here, assign tableDataSource to be the result. */
     this.deviceService.getAllItems().pipe(takeUntil(this.componentDestroyed$)).subscribe(allItems => {
+      allItems = allItems.filter(item => !item.borrowed_by_user_id)
       this.tableDataSource = new MatTableDataSource(allItems)
 
       this.selectedRowDataSource = new MatTableDataSource()
@@ -141,6 +142,7 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
   /** Update Table data */
   updateDataSource() {
     this.deviceService.getAllItems().pipe(take(1)).subscribe(allItems => {
+      allItems = allItems.filter(item => !item.borrowed_by_user_id)
       this.tableDataSource.data = allItems
 
       /** Update starred table data source after updating main data source */

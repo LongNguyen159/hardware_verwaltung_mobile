@@ -22,7 +22,7 @@ export class RoomPageComponent extends BasePageComponent implements OnInit {
   @ViewChild('paginator') paginator: MatPaginator
   @ViewChild(MatSort) sort: MatSort
 
-  displayedColumns = ['id', 'room_number', 'actions']
+  displayedColumns = ['id', 'room_number']
 
   columnMap: { [key: string]: string } = {
     'id': 'ID',

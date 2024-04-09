@@ -1,6 +1,5 @@
 <app-title-bar [title]="'Room Overview'"></app-title-bar>
-<div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding-right: 20px; gap: 10px;">
-  <button mat-stroked-button (click)="openNewRoomDialog()" style="position: absolute; left: 0; margin-left: 20px;">New Room</button>
+<div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding-right: 20px;padding-left: 20px; gap: 10px;">  
   <mat-form-field class="searchField">
     <mat-label>Filter</mat-label>
     <input matInput (keyup)="applyFilter($event)" placeholder="Ex. 102" #input>
