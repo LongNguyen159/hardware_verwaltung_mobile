@@ -8,27 +8,27 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'tab1',
-        loadChildren: () => import('../tab1/tab1.module').then(m => m.Tab1PageModule)
+        path: 'room',
+        loadChildren: () => import('../feature/room-view/pages/room-overview/room-overview.module').then(m => m.RoomOverviewPageModule)
       },
       {
-        path: 'tab2',
-        loadChildren: () => import('../tab2/tab2.module').then(m => m.Tab2PageModule)
+        path: 'qr-scan',
+        loadChildren: () => import('../qr-scan/qr-scan.module').then(m => m.QrScanPageModule)
       },
       {
-        path: 'tab3',
-        loadChildren: () => import('../tab3/tab3.module').then(m => m.Tab3PageModule)
+        path: 'device',
+        loadChildren: () => import('../feature/device-view/pages/all-device-page/all-device.module').then(m => m.AllDevicePageModule)
       },
       {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: '/tabs/device',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/tabs/device',
     pathMatch: 'full'
   }
 ];
