@@ -69,6 +69,10 @@ export class OverviewPageComponent extends BasePageComponent implements OnInit {
       this.updateDataSource()
       
       this.loadSavedDataFromLocalStorage()
+
+      this.sharedService.getUserUiMode().pipe(takeUntil(this.componentDestroyed$)).subscribe(mode => {
+        console.log(mode, 'from component')
+      })
     })
   }
 
