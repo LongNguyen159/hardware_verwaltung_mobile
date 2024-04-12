@@ -1,7 +1,0 @@
-{
-  "name": "hardware_verwaltung",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
-}

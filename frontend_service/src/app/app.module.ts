@@ -35,6 +35,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { NewRoomDialogComponent } from './feature/room_management/components/new-room-dialog/new-room-dialog.component';
 import { OverviewTableComponent } from './shared/components/overview-table/overview-table.component';
 import { AlertDialogComponent } from './shared/components/alert-dialog/alert-dialog.component';
+import { IonicModule } from '@ionic/angular';
 @NgModule({
   declarations: [
     AppComponent,
@@ -72,7 +73,8 @@ import { AlertDialogComponent } from './shared/components/alert-dialog/alert-dia
     MatButtonModule,
     MatToolbarModule,
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    IonicModule.forRoot({})
   ],
   providers: [DeviceService],
   bootstrap: [AppComponent]
