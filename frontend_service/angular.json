@@ -104,10 +104,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "verwaltung_hardware:build:production"
+              "buildTarget": "verwaltung_hardware:build:production"
             },
             "development": {
-              "browserTarget": "verwaltung_hardware:build:development"
+              "buildTarget": "verwaltung_hardware:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -115,7 +115,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "verwaltung_hardware:build"
+            "buildTarget": "verwaltung_hardware:build"
           }
         },
         "test": {
