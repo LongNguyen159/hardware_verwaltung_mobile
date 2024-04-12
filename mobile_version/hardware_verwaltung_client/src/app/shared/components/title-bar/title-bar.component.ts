@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
-
+import { IonBackButton, IonButtons, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 @Component({
   selector: 'app-title-bar',
   templateUrl: './title-bar.component.html',
@@ -9,10 +8,11 @@ import { IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
   imports: [
     IonHeader,
     IonTitle,
-    IonToolbar
+    IonToolbar,
+    IonButtons,
+    IonBackButton
   ]
 })
 export class TitleBarComponent {
   @Input() title: string = ''
-  
 }
