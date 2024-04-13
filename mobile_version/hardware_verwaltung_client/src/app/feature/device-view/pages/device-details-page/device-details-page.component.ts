@@ -1,6 +1,6 @@
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import {
   IonBackButton,
   IonButtons,
@@ -18,11 +18,12 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { take } from 'rxjs';
+import { take, takeUntil } from 'rxjs';
 import { TitleBarComponent } from 'src/app/shared/components/title-bar/title-bar.component';
-import { DeviceMetaData } from 'src/app/shared/models/shared-models';
+import { DeviceMetaData, ImageResponse } from 'src/app/shared/models/shared-models';
 import { SharedService } from 'src/app/shared/services/shared.service';
 import { NavController } from '@ionic/angular';
+import { BaseComponent } from 'src/app/shared/components/base/base.component';
 @Component({
   selector: 'app-device-details-page',
   templateUrl: './device-details-page.component.html',
@@ -46,26 +47,107 @@ import { NavController } from '@ionic/angular';
     IonItem,
     DatePipe,
     TitleBarComponent,
-    RouterModule
+    RouterModule,
+    CommonModule
   ],
 })
-export class DeviceDetailsPageComponent  implements OnInit {
+export class DeviceDetailsPageComponent extends BaseComponent implements OnInit {
   deviceDetails: DeviceMetaData
+  deviceId: number
+
+  editedNotes: string = ''
+  imageToShow: string
+  isPortrait: boolean = false
+  unixTimestampMiliseconds: number
+
+  lastModifiedDate: Date
+  timezoneName: string
+  relativeTime: string
 
   @Input()
   set id(deviceId: string) {
-    this.sharedService.getItemById(parseInt(deviceId)).pipe(take(1)).subscribe(device => {
-      this.deviceDetails = device
-    })
+    const id = parseInt(deviceId)
+    if (id) {
+      this.getDeviceInfos(id)
+    }
   }
 
 
   constructor(
     private sharedService: SharedService,
-  ) { }
+  ) { 
+    super()
+  }
 
   ngOnInit() {
-    console.log(window.history);
+  }
+
+  getDeviceInfos(deviceId: number) {
+    this.sharedService.getItemById(deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe(device => {
+      this.deviceDetails = device
+      this.deviceId = device.id
+      /** Retrive image from database to show */
+      this.getSavedImage()
+      this.retrieveNotes()
+    })
+  }
+
+
+  retrieveNotes() {
+    this.sharedService.getItemById(this.deviceId).pipe(take(1)).subscribe(device => {
+      device.annotation ? this.editedNotes = device.annotation : this.editedNotes = ''
+    })
+  }
+
+  /** Get saved image and display them (if there is an image) */
+  getSavedImage() {
+    this.sharedService.getImageOfDevice(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe(blobData => {
+      console.log('getting saved img of device id', this.deviceId)
+      if (blobData) {
+        /** Get image infos (id, name, etc.) */
+        this.getSavedImageMetaData()
+        this._readBlobDataFromImage(blobData)
+      } else {
+        /** Display nothing when there are no images found */
+        this.imageToShow = ''
+      }
+    })
+  }
+
+  /** Get image infos everytime page reloaded or initialised */
+  getSavedImageMetaData() {
+    this.sharedService.getImageInfos(this.deviceId).pipe(take(1)).subscribe((imageData: ImageResponse[]) => {
+      this._formatDateTimeFromUnix(imageData[0].unix_time)
+    })
+  }
+
+  private _formatDateTimeFromUnix(unixSeconds: number) {
+    this.unixTimestampMiliseconds = unixSeconds * 1000
+    this.lastModifiedDate = new Date(this.unixTimestampMiliseconds)
+    const timezoneLong = new Intl.DateTimeFormat('en-US', { timeZoneName: 'long' }).format(this.lastModifiedDate)
+    const firstSpaceIndex = timezoneLong.indexOf(' ')
+
+    /** Splice the long time zone to just get the latter part 'Center EU Time' */
+    this.timezoneName = timezoneLong.substring(firstSpaceIndex)
+
+    this.relativeTime = this.sharedService.getRelativeTimeText(this.lastModifiedDate)
+    /** Update relative time in interval, in case user stays on one page for a long time */
+    this.intervalUpdate = setInterval(() => {
+      this.relativeTime = this.sharedService.getRelativeTimeText(this.lastModifiedDate)      
+    }, 3 * 60 * 1000); // Update every 3 minutes
+  }
+
+  private _readBlobDataFromImage(blobData: Blob) {
+    const reader = new FileReader()
+    reader.onload = () => {
+      this.imageToShow = reader.result as string
+      const img = new Image()
+      img.src = this.imageToShow
+      img.onload = () => {
+        this.isPortrait = img.height > img.width
+      }
+    }
+    reader.readAsDataURL(blobData)
   }
 
 }
