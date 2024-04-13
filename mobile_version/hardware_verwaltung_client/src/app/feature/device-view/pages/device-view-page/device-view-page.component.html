@@ -1,5 +1,15 @@
 <!-- toolbar shown when scrolled -->
-<app-title-bar title="Available devices"></app-title-bar>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      Available devices
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content [fullscreen]="true">
   <!-- header of page -->
   <ion-header collapse="condense">

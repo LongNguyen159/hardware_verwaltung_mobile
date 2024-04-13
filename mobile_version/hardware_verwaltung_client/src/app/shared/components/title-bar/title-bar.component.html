@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/device" *ngIf="enableBackButton"></ion-back-button>
+      <ion-back-button [defaultHref]="backLocation" *ngIf="enableBackButton"></ion-back-button>
     </ion-buttons>
     <ion-title>
       {{ title }}

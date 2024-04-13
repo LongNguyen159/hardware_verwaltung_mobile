@@ -18,4 +18,5 @@ import { IonBackButton, IonButtons, IonHeader, IonTitle, IonToolbar } from '@ion
 export class TitleBarComponent {
   @Input() title: string = ''
   @Input() enableBackButton: boolean = false
+  @Input() backLocation: string
 }

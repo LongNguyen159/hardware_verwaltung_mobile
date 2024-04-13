@@ -1,7 +1,7 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonSkeletonText, IonList, IonItem, IonInfiniteScroll, IonLabel, IonAlert, IonInfiniteScrollContent, IonLoading } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonSkeletonText, IonList, IonItem, IonInfiniteScroll, IonLabel, IonAlert, IonInfiniteScrollContent, IonLoading, IonButton, IonBackButton, IonButtons } from '@ionic/angular/standalone';
 import { take } from 'rxjs';
 import { TitleBarComponent } from 'src/app/shared/components/title-bar/title-bar.component';
 import { DeviceMetaData } from 'src/app/shared/models/shared-models';
@@ -28,7 +28,9 @@ import { SharedService } from 'src/app/shared/services/shared.service';
     DatePipe,
     RouterModule,
     TitleBarComponent,
-    CommonModule
+    CommonModule,
+    IonButtons,
+    IonBackButton
   ],
 })
 export class DeviceViewPageComponent  implements OnInit {
