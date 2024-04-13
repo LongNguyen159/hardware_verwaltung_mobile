@@ -28,14 +28,14 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/device',
+        redirectTo: 'tabs/device',
         pathMatch: 'full',
       },
     ],
   },
   {
     path: '',
-    redirectTo: '/device',
+    redirectTo: 'tabs/device',
     pathMatch: 'full',
   },
 ];

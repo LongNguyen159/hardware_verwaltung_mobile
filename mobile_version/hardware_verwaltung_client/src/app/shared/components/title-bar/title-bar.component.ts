@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input } from '@angular/core';
 import { IonBackButton, IonButtons, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 @Component({
@@ -10,9 +11,11 @@ import { IonBackButton, IonButtons, IonHeader, IonTitle, IonToolbar } from '@ion
     IonTitle,
     IonToolbar,
     IonButtons,
-    IonBackButton
+    IonBackButton,
+    CommonModule
   ]
 })
 export class TitleBarComponent {
   @Input() title: string = ''
+  @Input() enableBackButton: boolean = false
 }
