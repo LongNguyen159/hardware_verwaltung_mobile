@@ -12,9 +12,9 @@ export const routes: Routes = [
           import('../feature/room-view/pages/room-view-page/room-view.page').then((m) => m.RoomOverviewPageComponent),
       },
       {
-        path: 'tab2',
+        path: 'qr-code',
         loadComponent: () =>
-          import('../tab2/tab2.page').then((m) => m.Tab2Page),
+          import('../feature/qr-code/qr-code-scanner/qr-code.page').then((m) => m.QrCodeScanner),
       },
       {
         path: 'tab3',
