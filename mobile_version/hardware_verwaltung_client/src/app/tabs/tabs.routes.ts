@@ -6,11 +6,6 @@ export const routes: Routes = [
     path: 'tabs',
     component: TabsPage,
     children: [
-      // {
-      //   path: 'room',
-      //   loadComponent: () =>
-      //     import('../feature/room-view/pages/room-view-page/room-view.page').then((m) => m.RoomOverviewPageComponent),
-      // },
       {
         path: 'qr-code',
         loadComponent: () =>
@@ -21,14 +16,9 @@ export const routes: Routes = [
         loadComponent: () =>
           import('../feature/dashboard/dashboard-page/dashboard-page.page').then((m) => m.DashboardPageComponent),
       },
-      // {
-      //   path: 'device',
-      //   loadComponent: () =>
-      //     import('../feature/device-view/pages/device-view-page/device-view-page.component').then((m) => m.DeviceViewPageComponent),
-      // },
       {
         path: '',
-        redirectTo: 'tabs/dashboard',
+        redirectTo: 'dashboard',
         pathMatch: 'full',
       },
     ],
@@ -38,4 +28,4 @@ export const routes: Routes = [
     redirectTo: 'tabs/dashboard',
     pathMatch: 'full',
   },
-];
+]
