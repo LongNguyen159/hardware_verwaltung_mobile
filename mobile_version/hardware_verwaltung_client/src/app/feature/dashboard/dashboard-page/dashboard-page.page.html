@@ -1,9 +1,11 @@
-<app-title-bar title="plus tab"></app-title-bar>
+<app-title-bar title="Dashboard"></app-title-bar>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Dashboard</ion-title>
+      <div class="ion-padding-horizontal greetText">
+        <p>{{greetingText}}, {{username}}</p>
+      </div>
     </ion-toolbar>
   </ion-header>
 
@@ -37,6 +39,61 @@
         </ion-card-header>
         <ion-card-content>
           Find items in a specific location
+        </ion-card-content>
+      </div>
+      <div class="chevronIconPadding">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </div>
+    </div>
+  </ion-card>
+
+  <ion-card [button]="true" routerLink="/device">
+    <div class="cardContentContainer">
+      <div>
+        <ion-card-header>
+          <ion-card-title>
+            Your Items
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Manage your lent items
+        </ion-card-content>
+      </div>
+      <div class="chevronIconPadding">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </div>
+    </div>
+  </ion-card>
+
+  <ion-card [button]="true" routerLink="/device">
+    <div class="cardContentContainer">
+      <div>
+        <ion-card-header>
+          <ion-card-title>
+            Your Items
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Manage your lent items
+        </ion-card-content>
+      </div>
+      <div class="chevronIconPadding">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </div>
+    </div>
+  </ion-card>
+
+
+  <ion-card [button]="true" routerLink="/device">
+    <div class="cardContentContainer">
+      <div>
+        <ion-card-header>
+          <ion-card-title>
+            Your Items
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Manage your lent items
         </ion-card-content>
       </div>
       <div class="chevronIconPadding">

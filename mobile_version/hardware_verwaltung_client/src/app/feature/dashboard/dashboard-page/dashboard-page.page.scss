@@ -8,3 +8,12 @@
     align-items: center;
     justify-content: space-between;
 }
+.greetText {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    font-weight: 600;
+    font-size: 2rem;
+}
