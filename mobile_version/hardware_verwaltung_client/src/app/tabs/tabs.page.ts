@@ -20,7 +20,7 @@ export class TabsPage {
 
   tabEntries: TabEntry[] = [
     { tab: 'device', icon: 'home-outline', label: 'Device', route: '/device' },
-    { tab: 'tab1', icon: 'triangle', label: 'Tab 1', route: '/tabs/tab1' },
+    { tab: 'room', icon: 'triangle', label: 'Room', route: '/room' },
     { tab: 'tab2', icon: 'ellipse', label: 'Tab 2', route: '/tabs/tab2' },
     { tab: 'tab3', icon: 'add-outline', label: 'Tab 3', route: '/tabs/tab3' }
   ]
