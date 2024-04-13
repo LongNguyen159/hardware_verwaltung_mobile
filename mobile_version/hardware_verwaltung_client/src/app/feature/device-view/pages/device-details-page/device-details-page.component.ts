@@ -102,7 +102,6 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
   /** Get saved image and display them (if there is an image) */
   getSavedImage() {
     this.sharedService.getImageOfDevice(this.deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe(blobData => {
-      console.log('getting saved img of device id', this.deviceId)
       if (blobData) {
         /** Get image infos (id, name, etc.) */
         this.getSavedImageMetaData()
