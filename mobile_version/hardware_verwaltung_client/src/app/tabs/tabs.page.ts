@@ -1,7 +1,7 @@
 import { Component, EnvironmentInjector, OnInit, inject } from '@angular/core';
 import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { triangle, ellipse, square, addOutline, homeOutline, qrCode, home, add } from 'ionicons/icons';
+import { triangle, ellipse, square, addOutline, homeOutline, qrCode, home, add, hardwareChip, hardwareChipOutline, laptop, laptopOutline, person, personCircle, personCircleOutline, grid, gridOutline, barcode, barcodeOutline } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import { Router, RouterEvent, NavigationEnd } from '@angular/router';
 import { takeUntil } from 'rxjs';
@@ -24,17 +24,20 @@ export class TabsPage extends BaseComponent implements OnInit {
   selectedTab: string = ''
 
   tabEntries: TabEntry[] = [
-    { tab: 'device', icon: 'home-outline', iconFilled: 'home', label: 'Device', route: '/device' },
-    { tab: 'room', icon: 'triangle', iconFilled: 'triangle', label: 'Room', route: '/room' },
-    { tab: 'qr-code', icon: 'qr-code', iconFilled: 'qr-code', route: '/qr-code' },
-    { tab: 'tab3', icon: 'add-outline', iconFilled: 'add', label: 'Tab 3', route: '/tabs/tab3' }
+    // { tab: 'device', icon: 'laptop-outline', iconFilled: 'laptop', label: 'Device', route: '/device' },
+    // { tab: 'room', icon: 'triangle', iconFilled: 'triangle', label: 'Room', route: '/room' },
+    { tab: 'dashboard', icon: 'grid-outline', iconFilled: 'grid', route: '/dashboard' },
+    { tab: 'qr-code', icon: 'barcode-outline', iconFilled: 'barcode-outline', route: '/qr-code' },
   ];
 
   public environmentInjector = inject(EnvironmentInjector);
 
   constructor(private router: Router) {
     super()
-    addIcons({ triangle, ellipse, addOutline, homeOutline, qrCode, home, add });
+    addIcons({ triangle, ellipse, addOutline, homeOutline, qrCode, home, add,
+      laptop, laptopOutline, personCircle, personCircleOutline,
+      grid, gridOutline, barcode, barcodeOutline
+     })
   }
 
   ngOnInit(): void {
@@ -42,7 +45,7 @@ export class TabsPage extends BaseComponent implements OnInit {
 
     this.router.events.pipe(takeUntil(this.componentDestroyed$)).subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
-        this.setSelectedTab(event.url);
+        this.setSelectedTab(event.url)
       }
     })
   }
