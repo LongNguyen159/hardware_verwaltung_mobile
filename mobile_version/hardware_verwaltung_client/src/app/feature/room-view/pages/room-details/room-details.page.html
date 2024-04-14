@@ -22,7 +22,7 @@
   <p class="ion-padding-horizontal" *ngIf="availableItems.length !== 0"><strong>Available items: {{ availableItems.length }} </strong></p>
   
   <!-- show list of devices -->
-  <ion-list class="ion-padding-top">
+  <ion-list class="ion-padding-top" *ngIf="availableItems.length !==0">
     <ion-item *ngFor="let item of availableItems" button [routerLink]="['/device', item.id]">  
       <ion-label class="ion-text-wrap">
         <h3 style="font-weight: bold;">{{ item.item_name }}</h3>
@@ -35,7 +35,9 @@
   <div class="no-data" *ngIf="availableItems.length == 0">
     <ion-icon size="large" name="file-tray"></ion-icon>
     <!-- Subtitle for no data available -->
-    <h2 class="subtitle">No available items</h2>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+      <p>No available items</p>
+    </div>
   </div>
 </ion-content>
 
