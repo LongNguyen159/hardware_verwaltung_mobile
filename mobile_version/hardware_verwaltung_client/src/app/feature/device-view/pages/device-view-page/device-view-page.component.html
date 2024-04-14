@@ -19,7 +19,7 @@
     </ion-toolbar>
   </ion-header>
   <ion-list class="ion-padding-top">
-    <ion-item *ngFor="let item of allDevices" button [routerLink]="['/device', item.id]">  
+    <ion-item *ngFor="let item of allAvailableDevices" button [routerLink]="['/device', item.id]">  
       <ion-label class="ion-text-wrap">
         <h3 style="font-weight: bold;">{{ item.item_name }}</h3>
         <p style="font-weight: bold;">{{ item.description }}</p>
