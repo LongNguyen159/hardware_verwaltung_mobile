@@ -37,6 +37,14 @@ import { SharedService } from 'src/app/shared/services/shared.service';
     IonSearchbar,
   ],
 })
+
+/** TODO:
+ * fix: polling reset list to beginning, very annoying.
+ * feat: implement filtering function
+ * fix: filtering and polling conflict: after polling, filter does not apply anymore 
+ * 
+ * feat: login page
+ */
 export class DeviceViewPageComponent extends BaseComponent implements OnInit {
   allAvailableDevices: DeviceMetaData[] = []
   searchHidden = false
