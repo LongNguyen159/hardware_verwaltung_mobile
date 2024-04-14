@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'app.hardware.verwaltung.system',
   appName: 'hardware_verwaltung_client',
   webDir: 'www',
   server: {
