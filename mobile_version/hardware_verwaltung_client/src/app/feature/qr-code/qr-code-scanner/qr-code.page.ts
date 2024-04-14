@@ -22,7 +22,10 @@ import { CommonModule } from '@angular/common';
 export class QrCodeScanner {
 
   isSupported = false
-  qrCode: Barcode[] = []
+
+  lendQrCodeData: Barcode[] = []
+
+  returnQrCodeData: Barcode[] = []
 
   constructor(private alertController: AlertController) { 
     BarcodeScanner.isSupported().then((result) => {
@@ -31,16 +34,53 @@ export class QrCodeScanner {
     addIcons({scan, chevronForward})
   }
 
-  async scan(): Promise<void> {
+  /** User scans to lend item */
+  async scanLendItem(): Promise<void> {
     const granted = await this.requestPermissions()
     if (!granted) {
       this.presentAlert()
       return;
     }
     const { barcodes } = await BarcodeScanner.scan();
-    this.qrCode.push(...barcodes);
-    console.log(this.qrCode)
+    this.lendQrCodeData.push(...barcodes);
+    console.log( 'lend qr data:', this.lendQrCodeData)
+
+    /** After getting JSON from the QR code, first send GET request to get item's full info.
+     * call sharedService.getItemById(id)
+     * 
+     * After getting full infos, send POST request to item-history.
+     * Close scanner.
+     */
   }
+
+
+  /** User scans to return item */
+  async scanReturnItem(): Promise<void> {
+    const granted = await this.requestPermissions()
+    if (!granted) {
+      this.presentAlert()
+      return;
+    }
+    const { barcodes } = await BarcodeScanner.scan();
+    this.returnQrCodeData.push(...barcodes);
+    console.log( 'return qr data:' , this.returnQrCodeData)
+
+    /** Scan Room's QR to return. We will get id of room as info.
+     * IDEA:
+     * Take deviceId as an arry of number, then use forkJoin to make multiple POST request (return multiple devices)
+     * call service to send POST request:
+     * for each id inside deviceIds, POST:
+     * {
+     *  item_id: id (each id of deviceIds),
+     *  room_id: 1 (stays the same),
+     *  item_hisotry_type: 2 (return),
+     *  user_id: 123 (stays the same)
+     *  ...
+     * }
+     */
+  }
+
+
 
   async requestPermissions(): Promise<boolean> {
     const { camera } = await BarcodeScanner.requestPermissions();
@@ -50,7 +90,7 @@ export class QrCodeScanner {
   async presentAlert(): Promise<void> {
     const alert = await this.alertController.create({
       header: 'Permission denied',
-      message: 'Please grant camera permission to use the barcode scanner.',
+      message: 'Please grant camera permission to use the QR scanner.',
       buttons: ['OK'],
     });
     await alert.present();
