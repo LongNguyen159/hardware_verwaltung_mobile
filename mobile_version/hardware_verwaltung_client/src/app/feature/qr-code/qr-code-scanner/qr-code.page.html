@@ -11,6 +11,44 @@
       <ion-title size="large">Scan QR Code</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <ion-card [button]="true" routerLink="/device">
+    <div class="cardContentContainer">
+      <div>
+        <ion-card-header>
+          <ion-card-title>
+            Lend Item
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Scan item's QR code to assign your name to it.
+        </ion-card-content>
+      </div>
+      <div class="chevronIconPadding">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </div>
+    </div>
+  </ion-card>
+
+  <ion-card [button]="true" routerLink="/device">
+    <div class="cardContentContainer">
+      <div>
+        <ion-card-header>
+          <ion-card-title>
+            Return Item
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Return your lent items by scanning the room's QR code
+        </ion-card-content>
+      </div>
+      <div class="chevronIconPadding">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </div>
+    </div>
+  </ion-card>
+
+
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="scan()" [disabled]="!this.qrCodeService.isSupported">
       <ion-icon name="scan"></ion-icon>
