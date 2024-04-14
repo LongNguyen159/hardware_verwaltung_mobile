@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle, IonCardTitle, IonButtons, IonButton, IonItem, IonIcon } from '@ionic/angular/standalone';
 import { ExploreContainerComponent } from '../../../explore-container/explore-container.component';
 import { TitleBarComponent } from '../../../shared/components/title-bar/title-bar.component';
@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { chevronForward } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
+import { Platform } from '@ionic/angular';
 @Component({
   selector: 'app-dashboard-page',
   templateUrl: 'dashboard-page.page.html',
@@ -20,9 +21,11 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 
   greetingText: string = ''
   username: string = 'Long Nguyen'
-
+  isIOS: boolean
   private intervalId: any
-  constructor() {
+  constructor(public platform: Platform) {
+    this.isIOS = this.platform.is('ipad') || this.platform.is('iphone') || this.platform.is('ios');
+    console.log(this.isIOS)
     addIcons({chevronForward})
   }
 

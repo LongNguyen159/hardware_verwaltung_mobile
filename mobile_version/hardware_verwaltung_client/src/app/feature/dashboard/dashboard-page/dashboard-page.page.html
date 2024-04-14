@@ -1,12 +1,18 @@
 <app-title-bar title="Dashboard"></app-title-bar>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+  <ion-header *ngIf="isIOS" collapse="condense" mode="ios">
     <ion-toolbar>
       <div class="ion-padding-horizontal greetText">
         <p>{{greetingText}}, {{username}}</p>
       </div>
     </ion-toolbar>
+  </ion-header>
+
+  <ion-header *ngIf="!isIOS" style="box-shadow: none !important;">
+    <div class="ion-padding-horizontal greetText">
+      <p>{{greetingText}}, {{username}}</p>
+    </div>
   </ion-header>
 
   <!-- Device overview card -->
