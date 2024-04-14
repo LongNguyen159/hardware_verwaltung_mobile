@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { chevronForward } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
-import { Platform } from '@ionic/angular';
+import { PlatformService } from 'src/app/shared/services/platform.service';
 @Component({
   selector: 'app-dashboard-page',
   templateUrl: 'dashboard-page.page.html',
@@ -23,9 +23,9 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   username: string = 'Long Nguyen'
   isIOS: boolean
   private intervalId: any
-  constructor(public platform: Platform) {
-    this.isIOS = this.platform.is('ipad') || this.platform.is('iphone') || this.platform.is('ios');
-    console.log(this.isIOS)
+  constructor(private platformService: PlatformService) {
+    this.isIOS = this.platformService.isIOSPlatform()
+    console.log('platform ios?', this.isIOS)
     addIcons({chevronForward})
   }
 
