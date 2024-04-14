@@ -55,7 +55,7 @@ export class RoomDetailsPageComponent extends BasePageComponent implements OnIni
     this.deviceService.getOneRoom(id).pipe(take(1)).subscribe((room: RoomInterface) => {
       this.roomDetails = room
       this.roomName = room.room_number
-
+      /** Get all items of that room */
       this.getAllItems()
 
       generateQRCodeFromJSON(room).then(data => {
