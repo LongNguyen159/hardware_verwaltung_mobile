@@ -19,7 +19,9 @@
       <ion-title size="large"> {{roomName}} </ion-title>
     </ion-toolbar>
   </ion-header>
-  <p class="ion-padding-horizontal"><strong>Available items: {{ availableItems.length }} </strong></p>
+  <p class="ion-padding-horizontal" *ngIf="availableItems.length !== 0"><strong>Available items: {{ availableItems.length }} </strong></p>
+  
+  <!-- show list of devices -->
   <ion-list class="ion-padding-top">
     <ion-item *ngFor="let item of availableItems" button [routerLink]="['/device', item.id]">  
       <ion-label class="ion-text-wrap">
@@ -29,4 +31,11 @@
       </ion-label>
     </ion-item>
   </ion-list>
+  <!-- Centered image -->
+  <div class="no-data" *ngIf="availableItems.length == 0">
+    <ion-icon size="large" name="file-tray"></ion-icon>
+    <!-- Subtitle for no data available -->
+    <h2 class="subtitle">No available items</h2>
+  </div>
 </ion-content>
+

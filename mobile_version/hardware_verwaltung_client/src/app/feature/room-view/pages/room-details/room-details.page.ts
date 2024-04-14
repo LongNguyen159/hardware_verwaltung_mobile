@@ -1,13 +1,15 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonBackButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonBackButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { SharedService } from 'src/app/shared/services/shared.service';
 import { take, takeUntil } from 'rxjs';
 import { DeviceMetaData, RoomInterface } from 'src/app/shared/models/shared-models';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { RouterModule } from '@angular/router';
+import { addIcons } from 'ionicons';
+import { fileTray, fileTrayOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-room-details',
@@ -16,7 +18,7 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,
     IonButtons, IonBackButton, IonList, IonItem, IonLabel,
-    RouterModule
+    RouterModule, IonIcon
   ]
 })
 export class RoomDetailsPage extends BaseComponent implements OnInit {
@@ -33,6 +35,7 @@ export class RoomDetailsPage extends BaseComponent implements OnInit {
   }
   constructor(public platformService: PlatformService, private sharedService: SharedService) { 
     super()
+    addIcons({fileTray, fileTrayOutline})
   }
 
   ngOnInit() {

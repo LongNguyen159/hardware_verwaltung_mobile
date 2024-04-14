@@ -56,14 +56,20 @@ export class RoomOverviewPageComponent extends BaseComponent implements OnInit {
     })
   }
 
-  getAvailableItemsCountForRoom(roomId: number): number {
+  getAvailableItemsCountForRoom(roomId: number): string {
     const room = this.allRooms.find(room => room.id === roomId)
     if (room) {
       const itemsOfRoom = this.allItems.filter(item => item.location === room.room_number)
       const availableItems = itemsOfRoom.filter(item => !item.borrowed_by_user_id)
-      return availableItems.length
+      if (availableItems.length == 0) {
+        return 'No available item'
+      }
+      if (availableItems.length == 1) {
+        return '1 available item'
+      }
+      return `${availableItems.length} available items`
     } else {
-      return 0
+      return `-`
     }
   }
 }
