@@ -25,4 +25,8 @@ export const routes: Routes = [
     path: 'room/:id',
     loadComponent: () => import('./feature/room-view/pages/room-details/room-details.page').then( m => m.RoomDetailsPage)
   },
+  {
+    path: 'your-items',
+    loadComponent: () => import('./feature/your-items-page/pages/your-items/your-items.page').then( m => m.YourItemsPage)
+  },
 ];
