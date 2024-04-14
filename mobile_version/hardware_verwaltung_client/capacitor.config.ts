@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'app.hardware.verwaltung.system',
-  appName: 'hardware_verwaltung_client',
+  appName: 'Hardware Service',
   webDir: 'www',
   server: {
     androidScheme: 'https'
