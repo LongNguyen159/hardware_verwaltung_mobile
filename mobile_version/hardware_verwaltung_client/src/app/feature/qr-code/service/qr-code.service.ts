@@ -26,6 +26,7 @@ export class QrCodeService {
     }
     const { barcodes } = await BarcodeScanner.scan();
     this.qrCode.push(...barcodes);
+    console.log(this.qrCode)
   }
 
   async requestPermissions(): Promise<boolean> {

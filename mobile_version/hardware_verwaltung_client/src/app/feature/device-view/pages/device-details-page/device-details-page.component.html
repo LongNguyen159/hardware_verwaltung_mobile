@@ -40,7 +40,7 @@
         <ion-card-content>
           <p *ngIf="imageToShow"><strong>Last modified:</strong> {{ unixTimestampMiliseconds | date: "LLL dd, yyyy 'at' HH:mm" }} ({{ timezoneName }}) </p>
           <p *ngIf="imageToShow" class="ion-padding-bottom"><strong>Relative Time:</strong> {{ relativeTime }} </p>
-          <div style="display: flex; justify-content: center; flex-direction: column; width: 100%; align-items: center; gap: 16px;">    
+          <div style="display: flex; justify-content: center; flex-direction: column; width: 100%; align-items: center; gap: 16px; pointer-events: none;">    
             <img *ngIf="imageToShow" [ngClass]="{'portrait': isPortrait, 'notPortrait': !isPortrait}" [src]="imageToShow" alt="Selected Photo" />
           </div>
 
