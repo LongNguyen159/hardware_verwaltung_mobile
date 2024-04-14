@@ -1,6 +1,14 @@
-<app-title-bar title="Triangle Tab">
-
-</app-title-bar>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button *ngIf="platformService.isIOSPlatform()" text="Dashboard" defaultHref="/tabs/dashboard"></ion-back-button>
+      <ion-back-button *ngIf="!platformService.isIOSPlatform()" defaultHref="/tabs/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      Room Overview
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
 
 <ion-content [fullscreen]="false">
   <ion-header collapse="condense">
@@ -8,5 +16,12 @@
       <ion-title size="large">Room Overview</ion-title>
     </ion-toolbar>
   </ion-header>
-
+  <ion-list class="ion-padding-top" *ngIf="allRooms.length !==0">
+    <ion-item *ngFor="let item of allRooms" button [routerLink]="['/room', item.id]">  
+      <ion-label class="ion-text-wrap">
+        <h3 style="font-weight: bold;">{{ item.room_number }}</h3>
+        <p style="font-weight: bold;">{{ allItems && item.id ? getAvailableItemsCountForRoom(item.id) : '-' }} available items</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

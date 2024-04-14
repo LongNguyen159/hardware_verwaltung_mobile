@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!-- For iOS -->
+      <ion-back-button *ngIf="platformService.isIOSPlatform()" text="Rooms" defaultHref="/room"></ion-back-button>
+
+      <!-- For other platforms -->
+      <ion-back-button *ngIf="!platformService.isIOSPlatform()" defaultHref="/room"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      Room 1
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Room 1</ion-title>
+    </ion-toolbar>
+  </ion-header>
+</ion-content>

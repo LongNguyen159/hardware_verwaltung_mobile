@@ -24,6 +24,7 @@ import { DeviceMetaData, ImageResponse } from 'src/app/shared/models/shared-mode
 import { SharedService } from 'src/app/shared/services/shared.service';
 import { NavController } from '@ionic/angular';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
+import { PlatformService } from 'src/app/shared/services/platform.service';
 @Component({
   selector: 'app-device-details-page',
   templateUrl: './device-details-page.component.html',
@@ -75,6 +76,7 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
 
   constructor(
     private sharedService: SharedService,
+    public platformService: PlatformService
   ) { 
     super()
   }

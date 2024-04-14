@@ -5,6 +5,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonSkeletonT
 import { take } from 'rxjs';
 import { TitleBarComponent } from 'src/app/shared/components/title-bar/title-bar.component';
 import { DeviceMetaData } from 'src/app/shared/models/shared-models';
+import { PlatformService } from 'src/app/shared/services/platform.service';
 import { SharedService } from 'src/app/shared/services/shared.service';
 
 @Component({
@@ -35,7 +36,7 @@ import { SharedService } from 'src/app/shared/services/shared.service';
 })
 export class DeviceViewPageComponent  implements OnInit {
   allDevices: DeviceMetaData[] = []
-  constructor(private sharedService: SharedService) { }
+  constructor(private sharedService: SharedService, public platformService: PlatformService) { }
 
   ngOnInit() {
     this.sharedService.getAllItems().pipe(take(1)).subscribe(allItems => {
