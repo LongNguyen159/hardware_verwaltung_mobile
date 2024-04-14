@@ -1,0 +1,12 @@
+.searchBar {
+    position: sticky;
+    top:0;
+    z-index: 10;
+}
+
+.background-dark {
+    background-color: var(--ion-background-color);
+}
+.background-light {
+    background-color: rgb(247, 247, 247);
+}

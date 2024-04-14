@@ -7,7 +7,7 @@ export class PlatformService {
   private _isIos: boolean
   constructor(
     private _platform: Platform
-  ) { 
+  ) {
     this._isIos = this._platform.is('ipad') || this._platform.is('iphone') || this._platform.is('ios')
   }
 

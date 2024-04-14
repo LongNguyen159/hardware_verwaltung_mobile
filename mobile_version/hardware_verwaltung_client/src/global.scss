@@ -26,6 +26,7 @@
 @import "@ionic/angular/css/flex-utils.css";
 
 
+/** Use to style ion-card to include a small '>' icon that the right side */
 .chevronIconPadding {
     padding-right: 10px;
 }
@@ -35,4 +36,14 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+}
+/** ---------------- */
+
+
+.noBoxShadow {
+    box-shadow: none;
+}
+
+.noBorderBottom {
+    border-bottom: none;
 }

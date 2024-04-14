@@ -1,5 +1,5 @@
 <!-- toolbar shown when scrolled -->
-<ion-header>
+<ion-header class="noBoxShadow">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button *ngIf="platformService.isIOSPlatform()" text="Dashboard" defaultHref="/tabs/dashboard"></ion-back-button>
@@ -11,13 +11,17 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="false" #content>
   <!-- header of page -->
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Available devices</ion-title>
     </ion-toolbar>
   </ion-header>
+  <div class="searchBar">
+    <ion-searchbar [ngClass]="{'background-dark': colorMode === 'dark', 'background-light': colorMode === 'light'}"  class="searchBar" placeholder="Search" showCancelButton="focus"></ion-searchbar>
+  </div>
+  
   <ion-list class="ion-padding-top">
     <ion-item *ngFor="let item of allAvailableDevices" button [routerLink]="['/device', item.id]">  
       <ion-label class="ion-text-wrap">
