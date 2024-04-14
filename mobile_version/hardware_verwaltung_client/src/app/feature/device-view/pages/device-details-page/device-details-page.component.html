@@ -17,6 +17,7 @@
         </ion-card-header>
       
         <ion-card-content *ngIf="deviceDetails">
+            <p><strong>Device ID:</strong> {{ deviceDetails.id }}</p>
             <p><strong>Type:</strong> {{ deviceDetails.item_name }}</p>
             <p><strong>Location:</strong> {{ deviceDetails.location }}</p>
 
