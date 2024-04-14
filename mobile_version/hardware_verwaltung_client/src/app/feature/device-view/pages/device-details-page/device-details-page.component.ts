@@ -1,6 +1,6 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe, Location } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule, RoutesRecognized } from '@angular/router';
 import {
   IonBackButton,
   IonButtons,
@@ -25,6 +25,7 @@ import { SharedService } from 'src/app/shared/services/shared.service';
 import { NavController } from '@ionic/angular';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { PlatformService } from 'src/app/shared/services/platform.service';
+import { filter, pairwise } from 'rxjs/operators';
 @Component({
   selector: 'app-device-details-page',
   templateUrl: './device-details-page.component.html',
@@ -52,6 +53,7 @@ import { PlatformService } from 'src/app/shared/services/platform.service';
     CommonModule
   ],
 })
+
 export class DeviceDetailsPageComponent extends BaseComponent implements OnInit {
   deviceDetails: DeviceMetaData
   deviceId: number
@@ -65,6 +67,7 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
   timezoneName: string
   relativeTime: string
 
+  backButtonLabel: string = 'Back'
   @Input()
   set id(deviceId: string) {
     const id = parseInt(deviceId)
@@ -76,7 +79,7 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
 
   constructor(
     private sharedService: SharedService,
-    public platformService: PlatformService
+    public platformService: PlatformService,
   ) { 
     super()
   }

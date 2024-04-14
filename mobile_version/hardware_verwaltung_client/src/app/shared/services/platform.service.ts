@@ -4,14 +4,14 @@ import { Platform } from '@ionic/angular';
   providedIn: 'root'
 })
 export class PlatformService {
-  isIos: boolean
+  private _isIos: boolean
   constructor(
     private _platform: Platform
   ) { 
-    this.isIos = this._platform.is('ipad') || this._platform.is('iphone') || this._platform.is('ios')
+    this._isIos = this._platform.is('ipad') || this._platform.is('iphone') || this._platform.is('ios')
   }
 
   isIOSPlatform(): boolean {
-    return this.isIos
+    return this._isIos
   }
 }
