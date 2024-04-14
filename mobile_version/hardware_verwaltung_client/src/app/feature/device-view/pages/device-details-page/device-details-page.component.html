@@ -43,6 +43,10 @@
           <div style="display: flex; justify-content: center; flex-direction: column; width: 100%; align-items: center; gap: 16px;">    
             <img *ngIf="imageToShow" [ngClass]="{'portrait': isPortrait, 'notPortrait': !isPortrait}" [src]="imageToShow" alt="Selected Photo" />
           </div>
+
+          <div *ngIf="!imageToShow">
+            No image to show
+          </div>
         </ion-card-content>
     </ion-card>
 </ion-content>
