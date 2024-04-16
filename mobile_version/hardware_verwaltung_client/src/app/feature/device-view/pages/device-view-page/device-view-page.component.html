@@ -11,7 +11,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="false" #content>
+<ion-content [fullscreen]="false" [scrollEvents]="true" (ionScroll)="onContentScroll()" #content>
   <!-- header of page -->
   <ion-header collapse="condense">
     <ion-toolbar>
@@ -19,7 +19,7 @@
     </ion-toolbar>
   </ion-header>
   <div class="searchBar">
-    <ion-searchbar [ngClass]="{'background-dark': colorMode === 'dark', 'background-light': colorMode === 'light'}"  class="searchBar" placeholder="Search" showCancelButton="focus"></ion-searchbar>
+    <ion-searchbar (ionFocus)="onSearchFocus()" (ionBlur)="hideAccessoryBarOnKeyboard()" [ngClass]="{'background-dark': colorMode === 'dark', 'background-light': colorMode === 'light'}"  class="searchBar" placeholder="Search" showCancelButton="focus"></ion-searchbar>
   </div>
   
   <ion-list class="ion-padding-top">

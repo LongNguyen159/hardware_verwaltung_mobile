@@ -9,6 +9,7 @@ import { DeviceMetaData } from 'src/app/shared/models/shared-models';
 import { ColorModeService } from 'src/app/shared/services/color-mode.service';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { SharedService } from 'src/app/shared/services/shared.service';
+import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
   selector: 'app-device-view-page',
@@ -61,7 +62,6 @@ import { SharedService } from 'src/app/shared/services/shared.service';
  */
 export class DeviceViewPageComponent extends BaseComponent implements OnInit {
   allAvailableDevices: DeviceMetaData[] = []
-  searchHidden = false
 
   colorMode: string
 
@@ -83,11 +83,26 @@ export class DeviceViewPageComponent extends BaseComponent implements OnInit {
     })
   }
 
-  onContentScroll(scrollEvent: CustomEvent) {
-    console.log(scrollEvent)
-    const scrollPosition = scrollEvent.detail.scrollTop;
-    this.searchHidden = scrollPosition > 100;
-    console.log(this.searchHidden)
+  async onSearchFocus() {
+    /** Show accessory bar on keyboard */
+    try {
+      await Keyboard.setAccessoryBarVisible({ isVisible: true });
+    } catch (error) {
+      console.error('Error setting accessory bar visibility:', error);
+    }
   }
 
+  async hideAccessoryBarOnKeyboard() {
+    try {
+      await Keyboard.setAccessoryBarVisible({ isVisible: false });
+    } catch (error) {
+      console.error('Error setting accessory bar visibility:', error);
+    }
+  }
+
+  onContentScroll() {
+    Keyboard.hide()
+  }
+
+  
 }
