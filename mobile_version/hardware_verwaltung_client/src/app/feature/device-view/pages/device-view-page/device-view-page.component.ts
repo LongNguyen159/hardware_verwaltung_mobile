@@ -41,7 +41,21 @@ import { SharedService } from 'src/app/shared/services/shared.service';
 /** TODO:
  * fix: polling reset list to beginning, very annoying.
  * feat: implement filtering function
- * fix: filtering and polling conflict: after polling, filter does not apply anymore 
+ * fix: filtering and polling conflict: after polling, filter does not apply anymore
+ * => Approach: Compare objects and merge.
+ * Compare incoming array of json, see if any changes: UPDATE, INSERT, DELETE => update only that item.
+ * UPDATE: length or value of object has changed.
+ * INSERT: length of whole array has increased, or item_id of incoming does not exist
+ * DELETE: length of whole array has decreased, or item_id of current not found in incoming.
+ * 
+ * optimise further: instead of polling every 10s, only update and merge if there are changes in the database.
+ * => Approach: use query notification. Every time database chagnes anything, notify frontend.
+ * If want to make it scalable, consider batching: not every change should be notified, but changes in batch:
+ * meaning, after a batch of changes, notify frontend.
+ * 
+ * If 1000 user changes something and we notify frontend each time, frontend will compare and merge data 1000 times,
+ * which is inefficient.
+ * 
  * 
  * feat: login page
  */
