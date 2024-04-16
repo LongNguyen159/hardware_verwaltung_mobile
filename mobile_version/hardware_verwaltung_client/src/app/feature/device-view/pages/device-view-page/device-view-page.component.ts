@@ -83,25 +83,23 @@ export class DeviceViewPageComponent extends BaseComponent implements OnInit {
     })
   }
 
-  async onSearchFocus() {
+  onSearchFocus() {
     /** Show accessory bar on keyboard */
-    try {
-      await Keyboard.setAccessoryBarVisible({ isVisible: true });
-    } catch (error) {
-      console.error('Error setting accessory bar visibility:', error);
+    if ( this.platformService.isNativePlatform()) {
+      Keyboard.setAccessoryBarVisible({ isVisible: true })
     }
   }
 
   async hideAccessoryBarOnKeyboard() {
-    try {
-      await Keyboard.setAccessoryBarVisible({ isVisible: false });
-    } catch (error) {
-      console.error('Error setting accessory bar visibility:', error);
+    if (this.platformService.isNativePlatform()) {
+      Keyboard.setAccessoryBarVisible({ isVisible: false })
     }
   }
 
   onContentScroll() {
-    Keyboard.hide()
+    if (this.platformService.isNativePlatform()) {
+      Keyboard.hide()
+    }
   }
 
   
