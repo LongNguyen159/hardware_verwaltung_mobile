@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { DeviceMetaData, ImageResponse, NewDeviceData, ProductType, RoomInterface } from '../models/shared-models';
 import { Observable, map, of, timer} from 'rxjs';
 import { switchMap } from 'rxjs';
+import { ToastController } from '@ionic/angular/standalone';
 @Injectable({
   providedIn: 'root'
 })
@@ -11,14 +12,14 @@ export class SharedService {
   /** TODO: Change API endpoint Host in production. Not 'localhost' anymore, but the IP
    * of server where it's been hosted.
    */
-  localhostName: string = 'longs-macbook.local'
+  hostName: string = 'LongsLocalDevMachine.local'
 
-  apiBaseHostUrl: string = `http://${this.localhostName}:8000`
+  apiBaseHostUrl: string = `http://${this.hostName}:8000`
   apiEndpoint: string = `${this.apiBaseHostUrl}/api/v1`
   imageId: number
   unixTimeValue: number
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private snackbar: ToastController) { }
 
   createNewDevice(newDeviceData: NewDeviceData[]) {
     return this.http.post(`${this.apiEndpoint}/items-new/`, newDeviceData)
@@ -128,5 +129,19 @@ export class SharedService {
     }
 
     return 'just now';
+  }
+
+  async openSnackbarMessage(message: string, duration = 3000) {
+    const toast = await this.snackbar.create({
+      message: message,
+      duration: duration,
+      position: 'top',
+      buttons: [{
+        role: "cancel",
+        text: "Dismiss"
+      }],
+    })
+
+    await toast.present();
   }
 }
