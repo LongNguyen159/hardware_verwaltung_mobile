@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">hardware_verwaltung_client</string>
+    <string name="title_activity_main">hardware_verwaltung_client</string>
+    <string name="package_name">app.hardware.verwaltung.system</string>
+    <string name="custom_url_scheme">app.hardware.verwaltung.system</string>
+</resources>

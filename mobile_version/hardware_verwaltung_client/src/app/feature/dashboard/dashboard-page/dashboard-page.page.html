@@ -1,0 +1,74 @@
+<app-title-bar title="Dashboard"></app-title-bar>
+
+<ion-content [fullscreen]="true">
+  <ion-header *ngIf="isIOS" collapse="condense" mode="ios">
+    <ion-toolbar>
+      <div class="ion-padding-horizontal greetText">
+        <p>{{greetingText}}, {{username}}</p>
+      </div>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-header *ngIf="!isIOS" style="box-shadow: none !important;">
+    <div class="ion-padding-horizontal greetText">
+      <p>{{greetingText}}, {{username}}</p>
+    </div>
+  </ion-header>
+
+  <!-- Device overview card -->
+  <ion-card [button]="true" routerLink="/device">
+    <div class="cardContentContainer">
+      <div>
+        <ion-card-header>
+          <ion-card-title>
+            Devices
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          See which devices are available for you
+        </ion-card-content>
+      </div>
+      <div class="chevronIconPadding">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </div>
+    </div>
+  </ion-card>
+
+  <!-- Room overview card -->
+  <ion-card [button]="true" routerLink="/room">
+    <div class="cardContentContainer">
+      <div>
+        <ion-card-header>
+          <ion-card-title>
+            Rooms
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Find items in a specific location
+        </ion-card-content>
+      </div>
+      <div class="chevronIconPadding">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </div>
+    </div>
+  </ion-card>
+
+  <!-- Your items card -->
+  <ion-card [button]="true" routerLink="/your-items">
+    <div class="cardContentContainer">
+      <div>
+        <ion-card-header>
+          <ion-card-title>
+            Your Items
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Manage your lent items
+        </ion-card-content>
+      </div>
+      <div class="chevronIconPadding">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </div>
+    </div>
+  </ion-card>
+</ion-content>

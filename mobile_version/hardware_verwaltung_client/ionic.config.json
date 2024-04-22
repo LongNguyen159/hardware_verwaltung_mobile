@@ -1,0 +1,7 @@
+{
+  "name": "hardware_verwaltung_client",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

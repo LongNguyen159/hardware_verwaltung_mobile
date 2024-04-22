@@ -1,0 +1,52 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button *ngIf="platformService.isIOSPlatform()" [text]="backButtonLabel" defaultHref="/device"></ion-back-button>
+        <ion-back-button *ngIf="!platformService.isIOSPlatform()" defaultHref="/device"></ion-back-button>
+      </ion-buttons>
+      <ion-title>
+        Details
+      </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <ion-card>
+        <ion-card-header>
+          <ion-card-title>Metadata</ion-card-title>
+        </ion-card-header>
+      
+        <ion-card-content *ngIf="deviceDetails">
+            <p><strong>Device ID:</strong> {{ deviceDetails.id }}</p>
+            <p><strong>Type:</strong> {{ deviceDetails.item_name }}</p>
+            <p><strong>Location:</strong> {{ deviceDetails.location }}</p>
+
+            <div>
+                <p><strong>Description:</strong> {{ deviceDetails.description }}</p>
+            </div>
+            <div>
+                <p><strong>Notes:</strong></p>
+                <div style="display:flex; align-items: center; flex-direction: row; gap: 10px;">
+                    <p>{{ deviceDetails.annotation }}</p>
+                </div>
+            </div>
+        </ion-card-content>
+    </ion-card>
+    <ion-card>
+        <ion-card-header>
+          <ion-card-title>Photo</ion-card-title>
+        </ion-card-header>
+      
+        <ion-card-content>
+          <p *ngIf="imageToShow"><strong>Last modified:</strong> {{ unixTimestampMiliseconds | date: "LLL dd, yyyy 'at' HH:mm" }} ({{ timezoneName }}) </p>
+          <p *ngIf="imageToShow" class="ion-padding-bottom"><strong>Relative Time:</strong> {{ relativeTime }} </p>
+          <div style="display: flex; justify-content: center; flex-direction: column; width: 100%; align-items: center; gap: 16px; pointer-events: none;">    
+            <img *ngIf="imageToShow" [ngClass]="{'portrait': isPortrait, 'notPortrait': !isPortrait}" [src]="imageToShow" alt="Selected Photo" />
+          </div>
+
+          <div *ngIf="!imageToShow">
+            No image to show
+          </div>
+        </ion-card-content>
+    </ion-card>
+</ion-content>
