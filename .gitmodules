@@ -1,4 +1,3 @@
-[submodule "LagersystemBackend
-"]
+[submodule "LagersystemBackend"]
 	path = LagersystemBackend
 	url = https://github.com/Lordsfg/LagersystemBackend
