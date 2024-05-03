@@ -78,7 +78,6 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
 
 
   constructor(
-    private sharedService: SharedService,
     public platformService: PlatformService,
   ) { 
     super()

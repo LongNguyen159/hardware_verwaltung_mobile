@@ -31,7 +31,6 @@ export class RoomOverviewPageComponent extends BaseComponent implements OnInit {
 
 
   constructor(
-    private sharedService: SharedService,
     public platformService: PlatformService
   ) {
     super()

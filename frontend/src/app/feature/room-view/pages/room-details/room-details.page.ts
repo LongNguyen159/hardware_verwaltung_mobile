@@ -33,7 +33,7 @@ export class RoomDetailsPage extends BaseComponent implements OnInit {
       this.getRoomDetails(id)
     }
   }
-  constructor(public platformService: PlatformService, private sharedService: SharedService) { 
+  constructor(public platformService: PlatformService) { 
     super()
     addIcons({fileTray, fileTrayOutline})
   }

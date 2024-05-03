@@ -66,7 +66,7 @@ export class DeviceViewPageComponent extends BaseComponent implements OnInit {
   colorMode: string
 
   @ViewChild('content') content: IonContent;
-  constructor(private sharedService: SharedService, public platformService: PlatformService,
+  constructor(public platformService: PlatformService,
     private colorModeService: ColorModeService
   ) {
     super()

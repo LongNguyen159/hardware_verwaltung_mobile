@@ -1,5 +1,6 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, inject } from '@angular/core';
 import { Subject } from 'rxjs';
+import { SharedService } from '../../services/shared.service';
 
 @Component({
   selector: 'app-base',
@@ -10,6 +11,8 @@ import { Subject } from 'rxjs';
 export class BaseComponent implements OnDestroy {
   componentDestroyed$ = new Subject<void>()
   intervalUpdate: any = null
+
+  sharedService = inject(SharedService)
 
   constructor() {}
 
