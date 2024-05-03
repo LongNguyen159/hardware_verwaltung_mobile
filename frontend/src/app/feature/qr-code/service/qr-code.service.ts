@@ -8,6 +8,11 @@ import { AlertController } from '@ionic/angular';
 @Injectable({
   providedIn: 'root'
 })
+
+/** TODO:
+ * Move logics from qr code page to service. In the future there might be 
+ * many components that uses this scanner service.
+ */
 export class QrCodeService {
   isSupported = false
   qrCode: Barcode[] = []

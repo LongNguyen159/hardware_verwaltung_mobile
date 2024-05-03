@@ -10,6 +10,10 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/stan
   standalone: true,
   imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
+
+/** TODO:
+ * Implement login page
+ */
 export class LoginPagePage implements OnInit {
 
   constructor() { }
