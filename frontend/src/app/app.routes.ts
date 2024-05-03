@@ -29,4 +29,8 @@ export const routes: Routes = [
     path: 'your-items',
     loadComponent: () => import('./feature/your-items-page/pages/your-items/your-items.page').then( m => m.YourItemsPage)
   },
+  {
+    path: 'login',
+    loadComponent: () => import('./feature/user/pages/login-page/login-page.page').then( m => m.LoginPagePage)
+  },
 ];
