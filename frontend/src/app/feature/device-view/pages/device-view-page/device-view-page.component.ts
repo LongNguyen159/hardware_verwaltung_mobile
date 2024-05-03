@@ -74,13 +74,25 @@ export class DeviceViewPageComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.sharedService.getAllItems().pipe(takeUntil(this.componentDestroyed$)).subscribe(allItems => {
-      this.allAvailableDevices = allItems.filter(item => !item.borrowed_by_user_id)
+      const filteredItems = allItems.filter(item => !item.borrowed_by_user_id)
+
+      /** Slice all items and push in new data.
+       * We can assign directly, but that means we loses all tracked items.
+       * Doing this will keep the original reference.
+       */
+      this.allAvailableDevices.splice(0, filteredItems.length)
+      this.allAvailableDevices.push(...filteredItems)
     })
 
     this.colorModeService.getUserUiMode().pipe(takeUntil(this.componentDestroyed$)).subscribe(mode => {
       console.log(mode)
       this.colorMode = mode
     })
+  }
+
+  /** Track item by its id to keep track of them on the list. (Mainly to preserve scroll position upon update datasource) */
+  trackById(index: number, item: any): number {
+    return item.id
   }
 
   onSearchFocus() {
