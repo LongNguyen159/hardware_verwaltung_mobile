@@ -12,7 +12,7 @@ export class SharedService {
   /** TODO: Change API endpoint Host in production. Not 'localhost' anymore, but the IP
    * of server where it's been hosted.
    */
-  hostName: string = 'longnguyen-macbookpro.local'
+  hostName: string = 'macbookpro-m1.local'
 
   apiBaseHostUrl: string = `http://${this.hostName}:8000`
   apiEndpoint: string = `${this.apiBaseHostUrl}/api/v1`
