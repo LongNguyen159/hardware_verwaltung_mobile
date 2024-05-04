@@ -5,6 +5,9 @@ import { IonBackButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, Io
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { RouterModule } from '@angular/router';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
+import { take } from 'rxjs';
+import { Device, User } from 'src/app/shared/models/shared-models';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-your-items',
@@ -23,6 +26,9 @@ import { BaseComponent } from 'src/app/shared/components/base/base.component';
 export class YourItemsPage extends BaseComponent implements OnInit {
 
   userId: number
+  user: User
+
+  itemsByUser: Device[] = []
 
   constructor(
     public platformService: PlatformService
@@ -32,15 +38,32 @@ export class YourItemsPage extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.getUserInfos()
-
   }
 
   /** Get user Infos here, as user has logged in. */
   getUserInfos() {
     this.userId = this.sharedService.testUserId
+
+    this.sharedService.getUserById(this.userId).pipe(take(1)).subscribe({
+      next: (value: User) => {
+        this.user = value
+        this.getItemsBorrowedByUser()
+      },
+      error: (err: HttpErrorResponse) => {
+        
+      }
+    })
   }
 
   getItemsBorrowedByUser() {
+    this.sharedService.getItemsBorrowedByUserId(this.userId).pipe(take(1)).subscribe({
+      next: (value: Device[]) => {
+        this.itemsByUser = value
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error(err)
+      }
+    })
   }
 
 }

@@ -21,7 +21,7 @@ export class SharedService {
   imageId: number
   unixTimeValue: number
 
-  testUserId: number = 10
+  testUserId: number = 1
 
   constructor(private http: HttpClient, private snackbar: ToastController) { }
 
@@ -154,6 +154,6 @@ export class SharedService {
   }
 
   getItemsBorrowedByUserId(userId: number) {
-    return this.http.get<Device[]>(`${this.apiEndpoint}`)
+    return this.http.get<Device[]>(`${this.apiEndpoint}/borrowed_items_by_user/${userId}/`)
   }
 }
