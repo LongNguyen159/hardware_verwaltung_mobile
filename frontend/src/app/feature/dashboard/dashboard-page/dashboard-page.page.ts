@@ -24,7 +24,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class DashboardPageComponent implements OnInit, OnDestroy {
   sharedService = inject(SharedService)
   greetingText: string = ''
-  username: string = ''
+  username: string = 'User'
   isIOS: boolean
   private intervalId: any
   constructor(private platformService: PlatformService) {

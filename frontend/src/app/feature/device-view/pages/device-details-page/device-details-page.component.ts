@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule, RoutesRecognized } from '@angular/router';
 import {
   IonBackButton,
+  IonButton,
   IonButtons,
   IonCard,
   IonCardContent,
@@ -50,7 +51,8 @@ import { filter, pairwise } from 'rxjs/operators';
     DatePipe,
     TitleBarComponent,
     RouterModule,
-    CommonModule
+    CommonModule,
+    IonButton
   ],
 })
 
@@ -68,6 +70,11 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
   relativeTime: string
 
   backButtonLabel: string = 'Back'
+
+  /** Boolean flag to determine whether or not the device belongs to current user */
+  isItemByUser: boolean = false
+
+
   @Input()
   set id(deviceId: string) {
     const id = parseInt(deviceId)
@@ -86,6 +93,7 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
   ngOnInit() {
   }
 
+
   getDeviceInfos(deviceId: number) {
     this.sharedService.getItemById(deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe(device => {
       this.deviceDetails = device
@@ -93,6 +101,15 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
       /** Retrive image from database to show */
       this.getSavedImage()
       this.retrieveNotes()
+      this.getUserInfo()
+    })
+  }
+
+  getUserInfo() {
+    this.sharedService.getUserById(this.sharedService.testUserId).pipe(take(1)).subscribe(user => {
+      if (this.deviceDetails.borrowed_by_user_id && this.deviceDetails.borrowed_by_user_id == user.id) {
+        this.isItemByUser = true
+      }
     })
   }
 
