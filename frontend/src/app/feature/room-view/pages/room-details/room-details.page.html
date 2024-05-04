@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!-- For iOS -->
+      <ion-back-button *ngIf="platformService.isIOSPlatform()" text="Rooms" defaultHref="/room"></ion-back-button>
+
+      <!-- For other platforms -->
+      <ion-back-button *ngIf="!platformService.isIOSPlatform()" defaultHref="/room"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      {{roomName}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large"> {{roomName}} </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <p class="ion-padding-horizontal" *ngIf="availableItems.length !== 0"><strong>Available items: {{ availableItems.length }} </strong></p>
+  
+  <!-- show list of devices -->
+  <ion-list class="ion-padding-top" *ngIf="availableItems.length !==0">
+    <ion-item *ngFor="let item of availableItems" button [routerLink]="['/device', item.id]">  
+      <ion-label class="ion-text-wrap">
+        <h3 style="font-weight: bold;">{{ item.item_name }}</h3>
+        <p style="font-weight: bold;">{{ item.description }}</p>
+        <p>{{ item.location }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <!-- Centered image -->
+  <div class="no-data" *ngIf="availableItems.length == 0">
+    <ion-icon size="large" name="file-tray" style="color:grey;"></ion-icon>
+    <!-- Subtitle for no data available -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; color: grey;">
+      <p>No available items</p>
+    </div>
+  </div>
+</ion-content>
+
