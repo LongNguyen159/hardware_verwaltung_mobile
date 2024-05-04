@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
-import { Barcode, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
+import { Barcode, BarcodeFormat, BarcodeScanner, ScanOptions } from '@capacitor-mlkit/barcode-scanning';
 import { AlertController } from '@ionic/angular';
 import { DeviceQRData } from 'src/app/shared/models/shared-models';
 
@@ -20,17 +20,28 @@ export class QrCodeService {
   constructor(private alertController: AlertController) { 
   }
 
+  /** Returns the last result scanned. Subscriber will be responsible for
+   * storing/clearing them.
+   */
   async scan(): Promise<Barcode | undefined> {
+    /** Reset storage on every scan */
+    this.qrCode = []
+
+    /** Early exit function if permission not granted */
     const granted = await this.requestPermissions();
     if (!granted) {
       this.presentAlert();
       return
     }
 
-
-    const { barcodes } = await BarcodeScanner.scan()
-
+    /** Scanning QR */
+    const scanOptions: ScanOptions = {
+      formats: [BarcodeFormat.QrCode]
+    }
+    const { barcodes } = await BarcodeScanner.scan(scanOptions)
+    /** Push ensures that the last one will be the most recent */
     this.qrCode.push(...barcodes)
+    /** Return the most recent scan result */
     return this.qrCode[this.qrCode.length -1]
   }
 
