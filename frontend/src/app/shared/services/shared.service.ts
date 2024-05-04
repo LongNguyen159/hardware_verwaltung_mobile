@@ -21,7 +21,7 @@ export class SharedService {
   imageId: number
   unixTimeValue: number
 
-  testUserId: number = 1
+  testUserId: number = 10
 
   constructor(private http: HttpClient, private snackbar: ToastController) { }
 
