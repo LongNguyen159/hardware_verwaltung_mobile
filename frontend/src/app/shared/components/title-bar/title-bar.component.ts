@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input } from '@angular/core';
-import { IonBackButton, IonButtons, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { PlatformService } from '../../services/platform.service';
 @Component({
   selector: 'app-title-bar',
   templateUrl: './title-bar.component.html',
@@ -12,11 +13,15 @@ import { IonBackButton, IonButtons, IonHeader, IonTitle, IonToolbar } from '@ion
     IonToolbar,
     IonButtons,
     IonBackButton,
-    CommonModule
+    CommonModule,
+    IonContent,
+    
   ]
 })
 export class TitleBarComponent {
   @Input() title: string = ''
   @Input() enableBackButton: boolean = false
   @Input() backLocation: string
+
+  constructor(public platformService: PlatformService) {}
 }
