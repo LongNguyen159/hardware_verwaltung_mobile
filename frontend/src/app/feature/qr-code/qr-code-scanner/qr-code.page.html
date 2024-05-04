@@ -70,18 +70,10 @@
     </div>
   </ion-card>
 
-
-  <ion-list>
-    <ion-item *ngFor="let code of lendQrCodeData">
-      <ion-label position="stacked">{{ code.format }}</ion-label>
-      <ion-input type="text" [value]="code.rawValue"></ion-input>
-    </ion-item>
-  </ion-list>
-
-
-  <!-- <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="scanLendItem()" [disabled]="!isSupported">
-      <ion-icon name="scan"></ion-icon>
-    </ion-fab-button>
-  </ion-fab> -->
+  <div>
+    Lent Device: {{ deviceInfo.id }} - {{ deviceInfo.item_name }}
+  </div>
+  <div>
+    Scanned device valid?: {{ isScannedDeviceValid }}
+  </div>
 </ion-content>

@@ -12,7 +12,7 @@ export interface Device {
     user_email?: string
 }
   
-export interface deviceQrData {
+export interface DeviceQRData {
     id: number
     deviceType: string
     deviceVariant: string
