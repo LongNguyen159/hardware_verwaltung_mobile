@@ -1,10 +1,11 @@
 
-export interface DeviceMetaData {
+export interface Device {
     id: number
     item_name: string
     description: string
     annotation?: string
     location: string
+    location_id: number
     borrowed_by_user_id?: number
     user_name?: string
     user_type?: string
@@ -22,7 +23,7 @@ export interface DownloadFileName {
 }
 export interface NewDeviceData {
     product_type: ProductType
-    current_room: RoomInterface
+    current_room: Room
     annotation: string
 }
   
@@ -32,7 +33,7 @@ export interface ProductType {
     description: string
 }
   
-export interface RoomInterface {
+export interface Room {
     id: number | null
     room_number: string
 }
@@ -43,4 +44,18 @@ export interface ImageResponse {
     file_name: string
     device_id: number
     image: string
+}
+
+export interface User {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  user_type: Usertype;
+  password_hash: string;
+}
+
+interface Usertype {
+  id: number;
+  name: string;
 }

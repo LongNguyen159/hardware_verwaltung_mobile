@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { DeviceMetaData, ImageResponse, NewDeviceData, ProductType, RoomInterface } from '../models/shared-models';
+import { Device, ImageResponse, NewDeviceData, ProductType, Room, User } from '../models/shared-models';
 import { Observable, map, of, timer} from 'rxjs';
 import { switchMap } from 'rxjs';
 import { ToastController } from '@ionic/angular/standalone';
@@ -12,12 +12,16 @@ export class SharedService {
   /** TODO: Change API endpoint Host in production. Not 'localhost' anymore, but the IP
    * of server where it's been hosted.
    */
-  hostName: string = 'macbookpro-m1.local'
+  private _hostName: string = 'macbookpro-m1.local'
+  private _apiBaseHostUrl: string = `http://${this._hostName}:8000`
 
-  apiBaseHostUrl: string = `http://${this.hostName}:8000`
-  apiEndpoint: string = `${this.apiBaseHostUrl}/api/v1`
+  apiEndpoint: string = `${this._apiBaseHostUrl}/api/v1`
+
+  
   imageId: number
   unixTimeValue: number
+
+  testUserId: number = 1
 
   constructor(private http: HttpClient, private snackbar: ToastController) { }
 
@@ -29,15 +33,15 @@ export class SharedService {
   getAllItems() {
     return timer(1, 10000).pipe(
       // Use switchMap to switch to a new observable each time interval emits a value
-      switchMap(() => this.http.get<DeviceMetaData[]>(`${this.apiEndpoint}/items-all/`))
+      switchMap(() => this.http.get<Device[]>(`${this.apiEndpoint}/items-all/`))
     )
   }
 
   /** Get 1 item infos, polling to reflect changes in DB */
-  getItemById(itemId: number): Observable<DeviceMetaData> {
+  getItemById(itemId: number): Observable<Device> {
     return timer(1, 10000).pipe(
       // Use switchMap to switch to a new observable each time interval emits a value
-      switchMap(() => this.http.get<DeviceMetaData>(`${this.apiEndpoint}/item-details/${itemId}/`)),
+      switchMap(() => this.http.get<Device>(`${this.apiEndpoint}/item-details/${itemId}/`)),
     )
   }
 
@@ -58,12 +62,12 @@ export class SharedService {
 
   getAllRooms() {
     return timer(1, 10000).pipe(
-      switchMap(() => this.http.get<RoomInterface[]>(`${this.apiEndpoint}/room/`))
+      switchMap(() => this.http.get<Room[]>(`${this.apiEndpoint}/room/`))
     )
   }
 
   getOneRoom(roomId: number) {
-    return this.http.get<RoomInterface>(`${this.apiEndpoint}/room/id/${roomId}/`)
+    return this.http.get<Room>(`${this.apiEndpoint}/room/id/${roomId}/`)
   }
 
   createNewRoom(roomNumber: string) {
@@ -101,7 +105,7 @@ export class SharedService {
   }
 
   getImageBlob(imageUrl: string): Observable<Blob> {
-    return this.http.get(`${this.apiBaseHostUrl}${imageUrl}`, { responseType: 'blob' })
+    return this.http.get(`${this._apiBaseHostUrl}${imageUrl}`, { responseType: 'blob' })
   }
 
   clearImage(deviceId: number) {
@@ -143,5 +147,13 @@ export class SharedService {
     })
 
     await toast.present();
+  }
+
+  getUserById(id: number) {
+    return this.http.get<User>(`${this.apiEndpoint}/user/id/${id}`)
+  }
+
+  getItemsBorrowedByUserId(userId: number) {
+    return this.http.get<Device[]>(`${this.apiEndpoint}`)
   }
 }

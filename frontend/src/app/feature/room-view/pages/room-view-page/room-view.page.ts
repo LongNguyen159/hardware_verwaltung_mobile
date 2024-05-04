@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { SharedService } from 'src/app/shared/services/shared.service';
 import { take, takeUntil } from 'rxjs';
-import { DeviceMetaData, RoomInterface } from 'src/app/shared/models/shared-models';
+import { Device, Room } from 'src/app/shared/models/shared-models';
 import { CommonModule } from '@angular/common';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 
@@ -21,13 +21,13 @@ import { PlatformService } from 'src/app/shared/services/platform.service';
   ],
 })
 export class RoomOverviewPageComponent extends BaseComponent implements OnInit {
-  allRooms: RoomInterface[] = []
+  allRooms: Room[] = []
   roomId: number
-  roomDetails: RoomInterface
+  roomDetails: Room
 
-  allItems: DeviceMetaData[] = []
-  allItemsOfRoom: DeviceMetaData[] = []
-  availableItems: DeviceMetaData[] = []
+  allItems: Device[] = []
+  allItemsOfRoom: Device[] = []
+  availableItems: Device[] = []
 
 
   constructor(
@@ -43,7 +43,7 @@ export class RoomOverviewPageComponent extends BaseComponent implements OnInit {
 
   getAllRooms() {
     this.sharedService.getAllRooms().pipe(takeUntil(this.componentDestroyed$)).subscribe(
-      (rooms: RoomInterface[]) => {
+      (rooms: Room[]) => {
         this.allRooms = rooms
       }
     )

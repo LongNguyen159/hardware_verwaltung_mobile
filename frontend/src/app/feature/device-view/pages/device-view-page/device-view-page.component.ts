@@ -5,7 +5,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonSkeletonT
 import { take, takeUntil } from 'rxjs';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { TitleBarComponent } from 'src/app/shared/components/title-bar/title-bar.component';
-import { DeviceMetaData } from 'src/app/shared/models/shared-models';
+import { Device } from 'src/app/shared/models/shared-models';
 import { ColorModeService } from 'src/app/shared/services/color-mode.service';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { SharedService } from 'src/app/shared/services/shared.service';
@@ -61,7 +61,7 @@ import { Keyboard } from '@capacitor/keyboard';
  * feat: login page
  */
 export class DeviceViewPageComponent extends BaseComponent implements OnInit {
-  allAvailableDevices: DeviceMetaData[] = []
+  allAvailableDevices: Device[] = []
 
   colorMode: string
 

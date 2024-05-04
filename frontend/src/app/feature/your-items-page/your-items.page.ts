@@ -37,11 +37,10 @@ export class YourItemsPage extends BaseComponent implements OnInit {
 
   /** Get user Infos here, as user has logged in. */
   getUserInfos() {
-    this.userId = 1
+    this.userId = this.sharedService.testUserId
   }
 
   getItemsBorrowedByUser() {
-    
   }
 
 }

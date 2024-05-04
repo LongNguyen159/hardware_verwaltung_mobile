@@ -20,7 +20,7 @@ import {
 } from '@ionic/angular/standalone';
 import { take, takeUntil } from 'rxjs';
 import { TitleBarComponent } from 'src/app/shared/components/title-bar/title-bar.component';
-import { DeviceMetaData, ImageResponse } from 'src/app/shared/models/shared-models';
+import { Device, ImageResponse } from 'src/app/shared/models/shared-models';
 import { SharedService } from 'src/app/shared/services/shared.service';
 import { NavController } from '@ionic/angular';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
@@ -55,7 +55,7 @@ import { filter, pairwise } from 'rxjs/operators';
 })
 
 export class DeviceDetailsPageComponent extends BaseComponent implements OnInit {
-  deviceDetails: DeviceMetaData
+  deviceDetails: Device
   deviceId: number
 
   editedNotes: string = ''

@@ -5,7 +5,7 @@ import { IonBackButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, Ion
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { SharedService } from 'src/app/shared/services/shared.service';
 import { take, takeUntil } from 'rxjs';
-import { DeviceMetaData, RoomInterface } from 'src/app/shared/models/shared-models';
+import { Device, Room } from 'src/app/shared/models/shared-models';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { RouterModule } from '@angular/router';
 import { addIcons } from 'ionicons';
@@ -22,9 +22,9 @@ import { fileTray, fileTrayOutline } from 'ionicons/icons';
   ]
 })
 export class RoomDetailsPage extends BaseComponent implements OnInit {
-  roomDetails: RoomInterface
-  allItemsOfRoom: DeviceMetaData[] = []
-  availableItems: DeviceMetaData[] = []
+  roomDetails: Room
+  allItemsOfRoom: Device[] = []
+  availableItems: Device[] = []
   roomName: string = ''
   @Input()
   set id(deviceId: string) {
@@ -42,7 +42,7 @@ export class RoomDetailsPage extends BaseComponent implements OnInit {
   }
 
   getRoomDetails(id: number) {
-    this.sharedService.getOneRoom(id).pipe(take(1)).subscribe((room: RoomInterface) => {
+    this.sharedService.getOneRoom(id).pipe(take(1)).subscribe((room: Room) => {
       this.roomDetails = room
       this.roomName = room.room_number
       /** Get all items of that room */

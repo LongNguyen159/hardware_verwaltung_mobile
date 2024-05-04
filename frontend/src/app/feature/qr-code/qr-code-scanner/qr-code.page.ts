@@ -8,7 +8,7 @@ import { QrCodeService } from '../service/qr-code.service';
 import { RouterModule } from '@angular/router';
 import { Barcode, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 import { CommonModule } from '@angular/common';
-import { DeviceMetaData, deviceQrData } from 'src/app/shared/models/shared-models';
+import { Device, deviceQrData } from 'src/app/shared/models/shared-models';
 import { SharedService } from 'src/app/shared/services/shared.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -53,7 +53,7 @@ export class QrCodeScanner {
     this.lendQrCodeData.push(...barcodes);
     const deviceScanResult: deviceQrData = JSON.parse(this.lendQrCodeData[this.lendQrCodeData.length - 1].rawValue)
     this.sharedService.getItemById(deviceScanResult.id).pipe(take(1)).subscribe({
-      next: (value: DeviceMetaData) => {
+      next: (value: Device) => {
         this.sharedService.openSnackbarMessage('Device lent successfully!')
       },
       error: (err: HttpErrorResponse) => {
