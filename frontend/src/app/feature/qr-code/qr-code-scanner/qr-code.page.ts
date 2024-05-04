@@ -69,22 +69,15 @@ export class QrCodeScanner {
         this.isScannedDeviceValid = this.qrCodeService.isValidDeviceData(jsonValue)
 
         if (this.isScannedDeviceValid) {
-          this.afterScannedDevice(jsonValue)
+          this._afterScannedDevice(jsonValue)
         } else {
           this.sharedService.openSnackbarMessage('QR code not valid')
         }
       }
     })
-
-    /** After getting JSON from the QR code, first send GET request to get item's full info.
-     * call sharedService.getItemById(id)
-     * 
-     * After getting full infos, send POST request to item-history, patch borrowed by user
-     * Close scanner.
-     */
   }
 
-  afterScannedDevice(scannedDeviceData: DeviceQRData) {
+  private _afterScannedDevice(scannedDeviceData: DeviceQRData) {
     this.lastScannedDevice = scannedDeviceData
     this.totalScannedDevice.push(this.lastScannedDevice)
 
@@ -92,10 +85,36 @@ export class QrCodeScanner {
     this.sharedService.getItemById(this.lastScannedDevice.id).pipe(take(1)).subscribe({
       next: (value: Device) => {
         this.deviceInfo = value
+
+        /** If item is not borrowed, call _lendDevice() to POST/PATCH lend item */
+        if (!this.deviceInfo.borrowed_by_user_id) {
+          this._lendDevice()
+        } else if (this.deviceInfo.borrowed_by_user_id == this.sharedService.testUserId) {
+          /** If user tries to scan their own item, notify them */
+          this.sharedService.openSnackbarMessage('You already lent this device.')
+        } else {
+          /** Else, meaning the device is not available to lend. */
+          this.sharedService.openSnackbarMessage('This device is currently not available.')
+        }
+        
+      },
+
+      /** Error getting item by id means the device is deleted from database,
+       * or the requested ID does not exist. Either way, device is not available to lend.
+       */
+      error: (err: HttpErrorResponse) => {
+        this.sharedService.openSnackbarMessage('QR code has expired, you can no longer lend this device.')
+      }
+    })
+  }
+
+  private _lendDevice() {
+    this.sharedService.lendItem(this.deviceInfo.id).pipe(take(1)).subscribe({
+      next: (value: any) => {
         this.sharedService.openSnackbarMessage(`Successfully added "${this.deviceInfo.item_name}" to your lent items!`)
       },
       error: (err: HttpErrorResponse) => {
-        this.sharedService.openSnackbarMessage('QR code has expired, you can no longer lend this device.')
+        this.sharedService.openSnackbarMessage('Error lending this item, please try again later.')
       }
     })
   }

@@ -11,6 +11,8 @@ export class SharedService {
 
   /** TODO: Change API endpoint Host in production. Not 'localhost' anymore, but the IP
    * of server where it's been hosted.
+   * 
+   * - Move user logics to UserService
    */
   private _hostName: string = 'macbookpro-m1.local'
   private _apiBaseHostUrl: string = `http://${this._hostName}:8000`
@@ -155,5 +157,13 @@ export class SharedService {
 
   getItemsBorrowedByUserId(userId: number) {
     return this.http.get<Device[]>(`${this.apiEndpoint}/borrowed_items_by_user/${userId}/`)
+  }
+
+
+  lendItem(itemId: number) {
+    const patchData = {
+      borrowed_by_user: this.testUserId
+    }
+    return this.http.patch(`${this.apiEndpoint}/item/id/${itemId}/`, patchData)
   }
 }

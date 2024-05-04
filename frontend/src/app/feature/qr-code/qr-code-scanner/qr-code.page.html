@@ -20,11 +20,11 @@
       <div>
         <ion-card-header>
           <ion-card-title>
-            Lend Item
+            Lend an Item
           </ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          Scan item's QR code to assign your name to it.
+          Scan the item you wish to lend
         </ion-card-content>
       </div>
       <div class="chevronIconPadding">
@@ -57,7 +57,7 @@
       <div>
         <ion-card-header>
           <ion-card-title>
-            Scanned Items
+            Your Items
           </ion-card-title>
         </ion-card-header>
         <ion-card-content>
@@ -70,7 +70,7 @@
     </div>
   </ion-card>
 
-  <div>
+  <div *ngIf="deviceInfo">
     Lent Device: {{ deviceInfo.id }} - {{ deviceInfo.item_name }}
   </div>
   <div>
