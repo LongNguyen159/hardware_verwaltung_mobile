@@ -150,7 +150,7 @@ export class SharedService {
   }
 
   getUserById(id: number) {
-    return this.http.get<User>(`${this.apiEndpoint}/user/id/${id}`)
+    return this.http.get<User>(`${this.apiEndpoint}/user/id/${id}/`)
   }
 
   getItemsBorrowedByUserId(userId: number) {
