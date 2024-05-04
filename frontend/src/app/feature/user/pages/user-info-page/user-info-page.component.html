@@ -7,10 +7,34 @@
 </ion-header> -->
 
 <ion-content>
-    <div class="flex flex-col w-full justify-center items-center align-center ion-padding avatar-container gap-2">
-        <ion-avatar>
-            <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
-        </ion-avatar>
-        <p *ngIf="user"> {{ user.first_name }} {{ user.last_name }} </p>
+    <!-- CONTENT CONTAINER -->
+    <div class="flex flex-col items-center justify-around w-full h-full">
+        <div class="flex flex-col w-full justify-center items-center align-center ion-padding avatar-container gap-2">
+            <ion-avatar>
+                <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+            </ion-avatar>
+            <p *ngIf="user"> {{ user.first_name }} {{ user.last_name }} </p>
+        </div>
+
+        
+        <div *ngIf="user" class="flex flex-col items-center justify-center w-full ion-padding">
+            <ion-card class="flex flex-col items-start w-full leading-10 ion-padding">
+                <div>
+                    <strong>Email:</strong> {{ user.email }}
+                </div>
+                <div>
+                    <strong>Role:</strong>  {{ user.user_type.name }}
+                </div>
+                <div>
+                    <strong>Birthday:</strong>
+                </div>
+            </ion-card>
+        </div>
+        <div class="w-full ion-padding">
+            <ion-button class="w-full" color="danger" fill="outline">
+                Logout
+            </ion-button>
+        </div>
     </div>
+    
 </ion-content>
