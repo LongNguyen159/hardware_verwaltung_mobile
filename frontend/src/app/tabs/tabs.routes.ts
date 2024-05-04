@@ -17,6 +17,11 @@ export const routes: Routes = [
           import('../feature/dashboard/dashboard-page/dashboard-page.page').then((m) => m.DashboardPageComponent),
       },
       {
+        path: 'user',
+        loadComponent: () =>
+          import('../feature/user/pages/user-info-page/user-info-page.component').then((m) => m.UserInfoPageComponent),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

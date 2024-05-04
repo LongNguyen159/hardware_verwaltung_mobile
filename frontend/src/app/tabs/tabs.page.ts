@@ -24,10 +24,9 @@ export class TabsPage extends BaseComponent implements OnInit {
   selectedTab: string = ''
 
   tabEntries: TabEntry[] = [
-    // { tab: 'device', icon: 'laptop-outline', iconFilled: 'laptop', label: 'Device', route: '/device' },
-    // { tab: 'room', icon: 'triangle', iconFilled: 'triangle', label: 'Room', route: '/room' },
     { tab: 'dashboard', icon: 'grid-outline', iconFilled: 'grid', route: '/dashboard' },
     { tab: 'qr-code', icon: 'barcode-outline', iconFilled: 'barcode-outline', route: '/qr-code' },
+    { tab: 'user', icon: 'person-circle-outline', iconFilled: 'person-circle', route: '/dashboard' },
   ];
 
   public environmentInjector = inject(EnvironmentInjector);
