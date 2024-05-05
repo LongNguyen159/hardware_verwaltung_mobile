@@ -41,11 +41,10 @@ export class QrCodeService {
   }
 
   /** Returns the last result scanned. Subscriber will be responsible for
-   * storing/clearing them.
+   * storing/clearing them. Return type interface: `Barcode`
+   * To see the actual data of scan results: `Barcode.rawValue` (string)
    * 
-   * NOTE: It is recommended to check for the interface returned by the scanner.
-   * Using the funciton  `isValidDeviceData(jsonValue)` below, we can check whether if
-   * the data scanned is a valid 'device' QR code.
+   * NOTE: It is recommended to check for the type interface of raw value returned by the scanner.
    * 
    * Please return a meaningful message or some type of notification for user
    * to let them know if QR code is not valid
@@ -56,12 +55,16 @@ export class QrCodeService {
 
     /** Early exit function if permission not granted */
     const granted = await this.requestPermissions();
+
+    /** Scan results will be undefined if permission is not granted (early exit function) */
     if (!granted) {
       this.presentAlert();
       return
     }
 
-    /** Scanning QR */
+    /** Scan options. In this case, we only scan QR code, so it's good to let the scanner know that
+     * to accelerate scanning process.
+     */
     const scanOptions: ScanOptions = {
       formats: [BarcodeFormat.QrCode]
     }
@@ -73,8 +76,8 @@ export class QrCodeService {
   }
 
 
-  /** Check if scanned data is of type DeviceQRData
-   * by checking if all properties match and of correct type
+  /** Check if scanned data is of type `DeviceQRData`
+   * by checking if all properties match and of the correct type
    */
   isValidDeviceData(jsonValue: any): jsonValue is DeviceQRData {
     return (
@@ -86,15 +89,26 @@ export class QrCodeService {
   }
 
 
-  /** Serve the purpose of specifically scan to lend items.
-   * Simply call this function and the device is scanned!
+  /** Specifically serve the purpose of scanning to LEND ITEMS.
+   * Simply call this function in any component and the device is lent!
+   * The rest logic (including error handling) is handled in QRCodeService.
+   * 
+   * Optional parameter: `deviceInfo`
+   * Provide this parameter if you want to specifically lend that exact item.
+   * Currently being used in device-details page.
    */
   scanLendDevice(deviceInfo?: Device) {
     this.scan().then( (scanResults: Barcode | undefined) => {
+      /** As per 'scan()' function above, scan results will be undefined if permission not granted,
+       * or there are issues with the scanner. Hence, handle them here by returning a meaningful error message
+       * and exit the function early.
+       */
       if (!scanResults) {
+        this.sharedService.openSnackbarMessage('Oops! There seems to be something wrong with the scanner, Please try again later.')
         return
       }
 
+      /** Scan results raw value is in string format, hence we must parse them into JSON */
       const jsonValue = JSON.parse(scanResults.rawValue)
       if (this.isValidDeviceData(jsonValue)) {
         this._afterLendDeviceScanned(jsonValue, deviceInfo)
@@ -105,6 +119,7 @@ export class QrCodeService {
     })
   }
 
+  /** Helper function for scanning devices: After validating that the QR's value is valid, this function will be executed. */
   private _afterLendDeviceScanned(scannedDeviceData: DeviceQRData, deviceInfo?: Device) {
     /** If device Info is provided directly by the page, no need to call for API to retrieve device infos. Skip that step. */
     if (deviceInfo) {
@@ -124,12 +139,15 @@ export class QrCodeService {
          * or the requested ID does not exist. Either way, device is not available to lend.
          */
         error: (err: HttpErrorResponse) => {
-          this.sharedService.openSnackbarMessage('QR code has expired, you can no longer lend this device.')
+          this.sharedService.openSnackbarMessage('QR code has expired, you can no longer lend this item.')
         }
       })
     }
   }
 
+  /** Helper function for `_afterLendDeviceScanned()`. Handling any conflicts might occur after retrieving the device's infos.
+   * Possible conflicts like device is already lent by another person, user scans their own items, etc.
+   */
   private _handlingErrorAfterScanningDevice(scannedDeviceData: DeviceQRData) {
     /** 
      * Normally this case will only happen if page already provided 'deviceInfo'.
@@ -139,20 +157,51 @@ export class QrCodeService {
      * since we use the scanned data to get the device info.
      */
     if (this.deviceInfo.id !== scannedDeviceData.id) {
-      this.sharedService.openSnackbarMessage('Scanned item does not match your selected item')
+      this._handleDeviceMismatch(scannedDeviceData)
       return
     }
 
-    /** If item is not borrowed, call _lendDevice() to POST/PATCH lend item */
+    /** If item is not borrowed, call _lendDevice() to proceed to lend item (Final step). */
     if (!this.deviceInfo.borrowed_by_user_id) {
       this._lendDevice()
     } else if (this.deviceInfo.borrowed_by_user_id == this.sharedService.testUserId) {
       /** If user tries to scan their own item, notify them */
-      this.sharedService.openSnackbarMessage('You already lent this device.')
+      this.sharedService.openSnackbarMessage(`"${scannedDeviceData.deviceType} (${scannedDeviceData.deviceVariant})" already existed in "Your Items".`, 5000)
     } else {
       /** Else, meaning the device is not available to lend. */
-      this.sharedService.openSnackbarMessage('This device is currently not available or is being lent by another person.', 5000)
+      this.sharedService.openSnackbarMessage(`Scanned item is currently not available or is being lent by another person.`, 5000)
     }
+  }
+
+  /** Helper function handling device mismatch:
+   * This function is called when user selected a specific item to scan, but scanned the wrong item.
+   * This will trigger the alert dialog to ask user whether they want to lend the scanned item anyway.
+   */
+  private async _handleDeviceMismatch(scannedDeviceData: DeviceQRData): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Item mismatch',
+      message: `Scanned item does not match your selected item. Do you still want to lend the scanned item anyway?<br><br>
+        Scanned item: ID: ${scannedDeviceData.id} - ${scannedDeviceData.deviceType} (${scannedDeviceData.deviceVariant})<br>
+      `,
+      cssClass: 'multiline-alert',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            return
+          }
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+
+            this._afterLendDeviceScanned(scannedDeviceData)
+          }
+        }
+      ]
+    })
+    await alert.present()
   }
 
   /** Sends request to lend device */
@@ -162,7 +211,7 @@ export class QrCodeService {
         this.sharedService.openSnackbarMessage(`Successfully added "${this.deviceInfo.item_name}" to your lent items!`)
       },
       error: (err: HttpErrorResponse) => {
-        this.sharedService.openSnackbarMessage('Error lending this item, please try again later.')
+        this.sharedService.openSnackbarMessage('Error lending scanned item, please try again later.')
       }
     })
   }
