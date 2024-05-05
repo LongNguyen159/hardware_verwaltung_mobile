@@ -138,6 +138,7 @@ export class SharedService {
     return 'just now';
   }
 
+  /** Opens snackbar message at the top of the screen. Default duration is 3 seconds. */
   async openSnackbarMessage(message: string, duration = 3000) {
     const toast = await this.snackbar.create({
       message: message,

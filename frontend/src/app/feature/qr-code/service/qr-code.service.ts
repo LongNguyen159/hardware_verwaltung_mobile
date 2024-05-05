@@ -89,7 +89,7 @@ export class QrCodeService {
   /** Serve the purpose of specifically scan to lend items.
    * Simply call this function and the device is scanned!
    */
-  scanLendDevice() {
+  scanLendDevice(deviceInfo?: Device) {
     this.scan().then( (scanResults: Barcode | undefined) => {
       if (!scanResults) {
         return
@@ -97,7 +97,7 @@ export class QrCodeService {
 
       const jsonValue = JSON.parse(scanResults.rawValue)
       if (this.isValidDeviceData(jsonValue)) {
-        this._afterLendDeviceScanned(jsonValue)
+        this._afterLendDeviceScanned(jsonValue, deviceInfo)
       } else {
         this.sharedService.openSnackbarMessage('QR code not valid.')
       }
@@ -105,33 +105,57 @@ export class QrCodeService {
     })
   }
 
-  private _afterLendDeviceScanned(scannedDeviceData: DeviceQRData) {
-    this.sharedService.getItemById(scannedDeviceData.id).pipe(take(1)).subscribe({
-      next: (value: Device) => {
-        this.deviceInfo = value
+  private _afterLendDeviceScanned(scannedDeviceData: DeviceQRData, deviceInfo?: Device) {
+    /** If device Info is provided directly by the page, no need to call for API to retrieve device infos. Skip that step. */
+    if (deviceInfo) {
+      this.deviceInfo = deviceInfo
+      this._handlingErrorAfterScanningDevice(scannedDeviceData)
+    }
 
-        /** If item is not borrowed, call _lendDevice() to POST/PATCH lend item */
-        if (!this.deviceInfo.borrowed_by_user_id) {
-          this._lendDevice()
-        } else if (this.deviceInfo.borrowed_by_user_id == this.sharedService.testUserId) {
-          /** If user tries to scan their own item, notify them */
-          this.sharedService.openSnackbarMessage('You already lent this device.')
-        } else {
-          /** Else, meaning the device is not available to lend. */
-          this.sharedService.openSnackbarMessage('This device is currently not available.')
+    /** If device info is not given by page, call API to retrieve for device info */
+    if (!deviceInfo) {
+      this.sharedService.getItemById(scannedDeviceData.id).pipe(take(1)).subscribe({
+        next: (value: Device) => {
+          this.deviceInfo = value
+          this._handlingErrorAfterScanningDevice(scannedDeviceData)
+        },
+  
+        /** Error getting item by id means the device is deleted from database,
+         * or the requested ID does not exist. Either way, device is not available to lend.
+         */
+        error: (err: HttpErrorResponse) => {
+          this.sharedService.openSnackbarMessage('QR code has expired, you can no longer lend this device.')
         }
-        
-      },
-
-      /** Error getting item by id means the device is deleted from database,
-       * or the requested ID does not exist. Either way, device is not available to lend.
-       */
-      error: (err: HttpErrorResponse) => {
-        this.sharedService.openSnackbarMessage('QR code has expired, you can no longer lend this device.')
-      }
-    })
+      })
+    }
   }
 
+  private _handlingErrorAfterScanningDevice(scannedDeviceData: DeviceQRData) {
+    /** 
+     * Normally this case will only happen if page already provided 'deviceInfo'.
+     * If page provides 'deviceInfo', that means user has selected a specific item to scan.
+     * 
+     * Otherwise if user scan from 'scan' button, 'deviceInfo' will always match the scanned data,
+     * since we use the scanned data to get the device info.
+     */
+    if (this.deviceInfo.id !== scannedDeviceData.id) {
+      this.sharedService.openSnackbarMessage('Scanned item does not match your selected item')
+      return
+    }
+
+    /** If item is not borrowed, call _lendDevice() to POST/PATCH lend item */
+    if (!this.deviceInfo.borrowed_by_user_id) {
+      this._lendDevice()
+    } else if (this.deviceInfo.borrowed_by_user_id == this.sharedService.testUserId) {
+      /** If user tries to scan their own item, notify them */
+      this.sharedService.openSnackbarMessage('You already lent this device.')
+    } else {
+      /** Else, meaning the device is not available to lend. */
+      this.sharedService.openSnackbarMessage('This device is currently not available or is being lent by another person.', 5000)
+    }
+  }
+
+  /** Sends request to lend device */
   private _lendDevice() {
     this.sharedService.lendItem(this.deviceInfo.id).pipe(take(1)).subscribe({
       next: (value: any) => {

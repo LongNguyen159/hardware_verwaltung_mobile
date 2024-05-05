@@ -133,7 +133,7 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
       return
     }
 
-    this.qrCodeService.scanLendDevice()
+    this.qrCodeService.scanLendDevice(this.deviceDetails)
   }
 
 
