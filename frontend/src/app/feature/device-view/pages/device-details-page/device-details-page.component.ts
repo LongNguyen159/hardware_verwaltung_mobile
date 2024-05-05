@@ -21,7 +21,7 @@ import {
 } from '@ionic/angular/standalone';
 import { take, takeUntil } from 'rxjs';
 import { TitleBarComponent } from 'src/app/shared/components/title-bar/title-bar.component';
-import { Device, ImageResponse } from 'src/app/shared/models/shared-models';
+import { Device, ImageResponse, User } from 'src/app/shared/models/shared-models';
 import { SharedService } from 'src/app/shared/services/shared.service';
 import { NavController } from '@ionic/angular';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
@@ -64,6 +64,8 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
 
   deviceDetails: Device
   deviceId: number
+
+  userInfos: User
 
   editedNotes: string = ''
 
@@ -117,10 +119,8 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
 
   /** Get user info to associate relation between item and user */
   getUserInfo() {
-    this.sharedService.getUserById(this.sharedService.testUserId).pipe(take(1)).subscribe(user => {
-      if (this.deviceDetails.borrowed_by_user_id && this.deviceDetails.borrowed_by_user_id == user.id) {
-        this.isItemByUser = true
-      }
+    this.sharedService.getUserById(this.sharedService.testUserId).pipe(takeUntil(this.componentDestroyed$)).subscribe(user => {
+      this.userInfos = user
     })
   }
 

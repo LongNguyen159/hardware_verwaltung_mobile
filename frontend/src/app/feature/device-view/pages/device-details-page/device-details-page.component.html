@@ -54,7 +54,7 @@
   </ion-card>
 
   <!-- On click opens camera to prompt for QR code scan -->
-  <div *ngIf="isItemByUser" class="flex flex-row justify-center items-center">
+  <div *ngIf="userInfos && userInfos.id == deviceDetails.borrowed_by_user_id" class="flex flex-row justify-center items-center">
     <ion-button color="warning">
       Return this item
     </ion-button>
