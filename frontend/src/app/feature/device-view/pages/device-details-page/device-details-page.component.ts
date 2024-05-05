@@ -61,10 +61,13 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
   deviceId: number
 
   editedNotes: string = ''
+
+  /** Image metadata */
   imageToShow: string
   isPortrait: boolean = false
   unixTimestampMiliseconds: number
 
+  /** Image last modified since */
   lastModifiedDate: Date
   timezoneName: string
   relativeTime: string
@@ -93,7 +96,7 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
   ngOnInit() {
   }
 
-
+  /** Get device infos upon page init via the id params in router */
   getDeviceInfos(deviceId: number) {
     this.sharedService.getItemById(deviceId).pipe(takeUntil(this.componentDestroyed$)).subscribe(device => {
       this.deviceDetails = device
@@ -101,10 +104,13 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
       /** Retrive image from database to show */
       this.getSavedImage()
       this.retrieveNotes()
+
+      /** Get user info after device info is retrieved */
       this.getUserInfo()
     })
   }
 
+  /** Get user info to associate relation between item and user */
   getUserInfo() {
     this.sharedService.getUserById(this.sharedService.testUserId).pipe(take(1)).subscribe(user => {
       if (this.deviceDetails.borrowed_by_user_id && this.deviceDetails.borrowed_by_user_id == user.id) {
