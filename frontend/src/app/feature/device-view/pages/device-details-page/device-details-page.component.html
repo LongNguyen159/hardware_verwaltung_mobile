@@ -28,7 +28,7 @@
       <div>
         <p><strong>Notes:</strong></p>
         <div style="display:flex; align-items: center; flex-direction: row; gap: 10px;">
-          <p>{{ deviceDetails.annotation }}</p>
+          <p>{{ deviceDetails.annotation || " - " }}</p>
         </div>
       </div>
     </ion-card-content>
@@ -48,7 +48,7 @@
       </div>
 
       <div *ngIf="!imageToShow">
-        No image to show
+        No images to show
       </div>
     </ion-card-content>
   </ion-card>
