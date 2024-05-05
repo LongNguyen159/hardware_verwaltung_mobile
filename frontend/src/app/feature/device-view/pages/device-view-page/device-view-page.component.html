@@ -19,11 +19,11 @@
     </ion-toolbar>
   </ion-header>
   <div class="searchBar">
-    <ion-searchbar (ionFocus)="onSearchFocus()" [ngClass]="{'background-dark': colorMode === 'dark', 'background-light': colorMode === 'light'}"  class="searchBar" placeholder="Search" showCancelButton="focus"></ion-searchbar>
+    <ion-searchbar [debounce]="200" (ionInput)="onSearchDevices($event.target.value)" [ngClass]="{'background-dark': colorMode === 'dark', 'background-light': colorMode === 'light'}"  class="searchBar" placeholder="Search" showCancelButton="focus"></ion-searchbar>
   </div>
   
   <ion-list class="ion-padding-top">
-    <ion-item *ngFor="let item of allAvailableDevices; trackBy: trackById" button [routerLink]="['/device', item.id]">  
+    <ion-item *ngFor="let item of allAvailableDevicesFiltered; trackBy: trackById" button [routerLink]="['/device', item.id]">  
       <ion-label class="ion-text-wrap">
         <h3 style="font-weight: bold;">{{ item.item_name }}</h3>
         <p style="font-weight: bold;">{{ item.description }}</p>

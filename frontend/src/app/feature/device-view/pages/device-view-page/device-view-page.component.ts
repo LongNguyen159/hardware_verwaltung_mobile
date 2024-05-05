@@ -2,7 +2,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonSkeletonText, IonList, IonItem, IonInfiniteScroll, IonLabel, IonAlert, IonInfiniteScrollContent, IonLoading, IonButton, IonBackButton, IonButtons } from '@ionic/angular/standalone';
-import { take, takeUntil } from 'rxjs';
+import { map, take, takeUntil } from 'rxjs';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { TitleBarComponent } from 'src/app/shared/components/title-bar/title-bar.component';
 import { Device } from 'src/app/shared/models/shared-models';
@@ -44,6 +44,8 @@ import { Keyboard } from '@capacitor/keyboard';
 export class DeviceViewPageComponent extends BaseComponent implements OnInit {
   allAvailableDevices: Device[] = []
 
+  allAvailableDevicesFiltered: Device[] = []
+
   colorMode: string
 
   @ViewChild('content') content: IonContent;
@@ -54,20 +56,26 @@ export class DeviceViewPageComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.sharedService.getAllItems().pipe(takeUntil(this.componentDestroyed$)).subscribe(allItems => {
-      const filteredItems = allItems.filter(item => !item.borrowed_by_user_id)
+    this.getAllDevices()
 
-      /** Slice all items and push in new data.
-       * We can assign directly, but that means we loses all tracked items.
-       * Doing this will keep the original reference.
-       */
-      this.allAvailableDevices.splice(0, filteredItems.length)
-      this.allAvailableDevices.push(...filteredItems)
-    })
 
     this.colorModeService.getUserUiMode().pipe(takeUntil(this.componentDestroyed$)).subscribe(mode => {
-      console.log(mode)
+      console.log('System mode:', mode)
       this.colorMode = mode
+    })
+
+
+    /** Init all devices */
+    this.sharedService.getAllItems().pipe(take(1)).subscribe(allItems => {
+      const allAvailableItems = allItems.filter(item => !item.borrowed_by_user_id)
+      this.allAvailableDevicesFiltered = [...allAvailableItems]
+    })
+  }
+
+  getAllDevices() {
+    this.sharedService.getAllItems().pipe(takeUntil(this.componentDestroyed$)).subscribe(allItems => {
+      const allAvailableItems = allItems.filter(item => !item.borrowed_by_user_id)
+      this.allAvailableDevices = [...allAvailableItems]
     })
   }
 
@@ -76,9 +84,18 @@ export class DeviceViewPageComponent extends BaseComponent implements OnInit {
     return item.id
   }
 
-  onSearchFocus() {
-    /** Show accessory bar on keyboard */
-    
+  onSearchDevices(input: string | null | undefined) {
+    const searchTerm = input?.trim().toLowerCase(); // Convert input to lowercase and remove leading/trailing whitespace
+    if (!searchTerm) {
+      this.allAvailableDevicesFiltered = [...this.allAvailableDevices]
+    } else {
+      const filteredDevices = this.allAvailableDevices.filter(device =>
+          device.item_name.toLowerCase().includes(searchTerm) ||
+          device.description.toLowerCase().includes(searchTerm) ||
+          device.location.toLowerCase().includes(searchTerm)
+      )
+      this.allAvailableDevicesFiltered = [...filteredDevices]
+    }
   }
 
   onContentScroll() {
