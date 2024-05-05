@@ -17,7 +17,21 @@ import { DeviceQRData } from 'src/app/shared/models/shared-models';
 export class QrCodeService {
   qrCode: Barcode[] = []
 
-  constructor(private alertController: AlertController) { 
+
+  constructor(private alertController: AlertController) {
+  }
+
+  /** Async function because it waits for Barcodescanner to determine
+   * whether if platform supports or not.
+   */
+  async isCodeScannerSupported(): Promise<boolean> {
+    try {
+      const result = await BarcodeScanner.isSupported();
+      return result.supported
+    } catch (error) {
+      console.error('Error checking code scanner support:', error)
+      return false
+    }
   }
 
   /** Returns the last result scanned. Subscriber will be responsible for

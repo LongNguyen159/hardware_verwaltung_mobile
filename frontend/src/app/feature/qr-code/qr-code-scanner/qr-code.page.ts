@@ -51,16 +51,12 @@ export class QrCodeScanner {
   }
 
 
-  checkIfPlatformSupportsQrScan() {
-    BarcodeScanner.isSupported().then((result) => {
-      this.isSupported = result.supported
-    })
+  async checkIfPlatformSupportsQrScan() {
+    this.isSupported = await this.qrCodeService.isCodeScannerSupported()
   }
 
   /** User scans to lend item */
   scanLendItem() {
-
-    
     this.qrCodeService.scan().then( (scanResult: Barcode | undefined) => {
       if (scanResult) {
         const jsonValue = JSON.parse(scanResult.rawValue)
