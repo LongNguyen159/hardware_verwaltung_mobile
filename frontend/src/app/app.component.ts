@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { PlatformService } from './shared/services/platform.service';
+import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +10,10 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor() {}
+  platformService = inject(PlatformService)
+  constructor() {
+    if ( this.platformService.isNativePlatform()) {
+      Keyboard.setAccessoryBarVisible({ isVisible: true })
+    }
+  }
 }
