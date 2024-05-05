@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe, Location } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule, RoutesRecognized } from '@angular/router';
 import {
   IonBackButton,
@@ -27,6 +27,8 @@ import { NavController } from '@ionic/angular';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { filter, pairwise } from 'rxjs/operators';
+import { QrCodeService } from 'src/app/feature/qr-code/service/qr-code.service';
+import { Barcode } from '@capacitor-mlkit/barcode-scanning';
 @Component({
   selector: 'app-device-details-page',
   templateUrl: './device-details-page.component.html',
@@ -57,6 +59,9 @@ import { filter, pairwise } from 'rxjs/operators';
 })
 
 export class DeviceDetailsPageComponent extends BaseComponent implements OnInit {
+  qrCodeService = inject(QrCodeService)
+  isCodeScannerSupported: boolean = false
+
   deviceDetails: Device
   deviceId: number
 
@@ -117,6 +122,24 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
         this.isItemByUser = true
       }
     })
+  }
+
+  async onLendItemClick() {
+    /** Check if platform supports code scanning first. If yes, open code scanner camera */
+    this.isCodeScannerSupported = await this.qrCodeService.isCodeScannerSupported()
+
+    if (!this.isCodeScannerSupported) {
+      this.sharedService.openSnackbarMessage('Lending an item requires QR-Code scanning functionality. Your platform does not support this feature.', 7000)
+      return
+    }
+
+    this.qrCodeService.scanLendDevice()
+  }
+
+
+
+  onReturnItemClick() {
+
   }
 
 

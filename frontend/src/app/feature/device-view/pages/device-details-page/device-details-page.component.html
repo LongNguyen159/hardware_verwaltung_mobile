@@ -62,7 +62,7 @@
 
 
   <div *ngIf="deviceDetails && !deviceDetails.borrowed_by_user_id" class="flex flex-row justify-center items-center">
-    <ion-button color="primary">
+    <ion-button color="primary" (click)="onLendItemClick()">
       Lend this item
     </ion-button>
   </div>

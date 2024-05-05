@@ -5,7 +5,7 @@ import { IonBackButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, Io
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { RouterModule } from '@angular/router';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
-import { take } from 'rxjs';
+import { take, takeUntil } from 'rxjs';
 import { Device, User } from 'src/app/shared/models/shared-models';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -56,7 +56,7 @@ export class YourItemsPage extends BaseComponent implements OnInit {
   }
 
   getItemsBorrowedByUser() {
-    this.sharedService.getItemsBorrowedByUserId(this.userId).pipe(take(1)).subscribe({
+    this.sharedService.getItemsBorrowedByUserId(this.userId).pipe(takeUntil(this.componentDestroyed$)).subscribe({
       next: (value: Device[]) => {
         this.itemsByUser = value
       },

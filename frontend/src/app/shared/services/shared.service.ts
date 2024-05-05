@@ -16,8 +16,9 @@ export class SharedService {
    */
   private _hostName: string = 'macbookpro-m1.local'
   private _apiBaseHostUrl: string = `http://${this._hostName}:8000`
-
   apiEndpoint: string = `${this._apiBaseHostUrl}/api/v1`
+
+  private _pollingInterval: number = 10000
 
   
   imageId: number
@@ -33,7 +34,7 @@ export class SharedService {
 
   /** Get all Items, polling to update the changes from DB */
   getAllItems() {
-    return timer(1, 10000).pipe(
+    return timer(1, this._pollingInterval).pipe(
       // Use switchMap to switch to a new observable each time interval emits a value
       switchMap(() => this.http.get<Device[]>(`${this.apiEndpoint}/items-all/`))
     )
@@ -41,7 +42,7 @@ export class SharedService {
 
   /** Get 1 item infos, polling to reflect changes in DB */
   getItemById(itemId: number): Observable<Device> {
-    return timer(1, 10000).pipe(
+    return timer(1, this._pollingInterval).pipe(
       // Use switchMap to switch to a new observable each time interval emits a value
       switchMap(() => this.http.get<Device>(`${this.apiEndpoint}/item-details/${itemId}/`)),
     )
@@ -156,7 +157,10 @@ export class SharedService {
   }
 
   getItemsBorrowedByUserId(userId: number) {
-    return this.http.get<Device[]>(`${this.apiEndpoint}/borrowed_items_by_user/${userId}/`)
+    return timer(1, this._pollingInterval).pipe(
+      // Use switchMap to switch to a new observable each time interval emits a value
+      switchMap(() => this.http.get<Device[]>(`${this.apiEndpoint}/borrowed_items_by_user/${userId}/`))
+    )
   }
 
 
