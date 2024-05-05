@@ -12,9 +12,6 @@
     </ion-toolbar>
   </ion-header>
 
-  <!-- <ion-fab-button (click)="testClick()">
-    toast
-  </ion-fab-button> -->
   <ion-card [button]="true" (click)="scanLendItem()" [disabled]="!isSupported">
     <div class="cardContentContainer">
       <div>
@@ -69,11 +66,4 @@
       </div>
     </div>
   </ion-card>
-
-  <div *ngIf="deviceInfo">
-    Lent Device: {{ deviceInfo.id }} - {{ deviceInfo.item_name }}
-  </div>
-  <div>
-    Scanned device valid?: {{ isScannedDeviceValid }}
-  </div>
 </ion-content>
