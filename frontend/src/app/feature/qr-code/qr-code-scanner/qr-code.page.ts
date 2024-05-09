@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonFab, IonFabButton, IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle, AlertController, IonList, IonItem, IonLabel, IonInput, IonToast } from '@ionic/angular/standalone';
-import { ExploreContainerComponent } from '../../../explore-container/explore-container.component';
 import { TitleBarComponent } from '../../../shared/components/title-bar/title-bar.component';
 import { addIcons } from 'ionicons';
 import { chevronForward, scan } from 'ionicons/icons';
@@ -18,7 +17,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   templateUrl: 'qr-code.page.html',
   styleUrls: ['qr-code.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainerComponent, TitleBarComponent,
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, TitleBarComponent,
     IonFab, IonFabButton, IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle,
     RouterModule, IonList, IonItem, IonLabel, IonInput, CommonModule,
     IonToast

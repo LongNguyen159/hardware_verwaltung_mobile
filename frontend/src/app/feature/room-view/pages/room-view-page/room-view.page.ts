@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonBackButton, IonList, IonLabel, IonItem } from '@ionic/angular/standalone';
-import { ExploreContainerComponent } from '../../../../explore-container/explore-container.component';
 import { TitleBarComponent } from '../../../../shared/components/title-bar/title-bar.component';
 import { RouterModule } from '@angular/router';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
@@ -15,7 +14,7 @@ import { PlatformService } from 'src/app/shared/services/platform.service';
   templateUrl: 'room-view.page.html',
   styleUrls: ['room-view.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainerComponent, TitleBarComponent,
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, TitleBarComponent,
     IonButtons, IonBackButton, IonList, IonTitle, IonLabel, IonItem, RouterModule,
     CommonModule
   ],
