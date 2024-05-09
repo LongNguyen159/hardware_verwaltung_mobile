@@ -4,10 +4,11 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
 import { Barcode, BarcodeFormat, BarcodeScanner, ScanOptions } from '@capacitor-mlkit/barcode-scanning';
 import { AlertController } from '@ionic/angular';
-import { Device, DeviceQRData } from 'src/app/shared/models/shared-models';
+import { Device, DeviceQRData, Room, RoomQRData } from 'src/app/shared/models/shared-models';
 import { SharedService } from 'src/app/shared/services/shared.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LoadingService } from 'src/app/shared/services/loading.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ import { HttpErrorResponse } from '@angular/common/http';
  */
 export class QrCodeService {
   sharedService = inject(SharedService)
+  loadingService = inject(LoadingService)
   qrCode: Barcode[] = []
 
   deviceInfo: Device
@@ -88,6 +90,14 @@ export class QrCodeService {
     )
   }
 
+  isValidRoomData(jsonValue: any): jsonValue is RoomQRData {
+    return (
+      typeof jsonValue === 'object' &&
+      'id' in jsonValue && typeof jsonValue.id === 'number' &&
+      'room_number' in jsonValue && typeof jsonValue.room_number === 'string'
+    )
+  }
+
 
   /** Specifically serve the purpose of scanning to LEND ITEMS.
    * Simply call this function in any component and the device is lent!
@@ -113,7 +123,7 @@ export class QrCodeService {
       if (this.isValidDeviceData(jsonValue)) {
         this._afterLendDeviceScanned(jsonValue, deviceInfo)
       } else {
-        this.sharedService.openSnackbarMessage('QR code not valid.')
+        this.sharedService.openSnackbarMessage(`QR code not valid. Are you sure this is a device's QR code?`)
       }
       
     })
@@ -206,12 +216,57 @@ export class QrCodeService {
 
   /** Sends request to lend device */
   private _lendDevice() {
+    this.loadingService.setLoading(true)
     this.sharedService.lendItem(this.deviceInfo.id).pipe(take(1)).subscribe({
       next: (value: any) => {
+        this.loadingService.setLoading(false)
         this.sharedService.openSnackbarMessage(`Successfully added "${this.deviceInfo.item_name}" to your lent items!`)
       },
       error: (err: HttpErrorResponse) => {
+        this.loadingService.setLoading(false)
         this.sharedService.openSnackbarMessage('Error lending scanned item, please try again later.')
+      }
+    })
+  }
+
+
+  scanReturnItem(deviceInfo: Device) {
+    this.scan().then( (scanResults: Barcode | undefined) => {
+      /** As per 'scan()' function above, scan results will be undefined if permission not granted,
+       * or there are issues with the scanner. Hence, handle them here by returning a meaningful error message
+       * and exit the function early.
+       */
+      if (!scanResults) {
+        this.sharedService.openSnackbarMessage('Oops! There seems to be something wrong with the scanner, Please try again later.')
+        return
+      }
+
+
+      /** Scan results raw value is in string format, hence we must parse them into JSON */
+      const scanResultsJsonValue = JSON.parse(scanResults.rawValue)
+
+      if (this.isValidRoomData(scanResultsJsonValue)) {
+        this._returnDevice(deviceInfo, scanResultsJsonValue)
+      } else {
+        this.sharedService.openSnackbarMessage(`QR code not valid. Are you sure you scanned the Room's QR code?`)
+      }
+      
+    })
+  }
+
+  private _afterReturnItemScanned(deviceInfo: Device, scannedResults: RoomQRData) {
+
+  }
+
+  private _returnDevice(device: Device, scannedRoomData: RoomQRData) {
+    this.loadingService.setLoading(true)
+    this.sharedService.returnItem(device.id, scannedRoomData.id).pipe(take(1)).subscribe({
+      next: (value: any) => {
+        this.loadingService.setLoading(false)
+        this.sharedService.openSnackbarMessage(`Item "${device.item_name}" has been returned at "${scannedRoomData.room_number}"`)
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loadingService.setLoading(false)
       }
     })
   }

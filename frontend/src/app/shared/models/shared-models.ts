@@ -17,6 +17,12 @@ export interface DeviceQRData {
     deviceType: string
     deviceVariant: string
 }
+
+export interface RoomQRData {
+    id: number
+    room_number: string
+}
+
 export interface DownloadFileName {
     id: number | string
     name: string

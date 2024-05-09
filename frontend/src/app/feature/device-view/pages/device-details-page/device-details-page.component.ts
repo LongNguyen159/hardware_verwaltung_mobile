@@ -29,6 +29,7 @@ import { PlatformService } from 'src/app/shared/services/platform.service';
 import { filter, pairwise } from 'rxjs/operators';
 import { QrCodeService } from 'src/app/feature/qr-code/service/qr-code.service';
 import { Barcode } from '@capacitor-mlkit/barcode-scanning';
+import { LoadingService } from 'src/app/shared/services/loading.service';
 @Component({
   selector: 'app-device-details-page',
   templateUrl: './device-details-page.component.html',
@@ -60,6 +61,7 @@ import { Barcode } from '@capacitor-mlkit/barcode-scanning';
 
 export class DeviceDetailsPageComponent extends BaseComponent implements OnInit {
   qrCodeService = inject(QrCodeService)
+  loadingService = inject(LoadingService)
   isCodeScannerSupported: boolean = false
 
   deviceDetails: Device
@@ -138,8 +140,15 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
 
 
 
-  onReturnItemClick() {
+  async onReturnItemClick() {
+    this.isCodeScannerSupported = await this.qrCodeService.isCodeScannerSupported()
 
+    if (!this.isCodeScannerSupported) {
+      this.sharedService.openSnackbarMessage('Lending an item requires QR-Code scanning functionality. Your platform does not support this feature.', 7000)
+      return
+    }
+
+    this.qrCodeService.scanReturnItem(this.deviceDetails)
   }
 
 

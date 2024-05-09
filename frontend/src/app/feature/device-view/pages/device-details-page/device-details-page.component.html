@@ -33,13 +33,13 @@
       </div>
 
       <div *ngIf="deviceDetails && !deviceDetails.borrowed_by_user_id" class="flex flex-row justify-center items-center pt-6">
-        <ion-button color="primary" (click)="onLendItemClick()">
+        <ion-button color="primary" (click)="onLendItemClick()" [disabled]="loadingService.loading()">
           Lend this item
         </ion-button>
       </div>
 
       <div *ngIf="userInfos && userInfos.id == deviceDetails.borrowed_by_user_id" class="flex flex-row justify-center items-center pt-6">
-        <ion-button color="warning">
+        <ion-button color="warning" (click)="onReturnItemClick()" [disabled]="loadingService.loading()">
           Return this item
         </ion-button>
       </div>

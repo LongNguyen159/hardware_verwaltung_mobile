@@ -165,10 +165,21 @@ export class SharedService {
   }
 
 
+  /** Later POST to item-history here */
   lendItem(itemId: number) {
     const patchData = {
       borrowed_by_user: this.testUserId
     }
     return this.http.patch(`${this.apiEndpoint}/item/id/${itemId}/`, patchData)
   }
+
+  /** Later POST to item-history here */
+  returnItem(itemId: number, roomId: number) {
+    const patchData = {
+      borrowed_by_user: null,
+      current_room: roomId
+    }
+    return this.http.patch(`${this.apiEndpoint}/item/id/${itemId}/`, patchData)
+  }
+  
 }
