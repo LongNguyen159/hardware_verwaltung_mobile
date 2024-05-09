@@ -31,6 +31,18 @@
           <p>{{ deviceDetails.annotation || " - " }}</p>
         </div>
       </div>
+
+      <div *ngIf="deviceDetails && !deviceDetails.borrowed_by_user_id" class="flex flex-row justify-center items-center pt-6">
+        <ion-button color="primary" (click)="onLendItemClick()">
+          Lend this item
+        </ion-button>
+      </div>
+
+      <div *ngIf="userInfos && userInfos.id == deviceDetails.borrowed_by_user_id" class="flex flex-row justify-center items-center pt-6">
+        <ion-button color="warning">
+          Return this item
+        </ion-button>
+      </div>
     </ion-card-content>
   </ion-card>
 
@@ -52,18 +64,4 @@
       </div>
     </ion-card-content>
   </ion-card>
-
-  <!-- On click opens camera to prompt for QR code scan -->
-  <div *ngIf="userInfos && userInfos.id == deviceDetails.borrowed_by_user_id" class="flex flex-row justify-center items-center">
-    <ion-button color="warning">
-      Return this item
-    </ion-button>
-  </div>
-
-
-  <div *ngIf="deviceDetails && !deviceDetails.borrowed_by_user_id" class="flex flex-row justify-center items-center">
-    <ion-button color="primary" (click)="onLendItemClick()">
-      Lend this item
-    </ion-button>
-  </div>
 </ion-content>
