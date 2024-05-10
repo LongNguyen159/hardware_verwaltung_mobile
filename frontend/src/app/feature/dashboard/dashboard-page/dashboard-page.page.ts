@@ -70,13 +70,13 @@ export class DashboardPageComponent extends BaseComponent implements OnInit, OnD
       this.greetingText = "Good morning"
 
       
-      this.iconName = 'sunny-outline'
+      this.iconName = 'sunny'
       this.iconColor = '#e2c111'
     } else if (currentHour >= 12 && currentHour < 18) {
       this.greetingText = "Good afternoon"
 
 
-      this.iconName = 'sunny-outline'
+      this.iconName = 'sunny'
       this.iconColor = '#e2c111'
     } else {
       this.greetingText = "Good evening"
