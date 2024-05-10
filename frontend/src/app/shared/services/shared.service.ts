@@ -165,8 +165,9 @@ export class SharedService {
   }
 
   getItemsBorrowedByUserId(userId: number) {
-    return timer(1, this._pollingInterval).pipe(
-      // Use switchMap to switch to a new observable each time interval emits a value
+    return this.triggerUpdate$.pipe(
+      startWith(null),
+      switchMap(() => timer(0, this._pollingInterval)),
       switchMap(() => this.http.get<Device[]>(`${this.apiEndpoint}/borrowed_items_by_user/${userId}/`))
     )
   }

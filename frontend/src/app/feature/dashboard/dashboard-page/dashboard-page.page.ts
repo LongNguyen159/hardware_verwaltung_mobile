@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, Inject, PLATFORM_ID, inject } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle, IonCardTitle, IonButtons, IonButton, IonItem, IonIcon } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardContent, IonCardSubtitle, IonCardTitle, IonButtons, IonButton, IonItem, IonIcon, IonBadge } from '@ionic/angular/standalone';
 import { TitleBarComponent } from '../../../shared/components/title-bar/title-bar.component';
 import { RouterModule } from '@angular/router';
 import { addIcons } from 'ionicons';
@@ -7,10 +7,11 @@ import { albums, chevronForward, desktop, desktopOutline, laptop, laptopOutline,
 import { CommonModule } from '@angular/common';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { SharedService } from 'src/app/shared/services/shared.service';
-import { take } from 'rxjs';
+import { take, takeUntil } from 'rxjs';
 import { User } from 'src/app/shared/models/shared-models';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from 'src/app/shared/services/user.service';
+import { BaseComponent } from 'src/app/shared/components/base/base.component';
 @Component({
   selector: 'app-dashboard-page',
   templateUrl: 'dashboard-page.page.html',
@@ -18,17 +19,20 @@ import { UserService } from 'src/app/shared/services/user.service';
   standalone: true,
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, TitleBarComponent, 
     IonCard, IonCardHeader, IonCardContent, IonCardSubtitle, IonCardTitle, RouterModule, IonIcon,
-    CommonModule
+    CommonModule,
+    IonBadge
   ],
 })
-export class DashboardPageComponent implements OnInit, OnDestroy {
-  sharedService = inject(SharedService)
+export class DashboardPageComponent extends BaseComponent implements OnInit, OnDestroy { 
   userService = inject(UserService)
   greetingText: string = ''
   username: string = 'User'
   isIOS: boolean
+
+  yourItemsLength = 0
   private intervalId: any
   constructor(private platformService: PlatformService) {
+    super()
     this.isIOS = this.platformService.isIOSPlatform()
 
 
@@ -41,6 +45,8 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     this.intervalId = setInterval(() => {
       this.getGreetingsText() // Call the function every hour
     }, 3600000) // 3600000 milliseconds = 1 hour
+
+    this.getItemsByUser()
   }
 
   getUsername() {
@@ -65,6 +71,13 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  getItemsByUser() {
+    this.sharedService.getItemsBorrowedByUserId(this.userService.testUserId).pipe(takeUntil(this.componentDestroyed$)).subscribe(items => {
+      this.yourItemsLength = items.length
+    })
+  }
+
+  // @ts-ignore
   ngOnDestroy(): void {
     clearInterval(this.intervalId)
   }

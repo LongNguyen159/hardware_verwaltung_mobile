@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonFab, IonFabButton, IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle, AlertController, IonList, IonItem, IonLabel, IonInput, IonToast } from '@ionic/angular/standalone';
+import { Component, OnInit, inject } from '@angular/core';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonFab, IonFabButton, IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle, AlertController, IonList, IonItem, IonLabel, IonInput, IonToast, IonBadge } from '@ionic/angular/standalone';
 import { TitleBarComponent } from '../../../shared/components/title-bar/title-bar.component';
 import { addIcons } from 'ionicons';
 import { albums, albumsOutline, chevronForward, qrCode, scan } from 'ionicons/icons';
@@ -9,8 +9,10 @@ import { Barcode, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 import { CommonModule } from '@angular/common';
 import { Device, DeviceQRData } from 'src/app/shared/models/shared-models';
 import { SharedService } from 'src/app/shared/services/shared.service';
-import { take } from 'rxjs';
+import { take, takeUntil } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { BaseComponent } from 'src/app/shared/components/base/base.component';
+import { UserService } from 'src/app/shared/services/user.service';
 
 @Component({
   selector: 'app-qr-code',
@@ -20,12 +22,12 @@ import { HttpErrorResponse } from '@angular/common/http';
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, TitleBarComponent,
     IonFab, IonFabButton, IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle,
     RouterModule, IonList, IonItem, IonLabel, IonInput, CommonModule,
-    IonToast
+    IonToast, IonBadge
   ]
 })
-export class QrCodeScanner {
-  sharedService =  inject(SharedService)
+export class QrCodeScanner extends BaseComponent implements OnInit {
   qrCodeService = inject(QrCodeService)
+  userService = inject(UserService)
 
   isSupported = false
 
@@ -42,11 +44,18 @@ export class QrCodeScanner {
 
   returnQrCodeData: Barcode[] = []
 
+  yourItemsLength = 0
+
   constructor(
     private alertController: AlertController
   ) {
+    super()
     addIcons({scan, chevronForward, qrCode, albumsOutline, albums})
     this.checkIfPlatformSupportsQrScan()
+  }
+
+  ngOnInit(): void {
+    this.getYourItemsLength()
   }
 
 
@@ -59,31 +68,9 @@ export class QrCodeScanner {
     this.qrCodeService.scanLendDevice()
   }
 
-
-
-  /** User scans to return item */
-  // async scanReturnItem(): Promise<void> {
-  //   const granted = await this.requestPermissions()
-  //   if (!granted) {
-  //     this.presentAlert()
-  //     return;
-  //   }
-  //   const { barcodes } = await BarcodeScanner.scan();
-  //   this.returnQrCodeData.push(...barcodes);
-  //   console.log( 'return qr data:' , this.returnQrCodeData)
-
-  //   /** Scan Room's QR to return. We will get id of room as info.
-  //    * IDEA:
-  //    * Take deviceId as an arry of number, then use forkJoin to make multiple POST request (return multiple devices)
-  //    * call service to send POST request:
-  //    * for each id inside deviceIds, POST:
-  //    * {
-  //    *  item_id: id (each id of deviceIds),
-  //    *  room_id: 1 (stays the same),
-  //    *  item_hisotry_type: 2 (return),
-  //    *  user_id: 123 (stays the same)
-  //    *  ...
-  //    * }
-  //    */
-  // }
+  getYourItemsLength() {
+    this.sharedService.getItemsBorrowedByUserId(this.userService.testUserId).pipe(takeUntil(this.componentDestroyed$)).subscribe( allItems => {
+      this.yourItemsLength = allItems.length
+    })
+  }
 }
