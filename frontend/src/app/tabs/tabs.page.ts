@@ -64,7 +64,7 @@ export class TabsPage extends BaseComponent implements OnInit {
   async onQrClick() {
     const isSupported = await this.qrCodeService.isCodeScannerSupported()
     if (!isSupported) {
-      this.sharedService.openSnackbarMessage('QR code scanning not supported on this platform')
+      this.sharedService.openSnackbarMessage('QR code scanning is not supported on this platform')
       this.selectedTab = this.tabNameExtractFromUrl
       return
     }
