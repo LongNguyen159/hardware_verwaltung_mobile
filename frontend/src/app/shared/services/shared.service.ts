@@ -36,10 +36,9 @@ export class SharedService {
 
   /** Get all Items, polling to update the changes from DB */
   getAllItems(): Observable<Device[]> {
-    return this.triggerUpdate$.pipe(
-      startWith(null),
-      switchMap(() => timer(0, this._pollingInterval)),
-      switchMap(() => this.http.get<Device[]>(`${this.apiEndpoint}/items-all/`))
+    return timer(1, this._pollingInterval).pipe(
+      // Use switchMap to switch to a new observable each time interval emits a value
+      switchMap(() => this.http.get<Device[]>(`${this.apiEndpoint}/items-all/`)),
     )
   }
 
@@ -47,11 +46,12 @@ export class SharedService {
     this.triggerUpdate$.next()
   }
 
-  /** Get 1 item infos, polling to reflect changes in DB */
+  /** Get 1 item infos, polling to reflect changes in DB, manually make request if `triggerEmission` is triggered */
   getItemById(itemId: number): Observable<Device> {
-    return timer(1, this._pollingInterval).pipe(
-      // Use switchMap to switch to a new observable each time interval emits a value
-      switchMap(() => this.http.get<Device>(`${this.apiEndpoint}/item-details/${itemId}/`)),
+    return this.triggerUpdate$.pipe(
+      startWith(null),
+      switchMap(() => timer(0, this._pollingInterval)),
+      switchMap(() => this.http.get<Device>(`${this.apiEndpoint}/item-details/${itemId}/`))
     )
   }
 
