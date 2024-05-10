@@ -108,7 +108,13 @@ export class QrCodeService {
    * Provide this parameter if you want to specifically lend that exact item.
    * Currently being used in device-details page.
    */
-  scanLendDevice(deviceInfo?: Device) {
+  async scanLendDevice(deviceInfo?: Device) {
+    const isSupported = await this.isCodeScannerSupported()
+
+    if (!isSupported) {
+      this.sharedService.openSnackbarMessage('QR code scanning is not supported on your platform')
+      return
+    }
     this.scan().then( (scanResults: Barcode | undefined) => {
       /** As per 'scan()' function above, scan results will be undefined if permission not granted,
        * or there are issues with the scanner. Hence, handle them here by returning a meaningful error message

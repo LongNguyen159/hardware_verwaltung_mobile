@@ -132,14 +132,6 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
   }
 
   async onLendItemClick() {
-    /** Check if platform supports code scanning first. If yes, open code scanner camera */
-    this.isCodeScannerSupported = await this.qrCodeService.isCodeScannerSupported()
-
-    if (!this.isCodeScannerSupported) {
-      this.sharedService.openSnackbarMessage('Lending an item requires QR-Code scanning functionality. Your platform does not support this feature.', 7000)
-      return
-    }
-
     this.qrCodeService.scanLendDevice(this.deviceDetails)
   }
 
