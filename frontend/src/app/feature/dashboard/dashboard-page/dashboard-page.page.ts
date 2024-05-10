@@ -10,6 +10,7 @@ import { SharedService } from 'src/app/shared/services/shared.service';
 import { take } from 'rxjs';
 import { User } from 'src/app/shared/models/shared-models';
 import { HttpErrorResponse } from '@angular/common/http';
+import { UserService } from 'src/app/shared/services/user.service';
 @Component({
   selector: 'app-dashboard-page',
   templateUrl: 'dashboard-page.page.html',
@@ -22,6 +23,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class DashboardPageComponent implements OnInit, OnDestroy {
   sharedService = inject(SharedService)
+  userService = inject(UserService)
   greetingText: string = ''
   username: string = 'User'
   isIOS: boolean
@@ -41,7 +43,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   }
 
   getUsername() {
-    this.sharedService.getUserById(this.sharedService.testUserId).pipe(take(1)).subscribe({
+    this.sharedService.getUserById(this.userService.testUserId).pipe(take(1)).subscribe({
       next: (value: User) => {
         this.username = `${value.first_name} ${value.last_name}`
       },

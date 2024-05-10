@@ -6,6 +6,7 @@ import { take } from 'rxjs';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { User } from 'src/app/shared/models/shared-models';
 import { PlatformService } from 'src/app/shared/services/platform.service';
+import { UserService } from 'src/app/shared/services/user.service';
 
 @Component({
   selector: 'app-user-info-page',
@@ -28,6 +29,7 @@ import { PlatformService } from 'src/app/shared/services/platform.service';
 })
 export class UserInfoPageComponent extends BaseComponent implements OnInit {
   platformService = inject(PlatformService)
+  userService = inject(UserService)
 
   userId: number
 
@@ -38,7 +40,7 @@ export class UserInfoPageComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userId = this.sharedService.testUserId
+    this.userId = this.userService.testUserId
 
     this.getUserInfos()
   }

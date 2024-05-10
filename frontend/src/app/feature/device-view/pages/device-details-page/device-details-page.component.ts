@@ -30,6 +30,7 @@ import { filter, pairwise } from 'rxjs/operators';
 import { QrCodeService } from 'src/app/feature/qr-code/service/qr-code.service';
 import { Barcode } from '@capacitor-mlkit/barcode-scanning';
 import { LoadingService } from 'src/app/shared/services/loading.service';
+import { UserService } from 'src/app/shared/services/user.service';
 @Component({
   selector: 'app-device-details-page',
   templateUrl: './device-details-page.component.html',
@@ -62,6 +63,7 @@ import { LoadingService } from 'src/app/shared/services/loading.service';
 export class DeviceDetailsPageComponent extends BaseComponent implements OnInit {
   qrCodeService = inject(QrCodeService)
   loadingService = inject(LoadingService)
+  userService = inject(UserService)
   isCodeScannerSupported: boolean = false
 
   deviceDetails: Device
@@ -121,7 +123,7 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
 
   /** Get user info to associate relation between item and user */
   getUserInfo() {
-    this.sharedService.getUserById(this.sharedService.testUserId).pipe(takeUntil(this.componentDestroyed$)).subscribe(user => {
+    this.sharedService.getUserById(this.userService.testUserId).pipe(takeUntil(this.componentDestroyed$)).subscribe(user => {
       this.userInfos = user
     })
   }

@@ -9,6 +9,7 @@ import { SharedService } from 'src/app/shared/services/shared.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LoadingService } from 'src/app/shared/services/loading.service';
+import { UserService } from 'src/app/shared/services/user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ import { LoadingService } from 'src/app/shared/services/loading.service';
 export class QrCodeService {
   sharedService = inject(SharedService)
   loadingService = inject(LoadingService)
+  userService = inject(UserService)
   qrCode: Barcode[] = []
 
   deviceInfo: Device
@@ -174,7 +176,7 @@ export class QrCodeService {
     /** If item is not borrowed, call _lendDevice() to proceed to lend item (Final step). */
     if (!this.deviceInfo.borrowed_by_user_id) {
       this._lendDevice()
-    } else if (this.deviceInfo.borrowed_by_user_id == this.sharedService.testUserId) {
+    } else if (this.deviceInfo.borrowed_by_user_id == this.userService.testUserId) {
       /** If user tries to scan their own item, notify them */
       this.sharedService.openSnackbarMessage(`"${scannedDeviceData.deviceType} (${scannedDeviceData.deviceVariant})" already existed in "Your Items".`, 5000)
     } else {

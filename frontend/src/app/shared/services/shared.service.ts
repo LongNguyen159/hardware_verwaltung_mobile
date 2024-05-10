@@ -1,13 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Device, ImageResponse, NewDeviceData, ProductType, Room, User } from '../models/shared-models';
 import { Observable, map, of, timer} from 'rxjs';
 import { switchMap } from 'rxjs';
 import { ToastController } from '@ionic/angular/standalone';
+import { UserService } from './user.service';
 @Injectable({
   providedIn: 'root'
 })
 export class SharedService {
+  userService = inject(UserService)
 
   /** TODO: Change API endpoint Host in production. Not 'localhost' anymore, but the IP
    * of server where it's been hosted.
@@ -24,7 +26,6 @@ export class SharedService {
   imageId: number
   unixTimeValue: number
 
-  testUserId: number = 1
 
   constructor(private http: HttpClient, private snackbar: ToastController) { }
 
@@ -168,7 +169,7 @@ export class SharedService {
   /** Later POST to item-history here */
   lendItem(itemId: number) {
     const patchData = {
-      borrowed_by_user: this.testUserId
+      borrowed_by_user: this.userService.testUserId
     }
     return this.http.patch(`${this.apiEndpoint}/item/id/${itemId}/`, patchData)
   }

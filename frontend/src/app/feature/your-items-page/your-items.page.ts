@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonBackButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonTitle, IonToolbar } from '@ionic/angular/standalone';
@@ -8,6 +8,7 @@ import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { take, takeUntil } from 'rxjs';
 import { Device, User } from 'src/app/shared/models/shared-models';
 import { HttpErrorResponse } from '@angular/common/http';
+import { UserService } from 'src/app/shared/services/user.service';
 
 @Component({
   selector: 'app-your-items',
@@ -24,7 +25,7 @@ import { HttpErrorResponse } from '@angular/common/http';
  * For testing purposes, we will hard code a user ID here.
  */
 export class YourItemsPage extends BaseComponent implements OnInit {
-
+  userService = inject(UserService)
   userId: number
   user: User
 
@@ -42,7 +43,7 @@ export class YourItemsPage extends BaseComponent implements OnInit {
 
   /** Get user Infos here, as user has logged in. */
   getUserInfos() {
-    this.userId = this.sharedService.testUserId
+    this.userId = this.userService.testUserId
 
     this.sharedService.getUserById(this.userId).pipe(take(1)).subscribe({
       next: (value: User) => {
