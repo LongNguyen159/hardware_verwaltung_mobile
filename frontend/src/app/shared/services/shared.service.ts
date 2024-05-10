@@ -147,6 +147,8 @@ export class SharedService {
 
   /** Opens snackbar message at the top of the screen. Default duration is 3 seconds. */
   async openSnackbarMessage(message: string, duration = 3000) {
+    /** Dismiss old toasts before opening new one */
+    this.snackbar.dismiss()
     const toast = await this.snackbar.create({
       message: message,
       duration: duration,

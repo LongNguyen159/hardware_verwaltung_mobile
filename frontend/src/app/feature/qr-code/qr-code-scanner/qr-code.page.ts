@@ -22,7 +22,7 @@ import { UserService } from 'src/app/shared/services/user.service';
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, TitleBarComponent,
     IonFab, IonFabButton, IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle,
     RouterModule, IonList, IonItem, IonLabel, IonInput, CommonModule,
-    IonToast, IonBadge
+    IonToast
   ]
 })
 export class QrCodeScanner extends BaseComponent implements OnInit {

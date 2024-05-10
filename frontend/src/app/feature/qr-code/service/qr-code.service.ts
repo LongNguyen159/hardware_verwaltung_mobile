@@ -39,7 +39,6 @@ export class QrCodeService {
       const result = await BarcodeScanner.isSupported();
       return result.supported
     } catch (error) {
-      console.error('Error checking code scanner support:', error)
       return false
     }
   }

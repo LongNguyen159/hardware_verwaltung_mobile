@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterEvent, NavigationEnd } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { BaseComponent } from '../shared/components/base/base.component';
+import { QrCodeService } from '../feature/qr-code/service/qr-code.service';
 export interface TabEntry {
   tab: string
   icon: string
@@ -21,13 +22,10 @@ export interface TabEntry {
   imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, CommonModule],
 })
 export class TabsPage extends BaseComponent implements OnInit {
-  selectedTab: string = ''
+  qrCodeService = inject(QrCodeService)
 
-  tabEntries: TabEntry[] = [
-    { tab: 'dashboard', icon: 'home-outline', iconFilled: 'home', route: '/dashboard' },
-    { tab: 'qr-code', icon: 'qr-code-outline', route: '/qr-code' },
-    { tab: 'user', icon: 'person-circle-outline', iconFilled: 'person-circle', route: '/dashboard' },
-  ];
+  selectedTab: string = ''
+  tabNameExtractFromUrl = ''
 
   public environmentInjector = inject(EnvironmentInjector);
 
@@ -40,19 +38,40 @@ export class TabsPage extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.setSelectedTab(this.router.url)
+    this.highlightActiveTab(this.router.url)
+    this.selectedTab = 'dashboard'
 
+    /** Subscribe to url changes */
     this.router.events.pipe(takeUntil(this.componentDestroyed$)).subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
-        this.setSelectedTab(event.url)
+        const parts = event.url.split('/')
+        const tabName = parts[parts.length - 1]
+        this.tabNameExtractFromUrl = tabName
+        this.selectedTab = tabName
+
+        console.log('selected tab:', this.selectedTab)
+        this.highlightActiveTab(event.url)
       }
     })
   }
 
-  setSelectedTab(url: string) {
-    const tab = this.tabEntries.find(entry => url.includes(entry.route));
-    if (tab) {
-      this.selectedTab = tab.tab;
+  onTabSelected(tabName: string) {
+    this.selectedTab = tabName
+    console.log(this.selectedTab)
+  }
+
+  highlightActiveTab(url: string) {
+    console.log('current url:', url)
+  }
+
+  async onQrClick() {
+    const isSupported = await this.qrCodeService.isCodeScannerSupported()
+    if (!isSupported) {
+      this.sharedService.openSnackbarMessage('QR code scanning not supported on this platform')
+      this.selectedTab = this.tabNameExtractFromUrl
+      return
     }
+    
+    this.qrCodeService.scanLendDevice()
   }
 }

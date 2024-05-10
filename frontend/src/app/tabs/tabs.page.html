@@ -1,10 +1,16 @@
 <ion-tabs>
   <ion-tab-bar slot="bottom">
-    <ng-container *ngFor="let tab of tabEntries">
-      <ion-tab-button [tab]="tab.tab" [class.active]="selectedTab === tab.tab" [href]="tab.route">
-        <ion-icon [name]="selectedTab === tab.tab ? tab.iconFilled : tab.icon"></ion-icon>
-        <ion-label>{{ tab.label }}</ion-label>
-      </ion-tab-button>
-    </ng-container>
+    <ion-tab-button tab="dashboard" (click)="onTabSelected('dashboard')" href="/dashboard">
+      <ion-icon [name]="selectedTab == 'dashboard' ? 'home' : 'home-outline'"></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button (click)="onQrClick(); onTabSelected('qr-code')">
+      <ion-icon name="qr-code"></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button tab="user" (click)="onTabSelected('user')" [class.active]="selectedTab === 'user'" href="/user">
+      <ion-icon name="person-circle-outline"></ion-icon>      
+    </ion-tab-button>
+
   </ion-tab-bar>
 </ion-tabs>
