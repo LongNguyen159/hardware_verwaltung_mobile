@@ -118,6 +118,9 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
 
       /** Get user info after device info is retrieved */
       this.getUserInfo()
+
+      /** Disable button = false on update new data */
+      this.loadingService.setLoading(false)
     })
   }
 

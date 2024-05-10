@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Device, ImageResponse, NewDeviceData, ProductType, Room, User } from '../models/shared-models';
-import { Observable, map, of, timer} from 'rxjs';
+import { Device, ImageResponse, ItemHistoryPost, NewDeviceData, ProductType, Room, User } from '../models/shared-models';
+import { Observable, Subject, map, of, startWith, timer} from 'rxjs';
 import { switchMap } from 'rxjs';
 import { ToastController } from '@ionic/angular/standalone';
 import { UserService } from './user.service';
@@ -21,6 +21,7 @@ export class SharedService {
   apiEndpoint: string = `${this._apiBaseHostUrl}/api/v1`
 
   private _pollingInterval: number = 10000
+  private triggerUpdate$ = new Subject<void>()
 
   
   imageId: number
@@ -34,11 +35,16 @@ export class SharedService {
   }
 
   /** Get all Items, polling to update the changes from DB */
-  getAllItems() {
-    return timer(1, this._pollingInterval).pipe(
-      // Use switchMap to switch to a new observable each time interval emits a value
+  getAllItems(): Observable<Device[]> {
+    return this.triggerUpdate$.pipe(
+      startWith(null),
+      switchMap(() => timer(0, this._pollingInterval)),
       switchMap(() => this.http.get<Device[]>(`${this.apiEndpoint}/items-all/`))
     )
+  }
+
+  triggerEmission(): void {
+    this.triggerUpdate$.next()
   }
 
   /** Get 1 item infos, polling to reflect changes in DB */
@@ -167,20 +173,26 @@ export class SharedService {
 
 
   /** Later POST to item-history here */
-  lendItem(itemId: number) {
-    const patchData = {
-      borrowed_by_user: this.userService.testUserId
+  lendItem(itemId: number, roomId: number) {
+    const postData: ItemHistoryPost = {
+      item: itemId,
+      user: this.userService.testUserId,
+      item_history_type: 1,
+      room: roomId
     }
-    return this.http.patch(`${this.apiEndpoint}/item/id/${itemId}/`, patchData)
+
+    return this.http.post(`${this.apiEndpoint}/item-history/`, postData)
   }
 
   /** Later POST to item-history here */
   returnItem(itemId: number, roomId: number) {
-    const patchData = {
-      borrowed_by_user: null,
-      current_room: roomId
+    const postData: ItemHistoryPost = {
+      item: itemId,
+      user: this.userService.testUserId,
+      item_history_type: 2,
+      room: roomId
     }
-    return this.http.patch(`${this.apiEndpoint}/item/id/${itemId}/`, patchData)
+    return this.http.post(`${this.apiEndpoint}/item-history/`, postData)
   }
   
 }

@@ -61,6 +61,13 @@ export interface User {
   password_hash: string;
 }
 
+export interface ItemHistoryPost {
+  item: number;
+  user: number;
+  item_history_type: number;
+  room: number;
+}
+
 interface Usertype {
   id: number;
   name: string;

@@ -219,9 +219,9 @@ export class QrCodeService {
   /** Sends request to lend device */
   private _lendDevice() {
     this.loadingService.setLoading(true)
-    this.sharedService.lendItem(this.deviceInfo.id).pipe(take(1)).subscribe({
+    this.sharedService.lendItem(this.deviceInfo.id, this.deviceInfo.location_id).pipe(take(1)).subscribe({
       next: (value: any) => {
-        this.loadingService.setLoading(false)
+        this.sharedService.triggerEmission()
         this.sharedService.openSnackbarMessage(`Successfully added "${this.deviceInfo.item_name}" to your lent items!`)
       },
       error: (err: HttpErrorResponse) => {
@@ -256,15 +256,11 @@ export class QrCodeService {
     })
   }
 
-  private _afterReturnItemScanned(deviceInfo: Device, scannedResults: RoomQRData) {
-
-  }
-
   private _returnDevice(device: Device, scannedRoomData: RoomQRData) {
     this.loadingService.setLoading(true)
     this.sharedService.returnItem(device.id, scannedRoomData.id).pipe(take(1)).subscribe({
       next: (value: any) => {
-        this.loadingService.setLoading(false)
+        this.sharedService.triggerEmission()
         this.sharedService.openSnackbarMessage(`Item "${device.item_name}" has been returned at "${scannedRoomData.room_number}"`)
       },
       error: (err: HttpErrorResponse) => {

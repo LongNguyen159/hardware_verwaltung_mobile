@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonSkeletonText, IonList, IonItem, IonInfiniteScroll, IonLabel, IonAlert, IonInfiniteScrollContent, IonLoading, IonButton, IonBackButton, IonButtons } from '@ionic/angular/standalone';
 import { map, take, takeUntil } from 'rxjs';
@@ -9,6 +9,7 @@ import { Device } from 'src/app/shared/models/shared-models';
 import { ColorModeService } from 'src/app/shared/services/color-mode.service';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { Keyboard } from '@capacitor/keyboard';
+import { LoadingService } from 'src/app/shared/services/loading.service';
 
 @Component({
   selector: 'app-device-view-page',
