@@ -1,7 +1,7 @@
 import { Component, EnvironmentInjector, OnInit, inject } from '@angular/core';
 import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { triangle, ellipse, square, addOutline, homeOutline, qrCode, home, add, hardwareChip, hardwareChipOutline, laptop, laptopOutline, person, personCircle, personCircleOutline, grid, gridOutline, barcode, barcodeOutline } from 'ionicons/icons';
+import { triangle, ellipse, square, addOutline, homeOutline, qrCode, home, add, hardwareChip, hardwareChipOutline, laptop, laptopOutline, person, personCircle, personCircleOutline, grid, gridOutline, barcode, barcodeOutline, addCircle, addCircleOutline, qrCodeOutline } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import { Router, RouterEvent, NavigationEnd } from '@angular/router';
 import { takeUntil } from 'rxjs';
@@ -24,8 +24,8 @@ export class TabsPage extends BaseComponent implements OnInit {
   selectedTab: string = ''
 
   tabEntries: TabEntry[] = [
-    { tab: 'dashboard', icon: 'grid-outline', iconFilled: 'grid', route: '/dashboard' },
-    { tab: 'qr-code', icon: 'barcode-outline', iconFilled: 'barcode-outline', route: '/qr-code' },
+    { tab: 'dashboard', icon: 'home-outline', iconFilled: 'home', route: '/dashboard' },
+    { tab: 'qr-code', icon: 'qr-code-outline', route: '/qr-code' },
     { tab: 'user', icon: 'person-circle-outline', iconFilled: 'person-circle', route: '/dashboard' },
   ];
 
@@ -33,9 +33,9 @@ export class TabsPage extends BaseComponent implements OnInit {
 
   constructor(private router: Router) {
     super()
-    addIcons({ triangle, ellipse, addOutline, homeOutline, qrCode, home, add,
+    addIcons({ triangle, ellipse, addOutline, homeOutline, qrCode, qrCodeOutline, home, add,
       laptop, laptopOutline, personCircle, personCircleOutline,
-      grid, gridOutline, barcode, barcodeOutline
+      grid, gridOutline, barcode, barcodeOutline, addCircle, addCircleOutline
      })
   }
 
