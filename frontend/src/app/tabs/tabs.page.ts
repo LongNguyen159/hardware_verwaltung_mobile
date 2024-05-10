@@ -31,34 +31,34 @@ export class TabsPage extends BaseComponent implements OnInit {
 
   constructor(private router: Router) {
     super()
+
+    
     addIcons({ triangle, ellipse, addOutline, homeOutline, qrCode, qrCodeOutline, home, add,
       laptop, laptopOutline, personCircle, personCircleOutline,
       grid, gridOutline, barcode, barcodeOutline, addCircle, addCircleOutline
-     })
+    })
+
+    /** Subscribe to url changes */
+    this._listenToRouterChanges()
   }
 
   ngOnInit(): void {
-    this.highlightActiveTab(this.router.url)
-    this.selectedTab = 'dashboard'
+    this._highlightActiveTab(this.router.url)
+  }
 
-    /** Subscribe to url changes */
+  private _listenToRouterChanges() {
     this.router.events.pipe(takeUntil(this.componentDestroyed$)).subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
-        const parts = event.url.split('/')
-        const tabName = parts[parts.length - 1]
-        this.tabNameExtractFromUrl = tabName
-        this.selectedTab = tabName
-
-        this.highlightActiveTab(event.url)
+        this._highlightActiveTab(event.url)
       }
     })
   }
 
-  onTabSelected(tabName: string) {
-    this.selectedTab = tabName
-  }
-
-  highlightActiveTab(url: string) {    
+  private _highlightActiveTab(url: string) {
+    const parts = url.split('/')
+      const tabName = parts[parts.length - 1]
+      this.tabNameExtractFromUrl = tabName
+      this.selectedTab = tabName  
   }
 
   async onQrClick() {

@@ -1,14 +1,14 @@
 <ion-tabs>
   <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="dashboard" (click)="onTabSelected('dashboard')" href="/dashboard">
+    <ion-tab-button tab="dashboard" href="/dashboard">
       <ion-icon [name]="selectedTab == 'dashboard' ? 'home' : 'home-outline'"></ion-icon>
     </ion-tab-button>
 
-    <ion-tab-button (click)="onQrClick(); onTabSelected('qr-code')">
+    <ion-tab-button (click)="onQrClick()">
       <ion-icon name="qr-code"></ion-icon>
     </ion-tab-button>
 
-    <ion-tab-button tab="user" (click)="onTabSelected('user')" [class.active]="selectedTab === 'user'" href="/user">
+    <ion-tab-button tab="user" [class.active]="selectedTab === 'user'" href="/user">
       <ion-icon name="person-circle-outline"></ion-icon>      
     </ion-tab-button>
 
