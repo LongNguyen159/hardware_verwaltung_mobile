@@ -3,7 +3,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, Io
 import { TitleBarComponent } from '../../../shared/components/title-bar/title-bar.component';
 import { RouterModule } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { albums, chevronForward, desktop, desktopOutline, laptop, laptopOutline, locationOutline } from 'ionicons/icons';
+import { albums, chevronForward, desktop, desktopOutline, laptop, laptopOutline, locationOutline, moon, moonOutline, sunny, sunnyOutline } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { SharedService } from 'src/app/shared/services/shared.service';
@@ -26,6 +26,8 @@ import { BaseComponent } from 'src/app/shared/components/base/base.component';
 export class DashboardPageComponent extends BaseComponent implements OnInit, OnDestroy { 
   userService = inject(UserService)
   greetingText: string = ''
+  iconName: string = ''
+  iconColor: string = ''
   username: string = 'User'
   isIOS: boolean
 
@@ -36,7 +38,9 @@ export class DashboardPageComponent extends BaseComponent implements OnInit, OnD
     this.isIOS = this.platformService.isIOSPlatform()
 
 
-    addIcons({chevronForward, albums, locationOutline, laptop, laptopOutline, desktop, desktopOutline})
+    addIcons({chevronForward, albums, locationOutline, laptop, laptopOutline, desktop, desktopOutline,
+      sunnyOutline, sunny, moon, moonOutline
+    })
   }
 
   ngOnInit(): void {
@@ -64,10 +68,21 @@ export class DashboardPageComponent extends BaseComponent implements OnInit, OnD
     const currentHour = new Date().getHours()
     if (currentHour >= 5 && currentHour < 12) {
       this.greetingText = "Good morning"
+
+      
+      this.iconName = 'sunny-outline'
+      this.iconColor = '#e2c111'
     } else if (currentHour >= 12 && currentHour < 18) {
       this.greetingText = "Good afternoon"
+
+
+      this.iconName = 'sunny-outline'
+      this.iconColor = '#e2c111'
     } else {
       this.greetingText = "Good evening"
+
+      this.iconName = 'moon'
+      this.iconColor = 'rgb(92, 94, 222)'
     }
   }
 

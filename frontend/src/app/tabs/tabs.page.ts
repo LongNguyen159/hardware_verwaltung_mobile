@@ -49,7 +49,6 @@ export class TabsPage extends BaseComponent implements OnInit {
         this.tabNameExtractFromUrl = tabName
         this.selectedTab = tabName
 
-        console.log('selected tab:', this.selectedTab)
         this.highlightActiveTab(event.url)
       }
     })
@@ -57,11 +56,9 @@ export class TabsPage extends BaseComponent implements OnInit {
 
   onTabSelected(tabName: string) {
     this.selectedTab = tabName
-    console.log(this.selectedTab)
   }
 
-  highlightActiveTab(url: string) {
-    console.log('current url:', url)
+  highlightActiveTab(url: string) {    
   }
 
   async onQrClick() {

@@ -10,6 +10,7 @@
   <ion-header *ngIf="isIOS" collapse="condense" mode="ios">
     <ion-toolbar>
       <div class="ion-padding-horizontal greetText">
+        <ion-icon [name]="iconName" [style.color]="iconColor"></ion-icon>
         <p>{{greetingText}}, {{username}}</p>
       </div>
     </ion-toolbar>
@@ -17,6 +18,7 @@
 
   <ion-header *ngIf="!isIOS" style="box-shadow: none !important;">
     <div class="ion-padding-horizontal greetText">
+      <ion-icon [name]="iconName" [style.color]="iconColor"></ion-icon>
       <p>{{greetingText}}, {{username}}</p>
     </div>
   </ion-header>
