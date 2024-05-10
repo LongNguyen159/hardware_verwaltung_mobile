@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonFab, IonFabButton, IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle, AlertController, IonList, IonItem, IonLabel, IonInput, IonToast } from '@ionic/angular/standalone';
 import { TitleBarComponent } from '../../../shared/components/title-bar/title-bar.component';
 import { addIcons } from 'ionicons';
-import { chevronForward, scan } from 'ionicons/icons';
+import { albums, albumsOutline, chevronForward, qrCode, scan } from 'ionicons/icons';
 import { QrCodeService } from '../service/qr-code.service';
 import { RouterModule } from '@angular/router';
 import { Barcode, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
@@ -45,7 +45,7 @@ export class QrCodeScanner {
   constructor(
     private alertController: AlertController
   ) {
-    addIcons({scan, chevronForward})
+    addIcons({scan, chevronForward, qrCode, albumsOutline, albums})
     this.checkIfPlatformSupportsQrScan()
   }
 

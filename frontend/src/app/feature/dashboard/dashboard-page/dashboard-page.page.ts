@@ -3,7 +3,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, Io
 import { TitleBarComponent } from '../../../shared/components/title-bar/title-bar.component';
 import { RouterModule } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { chevronForward } from 'ionicons/icons';
+import { albums, chevronForward, desktop, desktopOutline, laptop, laptopOutline, locationOutline } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { SharedService } from 'src/app/shared/services/shared.service';
@@ -30,8 +30,9 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   private intervalId: any
   constructor(private platformService: PlatformService) {
     this.isIOS = this.platformService.isIOSPlatform()
-    console.log('platform ios?', this.isIOS)
-    addIcons({chevronForward})
+
+
+    addIcons({chevronForward, albums, locationOutline, laptop, laptopOutline, desktop, desktopOutline})
   }
 
   ngOnInit(): void {

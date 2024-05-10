@@ -13,16 +13,22 @@
   </ion-header>
 
   <ion-card [button]="true" (click)="scanLendItem()" [disabled]="!isSupported">
+    
     <div class="cardContentContainer">
-      <div>
-        <ion-card-header>
-          <ion-card-title>
-            Lend an Item
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          Scan the item you wish to lend
-        </ion-card-content>
+      <div class="flex flex-row items-center pl-5">
+        <div class="text-cyan-600">
+          <ion-icon name="qr-code" size="large"></ion-icon>
+        </div>
+        <div class="flex flex-col items-start">
+          <ion-card-header>
+            <ion-card-title>
+              Lend an Item
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Scan the item you wish to lend
+          </ion-card-content>
+        </div>
       </div>
       <div class="chevronIconPadding">
         <ion-icon name="chevron-forward"></ion-icon>
@@ -30,36 +36,23 @@
     </div>
   </ion-card>
 
-  <!-- <ion-card [button]="true" (click)="scanReturnItem()" [disabled]="!isSupported">
-    <div class="cardContentContainer">
-      <div>
-        <ion-card-header>
-          <ion-card-title>
-            Return Item
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          Return your lent items by scanning the room's QR code
-        </ion-card-content>
-      </div>
-      <div class="chevronIconPadding">
-        <ion-icon name="chevron-forward"></ion-icon>
-      </div>
-    </div>
-  </ion-card> -->
-
 
   <ion-card [button]="true" routerLink="/your-items">
     <div class="cardContentContainer">
-      <div>
-        <ion-card-header>
-          <ion-card-title>
-            Your Items
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          Manage your lent items
-        </ion-card-content>
+      <div class="flex flex-row items-center pl-5">
+        <div class="text-cyan-600">
+          <ion-icon name="albums" size="large"></ion-icon>
+        </div>
+        <div class="flex flex-col items-start">
+          <ion-card-header>
+            <ion-card-title>
+              Your Items
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Manage your lent items
+          </ion-card-content>
+        </div>
       </div>
       <div class="chevronIconPadding">
         <ion-icon name="chevron-forward"></ion-icon>

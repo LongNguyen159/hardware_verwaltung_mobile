@@ -24,15 +24,20 @@
   <!-- Device overview card -->
   <ion-card [button]="true" routerLink="/device">
     <div class="cardContentContainer">
-      <div>
-        <ion-card-header>
-          <ion-card-title>
-            Devices
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          See which devices are available for you
-        </ion-card-content>
+      <div class="flex flex-row items-center pl-5">
+        <div class="text-cyan-600">
+          <ion-icon name="desktop-outline" size="large"></ion-icon>
+        </div>
+        <div class="flex flex-col items-start">
+          <ion-card-header>
+            <ion-card-title>
+              Devices
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            See which devices are available for you
+          </ion-card-content>
+        </div>
       </div>
       <div class="chevronIconPadding">
         <ion-icon name="chevron-forward"></ion-icon>
@@ -43,15 +48,20 @@
   <!-- Room overview card -->
   <ion-card [button]="true" routerLink="/room">
     <div class="cardContentContainer">
-      <div>
-        <ion-card-header>
-          <ion-card-title>
-            Rooms
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          Find items in a specific location
-        </ion-card-content>
+      <div class="flex flex-row items-center pl-5">
+        <div class="text-cyan-600">
+          <ion-icon name="location-outline" size="large"></ion-icon>
+        </div>
+        <div class="flex flex-col items-start">
+          <ion-card-header>
+            <ion-card-title>
+              Rooms
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Find items at a specific location
+          </ion-card-content>
+        </div>
       </div>
       <div class="chevronIconPadding">
         <ion-icon name="chevron-forward"></ion-icon>
@@ -59,18 +69,25 @@
     </div>
   </ion-card>
 
+  
+
   <!-- Your items card -->
   <ion-card [button]="true" routerLink="/your-items">
     <div class="cardContentContainer">
-      <div>
-        <ion-card-header>
-          <ion-card-title>
-            Your Items
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          Manage your lent items
-        </ion-card-content>
+      <div class="flex flex-row items-center pl-5">
+        <div class="text-cyan-600">
+          <ion-icon name="albums" size="large"></ion-icon>
+        </div>
+        <div class="flex flex-col items-start">
+          <ion-card-header>
+            <ion-card-title>
+              Your Items
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Manage your lent items
+          </ion-card-content>
+        </div>
       </div>
       <div class="chevronIconPadding">
         <ion-icon name="chevron-forward"></ion-icon>
