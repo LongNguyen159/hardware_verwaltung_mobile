@@ -147,8 +147,15 @@ export class SharedService {
 
   /** Opens snackbar message at the top of the screen. Default duration is 3 seconds. */
   async openSnackbarMessage(message: string, duration = 3000) {
-    /** Dismiss old toasts before opening new one */
-    this.snackbar.dismiss()
+    /** Dismiss old toasts before opening new one.
+     * First check if overlay exists, if yes then dismiss it.
+     * If we dismiss without an overlay there (a toast message), it will raise an error
+     * 'overlay does not exist'. Because we can't dismiss 'nothingness'.
+     */
+    const overlay = this.snackbar.getTop()
+    if (await overlay) {
+      this.snackbar.dismiss()
+    }
     const toast = await this.snackbar.create({
       message: message,
       duration: duration,
