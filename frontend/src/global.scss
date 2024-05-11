@@ -49,3 +49,15 @@
 .noBorderBottom {
     border-bottom: none;
 }
+
+@media (prefers-color-scheme: dark) {
+    ion-back-button {
+        color: #0ea5e9;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    ion-back-button {
+        color: #1e97b4;
+    }
+}
