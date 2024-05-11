@@ -54,10 +54,17 @@
     ion-back-button {
         color: #0ea5e9;
     }
+
+    ion-tab-button {
+        color: white
+    }
 }
 
 @media (prefers-color-scheme: light) {
     ion-back-button {
         color: #1e97b4;
+    }
+    ion-tab-button {
+        color: black
     }
 }
