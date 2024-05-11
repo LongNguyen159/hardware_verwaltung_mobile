@@ -177,10 +177,10 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
     /** Splice the long time zone to just get the latter part 'Center EU Time' */
     this.timezoneName = timezoneLong.substring(firstSpaceIndex)
 
-    this.relativeTime = this.sharedService.getRelativeTimeText(this.lastModifiedDate)
+    this.relativeTime = this.sharedService.getRelativeTimeDurationText(this.lastModifiedDate)
     /** Update relative time in interval, in case user stays on one page for a long time */
     this.intervalUpdate = setInterval(() => {
-      this.relativeTime = this.sharedService.getRelativeTimeText(this.lastModifiedDate)      
+      this.relativeTime = this.sharedService.getRelativeTimeDurationText(this.lastModifiedDate)      
     }, 3 * 60 * 1000); // Update every 3 minutes
   }
 

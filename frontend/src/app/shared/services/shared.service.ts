@@ -42,6 +42,10 @@ export class SharedService {
     )
   }
 
+  /** 
+   * Our functions poll periodically to fetch data.
+   * Call this function to manually trigger the API call apart from polling interval.
+   */
   triggerEmission(): void {
     this.triggerUpdate$.next()
   }
@@ -122,7 +126,14 @@ export class SharedService {
     return this.http.delete(`${this.apiEndpoint}/items/${deviceId}/image/`)
   }
 
-  getRelativeTimeText(date: Date): string {
+  /** Get relative time text refers to current time. Should be polled regularly
+   * by whoever uses it, to update what the referenced date to 'now'.
+   * Returns a string like 'a min ago', '2 minutes ago', etc.
+   * 
+   * Parameter: `startDate`
+   * Pass start date in as a reference to calculate duration till current time.
+   */
+  getRelativeTimeDurationText(startDate: Date): string {
     const units = [
       { label: 'year', duration: 365 * 24 * 60 * 60 * 1000 },
       { label: 'month', duration: 30 * 24 * 60 * 60 * 1000 },
@@ -132,7 +143,7 @@ export class SharedService {
     ];
 
     const now = new Date();
-    const elapsed = now.getTime() - date.getTime();
+    const elapsed = now.getTime() - startDate.getTime();
 
     for (const unit of units) {
         const unitElapsed = elapsed / unit.duration;
@@ -147,10 +158,10 @@ export class SharedService {
 
   /** Opens snackbar message at the top of the screen. Default duration is 3 seconds. */
   async openSnackbarMessage(message: string, duration = 3000) {
-    /** Dismiss old toasts before opening new one.
+    /** Dismiss old toasts before opening a new one.
      * First check if overlay exists, if yes then dismiss it.
-     * If we dismiss without an overlay there (a toast message), it will raise an error
-     * 'overlay does not exist'. Because we can't dismiss 'nothingness'.
+     * If we dismiss without an overlay (a toast message), it will raise an error
+     * 'overlay does not exist'. Because we can't dismiss 'nothingness' can we?
      */
     const overlay = this.snackbar.getTop()
     if (await overlay) {
@@ -166,7 +177,7 @@ export class SharedService {
       }],
     })
 
-    await toast.present();
+    await toast.present()
   }
 
   getUserById(id: number) {
@@ -182,7 +193,6 @@ export class SharedService {
   }
 
 
-  /** Later POST to item-history here */
   lendItem(itemId: number, roomId: number) {
     const postData: ItemHistoryPost = {
       item: itemId,
@@ -194,7 +204,6 @@ export class SharedService {
     return this.http.post(`${this.apiEndpoint}/item-history/`, postData)
   }
 
-  /** Later POST to item-history here */
   returnItem(itemId: number, roomId: number) {
     const postData: ItemHistoryPost = {
       item: itemId,

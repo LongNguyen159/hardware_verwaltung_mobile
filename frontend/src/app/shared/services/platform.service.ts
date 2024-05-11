@@ -11,6 +11,7 @@ export class PlatformService {
   ) {
     console.log('platforms:', _platform.platforms())
     this._isIos = this._platform.is('ipad') || this._platform.is('iphone') || this._platform.is('ios')
+    console.log('is Platform native?', this.isNativePlatform())
   }
 
   isIOSPlatform(): boolean {
