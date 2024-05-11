@@ -137,13 +137,6 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
 
 
   async onReturnItemClick() {
-    this.isCodeScannerSupported = await this.qrCodeService.isCodeScannerSupported()
-
-    if (!this.isCodeScannerSupported) {
-      this.sharedService.openSnackbarMessage('Lending an item requires QR-Code scanning functionality. Your platform does not support this feature.', 7000)
-      return
-    }
-
     this.qrCodeService.scanReturnItem(this.deviceDetails)
   }
 

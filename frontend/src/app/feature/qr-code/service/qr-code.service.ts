@@ -109,13 +109,11 @@ export class QrCodeService {
 
     if (!isSupported) {
       /** Open an error dialog */
-      const alert = await this.alertController.create({
-        header: 'QR Not Supported',
-        message: `QR Code scanning is not supported on this platform.`,
-        backdropDismiss: false,
-        buttons: ['Ok']
-      })
-      await alert.present()
+      this.showInfoDialog(
+        'QR Not Supported',
+        'QR Code scanning is not supported on this platform.',
+        'OK'
+      )
       return
     }
 
@@ -126,7 +124,7 @@ export class QrCodeService {
          * and exit the function early.
          */
         if (!scanResults) {
-          this.sharedService.openSnackbarMessage('Oops! There seems to be something wrong with the scanner, Please try again later.')
+          this.sharedService.openSnackbarMessage('Oops! There seems to be something wrong with the scanner, Please try again later')
           return
         }
 
@@ -142,7 +140,11 @@ export class QrCodeService {
       .catch((error: ScanErrorEvent) => {
         // Handle errors here
         console.error('Error occurred while scanning:', error.message)
-        this.sharedService.openSnackbarMessage(`An error occurred: ${error.message}`)
+        this.showInfoDialog(
+          'Scanner Error',
+          `${error.message}`,
+          'OK'
+        )
       })
   }
 
@@ -166,7 +168,7 @@ export class QrCodeService {
          * or the requested ID does not exist. Either way, device is not available to lend.
          */
         error: (err: HttpErrorResponse) => {
-          this.sharedService.openSnackbarMessage('QR code has expired, you can no longer lend this item.')
+          this.sharedService.openSnackbarMessage('QR code has expired, you can no longer lend this item')
         }
       })
     }
@@ -193,10 +195,10 @@ export class QrCodeService {
       this._lendDevice()
     } else if (this.deviceInfo.borrowed_by_user_id == this.userService.testUserId) {
       /** If user tries to scan their own item, notify them */
-      this.sharedService.openSnackbarMessage(`"${scannedDeviceData.deviceType} (${scannedDeviceData.deviceVariant})" already existed in "Your Items".`, 5000)
+      this.sharedService.openSnackbarMessage(`"${scannedDeviceData.deviceType} - ${scannedDeviceData.deviceVariant}" already existed in "Your Items"`, 5000)
     } else {
       /** Else, meaning the device is not available to lend. */
-      this.sharedService.openSnackbarMessage(`Scanned item is currently not available or is being lent by another person.`, 5000)
+      this.sharedService.openSnackbarMessage(`Scanned item is currently not available or is being lent by another person`, 5000)
     }
   }
 
@@ -205,30 +207,43 @@ export class QrCodeService {
    * This will trigger the alert dialog to ask user whether they want to lend the scanned item anyway.
    */
   private async _handleDeviceMismatch(scannedDeviceData: DeviceQRData): Promise<void> {
-    const alert = await this.alertController.create({
-      header: 'Item mismatch',
-      message: `Scanned item does not match your selected item. Do you still want to lend the scanned item anyway?<br><br>
-        Scanned item: ID: ${scannedDeviceData.id} - ${scannedDeviceData.deviceType} (${scannedDeviceData.deviceVariant})<br>
+    this.showConfirmationDialog(
+      'Item Mismatch',
+      `
+      Scanned item does not match your selected item. Do you still want to lend the scanned item anyway?<br><br>
+      Scanned item: ID: ${scannedDeviceData.id} - ${scannedDeviceData.deviceType} (${scannedDeviceData.deviceVariant})<br>
       `,
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            return
-          }
-        },
-        {
-          text: 'Yes',
-          role: 'confirm',
-          handler: () => {
+      'Cancel',
+      'Yes',
+      undefined,
+      () => {
+        this._afterLendDeviceScanned(scannedDeviceData)
+      }
+    )
+    // const alert = await this.alertController.create({
+    //   header: 'Item mismatch',
+    //   message: `Scanned item does not match your selected item. Do you still want to lend the scanned item anyway?<br><br>
+    //     Scanned item: ID: ${scannedDeviceData.id} - ${scannedDeviceData.deviceType} (${scannedDeviceData.deviceVariant})<br>
+    //   `,
+    //   buttons: [
+    //     {
+    //       text: 'Cancel',
+    //       role: 'cancel',
+    //       handler: () => {
+    //         return
+    //       }
+    //     },
+    //     {
+    //       text: 'Yes',
+    //       role: 'confirm',
+    //       handler: () => {
 
-            this._afterLendDeviceScanned(scannedDeviceData)
-          }
-        }
-      ]
-    })
-    await alert.present()
+    //         this._afterLendDeviceScanned(scannedDeviceData)
+    //       }
+    //     }
+    //   ]
+    // })
+    // await alert.present()
   }
 
   /** Sends request to lend device */
@@ -241,7 +256,7 @@ export class QrCodeService {
       },
       error: (err: HttpErrorResponse) => {
         this.loadingService.setLoading(false)
-        this.sharedService.openSnackbarMessage('Error lending scanned item, please try again later.')
+        this.sharedService.openSnackbarMessage('Error lending scanned item, please try again later')
       }
     })
   }
@@ -254,7 +269,7 @@ export class QrCodeService {
        * and exit the function early.
        */
       if (!scanResults) {
-        this.sharedService.openSnackbarMessage('Oops! There seems to be something wrong with the scanner, Please try again later.')
+        this.sharedService.openSnackbarMessage('Oops! There seems to be something wrong with the scanner, Please try again later')
         return
       }
 
@@ -275,12 +290,64 @@ export class QrCodeService {
     })
   }
 
+
+  /** Open dialog used to display infos, errors, or anything that does not need actions.
+   * This dialog only needs to be closed. If you want to perform actions on dialog, call `showConfirmationAlert`.
+   * 
+   * Example usage:
+   * 
+   * this.showInfoDialog(
+   *  'Info Header',
+   *  'mesage blabla',
+   *  'Close',
+   *  () => {
+   *    // close handler callback, do something here. It's optional.
+   *  }
+   * )
+   */
+  async showInfoDialog(header: string, message: string, buttonText: string = 'OK', onClose?: () => void) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: message,
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: buttonText,
+          handler: onClose
+        }
+      ]
+    })
+    await alert.present()
+  }
+  /** Confirmation dialog, receive callbacks as parameters for actions (onProceed? onCancel?) */
+  async showConfirmationDialog(header: string, message: string, cancelButtonText: string = 'Cancel', confirmButtonText: string = 'Yes', onCancel?: () => void, onConfirm?: () => void) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: message,
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: cancelButtonText,
+          role: 'cancel',
+          handler: onCancel
+        },
+        {
+          text: confirmButtonText,
+          role: 'confirm',
+          handler: onConfirm
+        }
+      ]
+    });
+    await alert.present()
+  }
+
+
   private _returnDevice(device: Device, scannedRoomData: RoomQRData) {
     this.loadingService.setLoading(true)
     this.sharedService.returnItem(device.id, scannedRoomData.id).pipe(take(1)).subscribe({
       next: (value: any) => {
         this.sharedService.triggerEmission()
-        this.sharedService.openSnackbarMessage(`Item "${device.item_name}" has been returned at "${scannedRoomData.room_number}"`)
+        this.sharedService.openSnackbarMessage(`Successfully returend "${device.item_name}" at "${scannedRoomData.room_number}"`)
       },
       error: (err: HttpErrorResponse) => {
         this.loadingService.setLoading(false)
