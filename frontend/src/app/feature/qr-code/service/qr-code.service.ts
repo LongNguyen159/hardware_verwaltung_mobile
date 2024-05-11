@@ -140,6 +140,10 @@ export class QrCodeService {
       .catch((error: ScanErrorEvent) => {
         // Handle errors here
         console.error('Error occurred while scanning:', error.message)
+        /** Ignore canceled error from scanner. */
+        if (error.message === 'scan canceled.') {
+          return
+        }
         this.showInfoDialog(
           'Scanner Error',
           `${error.message}`,
@@ -220,30 +224,6 @@ export class QrCodeService {
         this._afterLendDeviceScanned(scannedDeviceData)
       }
     )
-    // const alert = await this.alertController.create({
-    //   header: 'Item mismatch',
-    //   message: `Scanned item does not match your selected item. Do you still want to lend the scanned item anyway?<br><br>
-    //     Scanned item: ID: ${scannedDeviceData.id} - ${scannedDeviceData.deviceType} (${scannedDeviceData.deviceVariant})<br>
-    //   `,
-    //   buttons: [
-    //     {
-    //       text: 'Cancel',
-    //       role: 'cancel',
-    //       handler: () => {
-    //         return
-    //       }
-    //     },
-    //     {
-    //       text: 'Yes',
-    //       role: 'confirm',
-    //       handler: () => {
-
-    //         this._afterLendDeviceScanned(scannedDeviceData)
-    //       }
-    //     }
-    //   ]
-    // })
-    // await alert.present()
   }
 
   /** Sends request to lend device */
@@ -286,6 +266,9 @@ export class QrCodeService {
     })
     .catch((error: ScanErrorEvent) => {
       console.error(error)
+      if (error.message === 'scan canceled.') {
+        return
+      }
       this.sharedService.openSnackbarMessage(`An error occurred: ${error.message}`)
     })
   }
