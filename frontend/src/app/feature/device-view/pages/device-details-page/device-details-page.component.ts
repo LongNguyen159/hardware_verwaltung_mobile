@@ -131,10 +131,9 @@ export class DeviceDetailsPageComponent extends BaseComponent implements OnInit 
     })
   }
 
-  async onLendItemClick() {
+  onLendItemClick() {
     this.qrCodeService.scanLendDevice(this.deviceDetails)
   }
-
 
 
   async onReturnItemClick() {

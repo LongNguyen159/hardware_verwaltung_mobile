@@ -1,15 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
-import { Filesystem, Directory } from '@capacitor/filesystem';
-import { Preferences } from '@capacitor/preferences';
-import { Barcode, BarcodeFormat, BarcodeScanner, ScanOptions } from '@capacitor-mlkit/barcode-scanning';
-import { AlertController } from '@ionic/angular';
+import { Barcode, BarcodeFormat, BarcodeScanner, ScanErrorEvent, ScanOptions } from '@capacitor-mlkit/barcode-scanning';
 import { Device, DeviceQRData, Room, RoomQRData } from 'src/app/shared/models/shared-models';
 import { SharedService } from 'src/app/shared/services/shared.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LoadingService } from 'src/app/shared/services/loading.service';
 import { UserService } from 'src/app/shared/services/user.service';
+import { AlertController } from '@ionic/angular/standalone';
 
 @Injectable({
   providedIn: 'root'
@@ -99,7 +96,6 @@ export class QrCodeService {
     )
   }
 
-
   /** Specifically serve the purpose of scanning to LEND ITEMS.
    * Simply call this function in any component and the device is lent!
    * The rest logic (including error handling) is handled in QRCodeService.
@@ -112,28 +108,42 @@ export class QrCodeService {
     const isSupported = await this.isCodeScannerSupported()
 
     if (!isSupported) {
-      this.sharedService.openSnackbarMessage('QR code scanning is not supported on your platform')
+      /** Open an error dialog */
+      const alert = await this.alertController.create({
+        header: 'QR Not Supported',
+        message: `QR Code scanning is not supported on this platform.`,
+        backdropDismiss: false,
+        buttons: ['Ok']
+      })
+      await alert.present()
       return
     }
-    this.scan().then( (scanResults: Barcode | undefined) => {
-      /** As per 'scan()' function above, scan results will be undefined if permission not granted,
-       * or there are issues with the scanner. Hence, handle them here by returning a meaningful error message
-       * and exit the function early.
-       */
-      if (!scanResults) {
-        this.sharedService.openSnackbarMessage('Oops! There seems to be something wrong with the scanner, Please try again later.')
-        return
-      }
 
-      /** Scan results raw value is in string format, hence we must parse them into JSON */
-      const jsonValue = JSON.parse(scanResults.rawValue)
-      if (this.isValidDeviceData(jsonValue)) {
-        this._afterLendDeviceScanned(jsonValue, deviceInfo)
-      } else {
-        this.sharedService.openSnackbarMessage(`QR code not valid. Are you sure this is a device's QR code?`)
-      }
-      
-    })
+    this.scan()
+      .then( (scanResults: Barcode | undefined) => {
+        /** As per 'scan()' function above, scan results will be undefined if permission not granted,
+         * or there are issues with the scanner. Hence, handle them here by returning a meaningful error message
+         * and exit the function early.
+         */
+        if (!scanResults) {
+          this.sharedService.openSnackbarMessage('Oops! There seems to be something wrong with the scanner, Please try again later.')
+          return
+        }
+
+        /** Scan results raw value is in string format, hence we must parse them into JSON */
+        const jsonValue = JSON.parse(scanResults.rawValue)
+        if (this.isValidDeviceData(jsonValue)) {
+          this._afterLendDeviceScanned(jsonValue, deviceInfo)
+        } else {
+          this.sharedService.openSnackbarMessage(`QR code not valid. Are you sure this is a device's QR code?`)
+        }
+        
+      })
+      .catch((error: ScanErrorEvent) => {
+        // Handle errors here
+        console.error('Error occurred while scanning:', error.message)
+        this.sharedService.openSnackbarMessage(`An error occurred: ${error.message}`)
+      })
   }
 
   /** Helper function for scanning devices: After validating that the QR's value is valid, this function will be executed. */
@@ -200,7 +210,6 @@ export class QrCodeService {
       message: `Scanned item does not match your selected item. Do you still want to lend the scanned item anyway?<br><br>
         Scanned item: ID: ${scannedDeviceData.id} - ${scannedDeviceData.deviceType} (${scannedDeviceData.deviceVariant})<br>
       `,
-      cssClass: 'multiline-alert',
       buttons: [
         {
           text: 'Cancel',
@@ -211,6 +220,7 @@ export class QrCodeService {
         },
         {
           text: 'Yes',
+          role: 'confirm',
           handler: () => {
 
             this._afterLendDeviceScanned(scannedDeviceData)
@@ -258,6 +268,10 @@ export class QrCodeService {
         this.sharedService.openSnackbarMessage(`QR code not valid. Are you sure you scanned the Room's QR code?`)
       }
       
+    })
+    .catch((error: ScanErrorEvent) => {
+      console.error(error)
+      this.sharedService.openSnackbarMessage(`An error occurred: ${error.message}`)
     })
   }
 

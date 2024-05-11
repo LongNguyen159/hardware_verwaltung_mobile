@@ -1,8 +1,7 @@
 <ion-header>
     <ion-toolbar>
       <ion-buttons slot="start">
-        <ion-back-button *ngIf="platformService.isIOSPlatform()" [text]="backButtonLabel" defaultHref="/device"></ion-back-button>
-        <ion-back-button *ngIf="!platformService.isIOSPlatform()" defaultHref="/device"></ion-back-button>
+        <ion-back-button defaultHref="/device"></ion-back-button>
       </ion-buttons>
       <ion-title>
         Details
