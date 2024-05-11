@@ -1,12 +1,30 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button *ngIf="platformService.isIOSPlatform()" text="Back" defaultHref="/tabs/dashboard"></ion-back-button>
-      <ion-back-button *ngIf="!platformService.isIOSPlatform()" defaultHref="/tabs/dashboard"></ion-back-button>
-    </ion-buttons>
-    <ion-title>
-      Your items
-    </ion-title>
+    <div class="flex flex-row items-center">
+      <div>
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="/tabs/dashboard"></ion-back-button>
+        </ion-buttons>
+      </div>
+      <div>
+        <ion-title>
+          Your items
+        </ion-title>
+      </div>
+      <div class="flex flex-row w-full justify-end items-center pr-4">
+        <div>
+          <ion-fab-button class="noBoxShadow" size="small" style="--background: #0891b2; --background-activated: #0e7490;">
+            <ion-icon size="small" name="menu"></ion-icon>
+          </ion-fab-button>
+        </div>
+        <div>
+          <ion-fab-button class="noBoxShadow" size="small" (click)="onLendClick()" style="--background: #0891b2; --background-activated: #0e7490;">
+            <ion-icon name="qr-code" size="small"></ion-icon>
+          </ion-fab-button>
+        </div>
+      </div>
+    </div>
+    
   </ion-toolbar>
 </ion-header>
 
@@ -16,7 +34,7 @@
       <ion-title size="large">Your items</ion-title>
     </ion-toolbar>
   </ion-header>
-
+  
   <ion-list class="ion-padding-top">
     @for (item of itemsByUser; track item.id) {
       <ion-item button [routerLink]="['/device', item.id]">  

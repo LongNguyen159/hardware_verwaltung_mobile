@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonBackButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonBackButton, IonButton, IonButtons, IonContent, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle, IonToolbar, IonFab } from '@ionic/angular/standalone';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { RouterModule } from '@angular/router';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
@@ -9,14 +9,18 @@ import { take, takeUntil } from 'rxjs';
 import { Device, User } from 'src/app/shared/models/shared-models';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from 'src/app/shared/services/user.service';
+import { addIcons } from 'ionicons';
+import { menu, qrCode } from 'ionicons/icons';
+import { QrCodeService } from '../qr-code/service/qr-code.service';
 
 @Component({
   selector: 'app-your-items',
   templateUrl: './your-items.page.html',
   styleUrls: ['./your-items.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,
-    RouterModule, IonButtons, IonBackButton, IonList, IonItem, IonLabel
+  imports: [IonFab, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,
+    RouterModule, IonButtons, IonBackButton, IonList, IonItem, IonLabel, IonButton,
+    IonIcon, IonFabButton
   ]
 })
 
@@ -26,6 +30,7 @@ import { UserService } from 'src/app/shared/services/user.service';
  */
 export class YourItemsPage extends BaseComponent implements OnInit {
   userService = inject(UserService)
+  qrCodeService = inject(QrCodeService)
   userId: number
   user: User
 
@@ -35,6 +40,8 @@ export class YourItemsPage extends BaseComponent implements OnInit {
     public platformService: PlatformService
   ) { 
     super()
+
+    addIcons({qrCode, menu})
   }
 
   ngOnInit() {
@@ -54,6 +61,10 @@ export class YourItemsPage extends BaseComponent implements OnInit {
         
       }
     })
+  }
+
+  onLendClick() {
+    this.qrCodeService.scanLendDevice()
   }
 
   getItemsBorrowedByUser() {
