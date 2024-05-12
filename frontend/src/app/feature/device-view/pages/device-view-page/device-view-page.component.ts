@@ -115,7 +115,6 @@ export class DeviceViewPageComponent extends BaseComponent implements OnInit {
 
   /** Hide keyboard on scroll */
   async onContentScroll() {
-    console.log('scroll event detected')
     if (this.platformService.isNativePlatform()) {
       await Keyboard.hide()
       this.enableScrollEvent = false
