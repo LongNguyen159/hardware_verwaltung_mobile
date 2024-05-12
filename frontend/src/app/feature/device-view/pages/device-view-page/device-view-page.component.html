@@ -11,7 +11,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="false" [scrollEvents]="true" (ionScroll)="onContentScroll()" #content>
+<ion-content [fullscreen]="false" [scrollEvents]="enableScrollEvent" (ionScroll)="onContentScroll()" #content>
   <!-- header of page -->
   <ion-header collapse="condense">
     <ion-toolbar>
@@ -19,16 +19,25 @@
     </ion-toolbar>
   </ion-header>
   <div class="searchBar">
-    <ion-searchbar [debounce]="200" (ionInput)="onSearchDevices($event.target.value)" [ngClass]="{'background-dark': colorMode === 'dark', 'background-light': colorMode === 'light'}"  class="searchBar" placeholder="Search" showCancelButton="focus"></ion-searchbar>
+    <ion-searchbar [debounce]="200" (ionFocus)="onSearchFocus($event)" (ionInput)="onSearchDevices($event.target.value)" [ngClass]="{'background-dark': colorMode === 'dark', 'background-light': colorMode === 'light'}"  class="searchBar" placeholder="Search" showCancelButton="focus"></ion-searchbar>
   </div>
   
   <ion-list class="ion-padding-top">
-    <ion-item *ngFor="let item of allAvailableDevicesFiltered; trackBy: trackById" button [routerLink]="['/device', item.id]">  
-      <ion-label class="ion-text-wrap">
-        <h3 style="font-weight: bold;">{{ item.item_name }}</h3>
-        <p style="font-weight: bold;">{{ item.description }}</p>
-        <p>{{ item.location }}</p>
-      </ion-label>
-    </ion-item>
+    @for (item of allAvailableDevicesFiltered; track item.id) {
+      <ion-item-sliding>
+        <ion-item button [routerLink]="['/device', item.id]">  
+          <ion-label class="ion-text-wrap">
+            <h3 style="font-weight: bold;">{{ item.item_name }}</h3>
+            <p style="font-weight: bold;">{{ item.description }}</p>
+            <p>{{ item.location }}</p>
+          </ion-label>
+        </ion-item>
+    
+         <!-- Sliding actions buttons -->
+        <ion-item-options side="end" (ionSwipe)="onLendClick(item)">
+          <ion-item-option color="primary" type="button" expandable (click)="onLendClick(item)">Lend</ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    }   
   </ion-list>
 </ion-content>

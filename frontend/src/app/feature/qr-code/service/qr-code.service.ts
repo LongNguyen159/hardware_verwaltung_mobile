@@ -102,6 +102,7 @@ export class QrCodeService {
    * 
    * Optional parameter: `deviceInfo`
    * Provide this parameter if you want to specifically lend that exact item.
+   * Throws an error dialog if scanned item mismatch the selected item.
    * Currently being used in device-details page.
    */
   async scanLendDevice(deviceInfo?: Device) {
@@ -242,7 +243,13 @@ export class QrCodeService {
   }
 
 
-  async scanReturnItem(deviceInfo: Device) {
+  /** TODO: Refactor this function to take in an array as an arguement.
+   * If not array => Turn into array.
+   * 
+   * Scan only once, take the room ID,
+   * Then use forkJoin to handle multple POST request to server.
+   */
+  async scanReturnDevice(deviceInfo: Device) {
     const isSupported = await this.isCodeScannerSupported()
 
     if (!isSupported) {
@@ -287,6 +294,20 @@ export class QrCodeService {
         `${error.message}`,
         'OK'
       )
+    })
+  }
+
+
+  private _returnDevice(device: Device, scannedRoomData: RoomQRData) {
+    this.loadingService.setLoading(true)
+    this.sharedService.returnItem(device.id, scannedRoomData.id).pipe(take(1)).subscribe({
+      next: (value: any) => {
+        this.sharedService.triggerEmission()
+        this.sharedService.openSnackbarMessage(`Successfully returend "${device.item_name}" at "${scannedRoomData.room_number}"`)
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loadingService.setLoading(false)
+      }
     })
   }
 
@@ -342,18 +363,7 @@ export class QrCodeService {
   }
 
 
-  private _returnDevice(device: Device, scannedRoomData: RoomQRData) {
-    this.loadingService.setLoading(true)
-    this.sharedService.returnItem(device.id, scannedRoomData.id).pipe(take(1)).subscribe({
-      next: (value: any) => {
-        this.sharedService.triggerEmission()
-        this.sharedService.openSnackbarMessage(`Successfully returend "${device.item_name}" at "${scannedRoomData.room_number}"`)
-      },
-      error: (err: HttpErrorResponse) => {
-        this.loadingService.setLoading(false)
-      }
-    })
-  }
+  
 
 
   async requestPermissions(): Promise<boolean> {

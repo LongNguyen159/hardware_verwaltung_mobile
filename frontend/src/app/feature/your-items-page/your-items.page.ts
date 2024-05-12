@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonBackButton, IonButton, IonButtons, IonContent, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle, IonToolbar, IonFab } from '@ionic/angular/standalone';
+import { IonBackButton, IonButton, IonButtons, IonContent, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle, IonToolbar, IonFab, IonItemSliding, IonItemOptions, IonItemOption } from '@ionic/angular/standalone';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { RouterModule } from '@angular/router';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
@@ -20,7 +20,8 @@ import { QrCodeService } from '../qr-code/service/qr-code.service';
   standalone: true,
   imports: [IonFab, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,
     RouterModule, IonButtons, IonBackButton, IonList, IonItem, IonLabel, IonButton,
-    IonIcon, IonFabButton
+    IonIcon, IonFabButton,
+    IonItemSliding, IonItemOptions, IonItemOption
   ]
 })
 
@@ -65,6 +66,10 @@ export class YourItemsPage extends BaseComponent implements OnInit {
 
   onLendClick() {
     this.qrCodeService.scanLendDevice()
+  }
+
+  onReturnClick(deviceInfo: Device) {
+    this.qrCodeService.scanReturnDevice(deviceInfo)
   }
 
   getItemsBorrowedByUser() {
