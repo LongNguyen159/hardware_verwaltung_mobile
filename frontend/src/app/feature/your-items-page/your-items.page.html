@@ -12,11 +12,23 @@
         </ion-title>
       </div>
       <div class="flex flex-row w-full justify-end items-center pr-4">
-        <div>
-          <ion-fab-button class="noBoxShadow" size="small" style="--background: #0891b2; --background-activated: #0e7490;">
-            <ion-icon size="small" name="menu"></ion-icon>
-          </ion-fab-button>
-        </div>
+        <!-- SELECT ITEMS BUTTON -->
+        @if (isSelectMode) {
+          <div>
+            <ion-button style="font-size: 1rem" size="small" fill="outline" (click)="toggleSelectItems()">
+              Done
+            </ion-button>
+          </div>
+        } @else {
+          <div>
+            <ion-fab-button class="noBoxShadow" size="small" (click)="toggleSelectItems()" style="--background: #0891b2; --background-activated: #0e7490;">
+              <ion-icon size="small" name="checkmark-circle-outline"></ion-icon>
+            </ion-fab-button>
+          </div>
+        }
+        
+
+        <!-- SCAN QR BUTTON -->
         <div>
           <ion-fab-button class="noBoxShadow" size="small" (click)="onLendClick()" style="--background: #0891b2; --background-activated: #0e7490;">
             <ion-icon name="qr-code" size="small"></ion-icon>
@@ -39,12 +51,23 @@
     @for (item of itemsByUser; track item.id) {
       <ion-item-sliding>
         <!-- LIST ITEMS -->
-        <ion-item button [routerLink]="['/device', item.id]">  
-          <ion-label class="ion-text-wrap">
-            <h3 style="font-weight: bold;">{{ item.item_name }}</h3>
-            <p style="font-weight: bold;">{{ item.description }}</p>
-            <p>{{ item.location }}</p>
-          </ion-label>
+        <ion-item button [routerLink]="['/device', item.id]">
+          
+          @if (isSelectMode) {
+            <ion-checkbox (click)="$event.stopPropagation()" justify="start" labelPlacement="end">
+              <ion-label class="ion-text-wrap">
+                <h3 style="font-weight: bold;">{{ item.item_name }}</h3>
+                <p style="font-weight: bold;">{{ item.description }}</p>
+                <p>{{ item.location }}</p>
+              </ion-label>
+            </ion-checkbox>
+          } @else {
+            <ion-label class="ion-text-wrap">
+              <h3 style="font-weight: bold;">{{ item.item_name }}</h3>
+              <p style="font-weight: bold;">{{ item.description }}</p>
+              <p>{{ item.location }}</p>
+            </ion-label>
+          }
         </ion-item>
 
         <!-- Sliding actions buttons -->

@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonBackButton, IonButton, IonButtons, IonContent, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle, IonToolbar, IonFab, IonItemSliding, IonItemOptions, IonItemOption } from '@ionic/angular/standalone';
+import { IonBackButton, IonButton, IonButtons, IonContent, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle, IonToolbar, IonFab, IonItemSliding, IonItemOptions, IonItemOption, IonCheckbox } from '@ionic/angular/standalone';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { RouterModule } from '@angular/router';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
@@ -10,7 +10,7 @@ import { Device, User } from 'src/app/shared/models/shared-models';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from 'src/app/shared/services/user.service';
 import { addIcons } from 'ionicons';
-import { menu, qrCode } from 'ionicons/icons';
+import { checkmarkCircle, checkmarkCircleOutline, create, createOutline, menu, pencil, qrCode } from 'ionicons/icons';
 import { QrCodeService } from '../qr-code/service/qr-code.service';
 
 @Component({
@@ -21,7 +21,7 @@ import { QrCodeService } from '../qr-code/service/qr-code.service';
   imports: [IonFab, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,
     RouterModule, IonButtons, IonBackButton, IonList, IonItem, IonLabel, IonButton,
     IonIcon, IonFabButton,
-    IonItemSliding, IonItemOptions, IonItemOption
+    IonItemSliding, IonItemOptions, IonItemOption, IonCheckbox
   ]
 })
 
@@ -35,6 +35,8 @@ export class YourItemsPage extends BaseComponent implements OnInit {
   userId: number
   user: User
 
+  isSelectMode: boolean = false
+
   itemsByUser: Device[] = []
 
   constructor(
@@ -42,7 +44,7 @@ export class YourItemsPage extends BaseComponent implements OnInit {
   ) { 
     super()
 
-    addIcons({qrCode, menu})
+    addIcons({qrCode, menu, createOutline, create, pencil, checkmarkCircleOutline})
   }
 
   ngOnInit() {
@@ -81,6 +83,10 @@ export class YourItemsPage extends BaseComponent implements OnInit {
         console.error(err)
       }
     })
+  }
+
+  toggleSelectItems() {
+    this.isSelectMode = !this.isSelectMode
   }
 
 }
