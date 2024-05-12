@@ -1,22 +1,19 @@
-<!-- <ion-header class="noBoxShadow">
-    <ion-toolbar>
-      <ion-title>
-        
-      </ion-title>
-    </ion-toolbar>
-</ion-header> -->
-
 <ion-content>
     <!-- CONTENT CONTAINER -->
     <div class="flex flex-col items-center justify-around w-full h-full">
+
+        <!-- USER AVATAR SECTION -->
         <div class="flex flex-col w-full justify-center items-center align-center ion-padding avatar-container gap-2">
-            <ion-avatar>
-                <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+            <ion-avatar>                
+                <img *ngIf="colorTheme == 'dark'; else lightModeImage" alt="Silhouette of a person's head" src="assets/images/person-darkmode.png" />
+                <ng-template #lightModeImage>
+                    <img alt="Silhouette of a person's head" src="assets/images/person.png" />
+                </ng-template>
             </ion-avatar>
             <p *ngIf="user"> {{ user.first_name }} {{ user.last_name }} </p>
         </div>
 
-        
+        <!-- USER INFOS SECTION -->
         <div *ngIf="user" class="flex flex-col items-center justify-center w-full ion-padding">
             <ion-card class="flex flex-col items-start w-full leading-10 ion-padding">
                 <div>
@@ -30,6 +27,8 @@
                 </div>
             </ion-card>
         </div>
+
+        <!-- ACTIONS SECTION -->
         <div class="w-full ion-padding">
             <ion-button class="w-full" color="danger" fill="outline">
                 Logout
