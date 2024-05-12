@@ -242,7 +242,18 @@ export class QrCodeService {
   }
 
 
-  scanReturnItem(deviceInfo: Device) {
+  async scanReturnItem(deviceInfo: Device) {
+    const isSupported = await this.isCodeScannerSupported()
+
+    if (!isSupported) {
+      /** Open an error dialog */
+      this.showInfoDialog(
+        'QR Not Supported',
+        'QR Code scanning is not supported on this platform.',
+        'OK'
+      )
+      return
+    }
     this.scan().then( (scanResults: Barcode | undefined) => {
       /** As per 'scan()' function above, scan results will be undefined if permission not granted,
        * or there are issues with the scanner. Hence, handle them here by returning a meaningful error message
@@ -265,11 +276,17 @@ export class QrCodeService {
       
     })
     .catch((error: ScanErrorEvent) => {
-      console.error(error)
+      // Handle errors here
+      console.error('Error occurred while scanning:', error.message)
+      /** Ignore canceled error from scanner. */
       if (error.message === 'scan canceled.') {
         return
       }
-      this.sharedService.openSnackbarMessage(`An error occurred: ${error.message}`)
+      this.showInfoDialog(
+        'Scanner Error',
+        `${error.message}`,
+        'OK'
+      )
     })
   }
 
