@@ -13,9 +13,10 @@ npm ci
 
 Frontend starten:
 ```
-cd frontend_service
-ng serve
+cd frontend
+ionic serve [platform]
 ```
+[platform]= ios/android
 
 Backend starten:
 ```
