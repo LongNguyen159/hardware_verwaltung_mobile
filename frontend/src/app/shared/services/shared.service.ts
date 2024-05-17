@@ -174,6 +174,7 @@ export class SharedService {
     const toast = await this.snackbar.create({
       message: message,
       duration: duration,
+      swipeGesture: "vertical",
       position: 'top',
       buttons: [{
         role: "cancel",
