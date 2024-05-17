@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Device, ImageResponse, ItemHistoryPost, NewDeviceData, ProductType, Room, User } from '../models/shared-models';
-import { Observable, Subject, map, of, startWith, timer} from 'rxjs';
+import { Observable, Subject, forkJoin, map, of, startWith, timer} from 'rxjs';
 import { switchMap } from 'rxjs';
-import { ToastController } from '@ionic/angular/standalone';
+import { CheckboxCustomEvent, ToastController } from '@ionic/angular/standalone';
 import { UserService } from './user.service';
 @Injectable({
   providedIn: 'root'
@@ -26,6 +26,10 @@ export class SharedService {
   
   imageId: number
   unixTimeValue: number
+
+
+  selectedItems: Device[] = []
+  selectedItemsSubject = new Subject<Device[]>()
 
 
   constructor(private http: HttpClient, private snackbar: ToastController) { }
@@ -184,6 +188,7 @@ export class SharedService {
     return this.http.get<User>(`${this.apiEndpoint}/user/id/${id}/`)
   }
 
+  /** Get all items borrowed by user */
   getItemsBorrowedByUserId(userId: number) {
     return this.triggerUpdate$.pipe(
       startWith(null),
@@ -204,14 +209,45 @@ export class SharedService {
     return this.http.post(`${this.apiEndpoint}/item-history/`, postData)
   }
 
-  returnItem(itemId: number, roomId: number) {
-    const postData: ItemHistoryPost = {
-      item: itemId,
-      user: this.userService.testUserId,
-      item_history_type: 2,
-      room: roomId
-    }
-    return this.http.post(`${this.apiEndpoint}/item-history/`, postData)
+  returnItems(itemIds: number[], roomId: number): Observable<any[]> {
+    const requests = itemIds.map(itemId => {
+      const postData = {
+        item: itemId,
+        user: this.userService.testUserId,
+        item_history_type: 2,
+        room: roomId
+      }
+      return this.http.post(`${this.apiEndpoint}/item-history/`, postData)
+    })
+    return forkJoin(requests)
   }
+
+  clearSelectedDevices() {
+    /** Reset selected items on 'done' click. This is equivalent to clicking 'cancel' */
+    this.selectedItems = []
+    this.selectedItemsSubject.next(this.selectedItems)
+  }
+
+
+  setSelectedDevices(option: CheckboxCustomEvent) {
+    const checked = option.detail.checked
+    const item: Device = option.detail.value
+
+    /** Only push in selected item if it does not already exist. */
+    if (checked && !this.selectedItems.map(v => v.id).includes(item.id)) {
+      this.selectedItems.push(item)
+    }
+
+    if (!checked) {
+      this.selectedItems = this.selectedItems.filter(v => v.id !== item.id)
+    }
+
+    this.selectedItemsSubject.next(this.selectedItems)
+  }
+
+  getSelectedDevices(): Observable<Device[]> {
+    return this.selectedItemsSubject.asObservable()
+  }
+  
   
 }

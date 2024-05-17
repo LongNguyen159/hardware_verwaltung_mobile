@@ -15,7 +15,7 @@
         <!-- SELECT ITEMS BUTTON -->
         @if (isSelectMode) {
           <div>
-            <ion-button style="font-size: 1rem" size="small" fill="clear" (click)="toggleSelectItems()">
+            <ion-button style="font-size: 1rem" size="small" fill="clear" (click)="toggleSelectItems(); onDoneClick()">
               Done
             </ion-button>
           </div>
@@ -54,7 +54,7 @@
         <ion-item button [routerLink]="['/device', item.id]">
           
           @if (isSelectMode) {
-            <ion-checkbox (click)="$event.stopPropagation()" justify="start" labelPlacement="end">
+            <ion-checkbox [value]="item" (click)="$event.stopPropagation()" (ionChange)="onItemsSelect($event)" justify="start" labelPlacement="end">
               <ion-label class="ion-text-wrap">
                 <h3 style="font-weight: bold;">{{ item.item_name }}</h3>
                 <p style="font-weight: bold;">{{ item.description }}</p>
@@ -78,3 +78,14 @@
     }
   </ion-list>
 </ion-content>
+@if (isSelectMode) {
+  <ion-footer>
+    <ion-toolbar>
+      <div class="flex flex-row items-center justify-center">
+        <ion-button (click)="onReturnClick(selectedItems)" color="warning" [disabled]="selectedItems.length == 0">
+          Return Items ({{ selectedItems.length }})
+        </ion-button>
+      </div>
+    </ion-toolbar>
+  </ion-footer>
+}

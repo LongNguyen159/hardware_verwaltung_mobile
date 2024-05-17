@@ -232,11 +232,15 @@ export class QrCodeService {
     this.loadingService.setLoading(true)
     this.sharedService.lendItem(this.deviceInfo.id, this.deviceInfo.location_id).pipe(take(1)).subscribe({
       next: (value: any) => {
+        /** Refresh data source */
         this.sharedService.triggerEmission()
         this.sharedService.openSnackbarMessage(`Successfully added "${this.deviceInfo.item_name}" to your lent items!`)
       },
       error: (err: HttpErrorResponse) => {
         this.loadingService.setLoading(false)
+        /** Refresh data source */
+        this.sharedService.triggerEmission()
+
         this.sharedService.openSnackbarMessage('Error lending scanned item, please try again later')
       }
     })
@@ -249,7 +253,7 @@ export class QrCodeService {
    * Scan only once, take the room ID,
    * Then use forkJoin to handle multple POST request to server.
    */
-  async scanReturnDevice(deviceInfo: Device) {
+  async scanReturnDevice(deviceInfo: Device | Device[]) {
     const isSupported = await this.isCodeScannerSupported()
 
     if (!isSupported) {
@@ -260,6 +264,10 @@ export class QrCodeService {
         'OK'
       )
       return
+    }
+
+    if (!Array.isArray(deviceInfo)) {
+      deviceInfo = [deviceInfo]
     }
     this.scan().then( (scanResults: Barcode | undefined) => {
       /** As per 'scan()' function above, scan results will be undefined if permission not granted,
@@ -298,15 +306,40 @@ export class QrCodeService {
   }
 
 
-  private _returnDevice(device: Device, scannedRoomData: RoomQRData) {
+  private _returnDevice(device: Device | Device[], scannedRoomData: RoomQRData) {
     this.loadingService.setLoading(true)
-    this.sharedService.returnItem(device.id, scannedRoomData.id).pipe(take(1)).subscribe({
-      next: (value: any) => {
+    if (!Array.isArray(device)) {
+      device = [device]
+    }
+
+    const deviceIds = device.map(item => item.id)
+    this.sharedService.returnItems(deviceIds, scannedRoomData.id).pipe(take(1)).subscribe({
+      next: (value: any[]) => {
         this.sharedService.triggerEmission()
-        this.sharedService.openSnackbarMessage(`Successfully returend "${device.item_name}" at "${scannedRoomData.room_number}"`)
+
+        console.log("Item return response:", value)
+        if (value.length == 1) {
+          // notify user that item X returned successfully at location Y
+          const responseMessage = value[0]
+          this.sharedService.openSnackbarMessage(`Successfully returned "${responseMessage.itemName}" at "${responseMessage.room}"`)
+
+        } else if (value.length > 1) {
+          const responseMessage = value[0]
+          this.sharedService.openSnackbarMessage(`Successfully returned ${value.length} items at "${responseMessage.room}"`)
+        }
+        this.sharedService.clearSelectedDevices()
+        
+
+        // this.sharedService.openSnackbarMessage(`Successfully returend "${device.item_name}" at "${scannedRoomData.room_number}"`)
       },
       error: (err: HttpErrorResponse) => {
         this.loadingService.setLoading(false)
+        this.sharedService.clearSelectedDevices()
+        this.showInfoDialog(
+          'Error returning item',
+          `An error occurred while returning item. Please try again later.`,
+          'OK'
+        )
       }
     })
   }

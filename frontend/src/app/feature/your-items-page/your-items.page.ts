@@ -1,11 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonBackButton, IonButton, IonButtons, IonContent, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle, IonToolbar, IonFab, IonItemSliding, IonItemOptions, IonItemOption, IonCheckbox } from '@ionic/angular/standalone';
+import { IonBackButton, IonButton, IonButtons, IonContent, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle, IonToolbar, IonFab, IonItemSliding, IonItemOptions, IonItemOption, IonCheckbox, CheckboxChangeEventDetail, CheckboxCustomEvent, IonFooter } from '@ionic/angular/standalone';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { RouterModule } from '@angular/router';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
-import { take, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { Device, User } from 'src/app/shared/models/shared-models';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from 'src/app/shared/services/user.service';
@@ -21,7 +21,8 @@ import { QrCodeService } from '../qr-code/service/qr-code.service';
   imports: [IonFab, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,
     RouterModule, IonButtons, IonBackButton, IonList, IonItem, IonLabel, IonButton,
     IonIcon, IonFabButton,
-    IonItemSliding, IonItemOptions, IonItemOption, IonCheckbox
+    IonItemSliding, IonItemOptions, IonItemOption, IonCheckbox,
+    IonFooter
   ]
 })
 
@@ -36,7 +37,10 @@ export class YourItemsPage extends BaseComponent implements OnInit {
   user: User
 
   isSelectMode: boolean = false
+  /** Selected items */
+  selectedItems: Device[] = []
 
+  /** All items list */
   itemsByUser: Device[] = []
 
   constructor(
@@ -49,6 +53,12 @@ export class YourItemsPage extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.getUserInfos()
+
+    this.sharedService.getSelectedDevices().pipe(takeUntil(this.componentDestroyed$)).subscribe({
+      next: (value: Device[]) => {
+        this.selectedItems = value
+      }
+    })
   }
 
   /** Get user Infos here, as user has logged in. */
@@ -70,7 +80,7 @@ export class YourItemsPage extends BaseComponent implements OnInit {
     this.qrCodeService.scanLendDevice()
   }
 
-  onReturnClick(deviceInfo: Device) {
+  onReturnClick(deviceInfo: Device | Device[]) {
     this.qrCodeService.scanReturnDevice(deviceInfo)
   }
 
@@ -87,6 +97,15 @@ export class YourItemsPage extends BaseComponent implements OnInit {
 
   toggleSelectItems() {
     this.isSelectMode = !this.isSelectMode
+  }
+
+  onDoneClick() {
+    /** Reset selected items on 'done' click. This is equivalent to clicking 'cancel' */
+    this.sharedService.clearSelectedDevices()
+  }
+
+  onItemsSelect(option: CheckboxCustomEvent) {
+    this.sharedService.setSelectedDevices(option)
   }
 
 }
