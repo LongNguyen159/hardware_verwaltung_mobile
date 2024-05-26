@@ -10,5 +10,10 @@ import { Keyboard } from '@capacitor/keyboard';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor() {}
+  platformService = inject(PlatformService)
+  constructor() {
+    if ( this.platformService.isNativePlatform()) {
+      Keyboard.setAccessoryBarVisible({ isVisible: true })
+    }
+  }
 }
