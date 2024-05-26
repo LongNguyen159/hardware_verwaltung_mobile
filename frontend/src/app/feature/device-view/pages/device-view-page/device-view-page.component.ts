@@ -10,6 +10,7 @@ import { ColorModeService } from 'src/app/shared/services/color-mode.service';
 import { PlatformService } from 'src/app/shared/services/platform.service';
 import { Keyboard } from '@capacitor/keyboard';
 import { QrCodeService } from 'src/app/feature/qr-code/service/qr-code.service';
+import { SearchService } from 'src/app/shared/services/search.service';
 
 @Component({
   selector: 'app-device-view-page',
@@ -48,6 +49,8 @@ import { QrCodeService } from 'src/app/feature/qr-code/service/qr-code.service';
  */
 export class DeviceViewPageComponent extends BaseComponent implements OnInit {
   qrCodeService = inject(QrCodeService)
+  searchService = inject(SearchService)
+
   allAvailableDevices: Device[] = []
 
   allAvailableDevicesFiltered: Device[] = []
@@ -64,6 +67,8 @@ export class DeviceViewPageComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.getAllDevices()
+
+    this.getIsScrollEventEnabled()
 
 
     this.colorModeService.getUserUiMode().pipe(takeUntil(this.componentDestroyed$)).subscribe(mode => {
@@ -109,16 +114,20 @@ export class DeviceViewPageComponent extends BaseComponent implements OnInit {
     }
   }
 
+  getIsScrollEventEnabled() {
+    this.searchService.isScrollEventEnabled().pipe(takeUntil(this.componentDestroyed$)).subscribe(isEnabled => {
+      this.enableScrollEvent = isEnabled
+    })
+  }
+
   onSearchFocus(event: Event) {
-    this.enableScrollEvent = true
+    /** Only enable scroll event on search focus */
+    this.searchService.enableScrollEventOnSearchFocus()
   }
 
   /** Hide keyboard on scroll */
-  async onContentScroll() {
-    if (this.platformService.isNativePlatform()) {
-      await Keyboard.hide()
-      this.enableScrollEvent = false
-    }
+  onContentScroll() {
+    this.searchService.hideKeyboardOnScroll()
   }
 
   
